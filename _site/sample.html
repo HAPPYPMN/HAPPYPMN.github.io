@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人主页预览</title>
+  <style>
+    /* 样式来自于 assets/css/style.scss */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #fff;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header nav {
+      padding: 10px 0;
+      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 20px;
+      text-align: right;
+    }
+    header nav a {
+      margin-left: 20px;
+      color: #333;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    header nav a:hover {
+      color: #007bff;
+    }
+    .profile-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .profile-pic {
+      flex: 0 0 150px;
+    }
+    .profile-pic img {
+      width: 100%;
+      border-radius: 50%;
+      border: 3px solid #f0f0f0;
+    }
+    .profile-text {
+      flex: 1;
+    }
+    .profile-text h1 {
+      margin-top: 0;
+      margin-bottom: 5px;
+    }
+    .profile-text p {
+      margin-bottom: 15px;
+    }
+    .contact-links a {
+      margin-right: 10px;
+      color: #007bff;
+      text-decoration: none;
+    }
+    .contact-links a:hover {
+      text-decoration: underline;
+    }
+    .publications-list {
+      list-style: none;
+      padding: 0;
+    }
+    .publications-list li {
+      margin-bottom: 25px;
+      border-left: 3px solid #007bff;
+      padding-left: 15px;
+    }
+    .publications-list p {
+      margin: 0;
+    }
+    .resource-links a {
+      display: inline-block;
+      margin-top: 5px;
+      margin-right: 10px;
+      font-size: 0.9em;
+      font-weight: bold;
+      color: #007bff;
+      text-decoration: none;
+    }
+    .resource-links a:hover {
+      text-decoration: underline;
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      color: #888;
+      font-size: 0.9em;
+    }
+    h2 {
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 5px;
+        margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <nav>
+        <a href="#home">主页 (Home)</a>
+        <a href="#publications">发表论文 (Publications)</a>
+      </nav>
+    </header>
+    
+    <main>
+      <div id="home">
+        <div class="profile-container">
+          <div class="profile-pic">
+            <img src="https://via.placeholder.com/150" alt="[你的名字]">
+          </div>
+          <div class="profile-text">
+            <h1>[你的名字]</h1>
+            <p><strong>[你的头衔, e.g., 博士生]</strong><br>
+            [你的院系], [你的大学]<br>
+            [你的城市], [你的国家]</p>
+            
+            <p>
+              这里是您的自我介绍段落。您可以介绍您的研究兴趣，例如：我主要关注于 [你的研究领域A] 和 [你的研究领域B]，特别是 [更具体的方向]。我目前在 [你的导师姓名] 教授的指导下，在 [你的实验室名称] 工作。我的目标是 [你的宏观研究目标]。
+            </p>
+        
+            <div class="contact-links">
+              <a href="#">Email</a> / 
+              <a href="#" target="_blank">Google Scholar</a> / 
+              <a href="#" target="_blank">GitHub</a> / 
+              <a href="#" target="_blank">下载 CV</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <hr style="margin-top: 50px; border: 1px solid #eee;">
+
+      <div id="publications">
+        <h2>精选论文 (Selected Publications)</h2>
+        <p style="color: #666;">*代表同等贡献 (denotes equal contribution)*</p>
+        <ul class="publications-list">
+          <li>
+            <p><strong>[你的名字]</strong>, [作者B], [作者C]. "一篇非常重要的论文标题 (A Very Important Paper Title)". <em>[顶级会议或期刊名称, e.g., CVPR]</em>, 2025.</p>
+            <div class="resource-links">
+              <a href="#">[PDF]</a>
+              <a href="#">[Code]</a>
+              <a href="#">[Project Page]</a>
+              <a href="#">[Video]</a>
+            </div>
+          </li>
+          <li>
+            <p>[作者A]*, <strong>[你的名字]</strong>*, [作者C]. "另一篇也很棒的论文标题 (Another Great Paper Title)". <em>[著名期刊名称, e.g., Nature Machine Intelligence]</em>, 2024.</p>
+            <div class="resource-links">
+              <a href="#">[PDF]</a>
+              <a href="#">[Code]</a>
+            </div>
+          </li>
+        </ul>
+
+        <h2>预印本 (Preprints)</h2>
+        <ul class="publications-list">
+          <li>
+            <p>[作者A], <strong>[你的名字]</strong>. "一篇正在审稿中的论文标题 (A Paper Title Currently Under Review)". <em>arXiv:2501.12345</em>, 2025.</p>
+            <div class="resource-links">
+              <a href="#">[PDF]</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </main>
+    
+    <footer>
+      <p>&copy; 2025 [你的名字]. All rights reserved.</p>
+    </footer>
+  </div>
+
+</body>
+</html>
