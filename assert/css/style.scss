@@ -1,0 +1,114 @@
+---
+---
+// assets/css/style.scss
+// 上面这两行空的 Front Matter 是必须的，它告诉 Jekyll 需要处理这个文件。
+
+// 1. 导入您在 _config.yml 中设置的默认主题样式
+@import "{{ site.theme }}";
+
+// 2. 在这里写下您自己的 CSS 来覆盖或添加新样式
+
+/* 全局容器和字体 */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 头部导航栏 */
+header nav {
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+header nav a {
+  margin-left: 20px;
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+header nav a:hover {
+  color: #007bff;
+}
+
+/* 个人简介区域的双栏布局 */
+.profile-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.profile-pic {
+  flex: 0 0 150px; /* 照片区域固定宽度 */
+}
+
+.profile-pic img {
+  width: 100%;
+  border-radius: 50%; /* 圆形照片 */
+  border: 3px solid #f0f0f0;
+}
+
+.profile-text {
+  flex: 1;
+}
+
+.profile-text h1 {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.profile-text p {
+  margin-bottom: 15px;
+}
+
+.contact-links a {
+  margin-right: 10px;
+}
+
+/* 论文列表 */
+.publications-list {
+  list-style: none;
+  padding: 0;
+}
+
+.publications-list li {
+  margin-bottom: 25px;
+  border-left: 3px solid #007bff;
+  padding-left: 15px;
+}
+
+.publications-list p {
+  margin: 0;
+}
+
+.resource-links a {
+  display: inline-block;
+  margin-top: 5px;
+  margin-right: 10px;
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.resource-links a:hover {
+  text-decoration: underline;
+}
+
+/* 页脚 */
+footer {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+  color: #888;
+  font-size: 0.9em;
+}
