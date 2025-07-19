@@ -32,7 +32,7 @@ title: 主页
 <h2 id="publications">Research</h2>
 
 <ul class="publications-list">
-  <li>
+  <!-- <li>
     <p><strong>Minnan Pei</strong>, [作者B], [作者C]. "一篇非常重要的论文标题 (A Very Important Paper Title)". <em>[顶级会议或期刊名称, e.g., CVPR]</em>, 2025.</p>
     <div class="resource-links">
       <a href="[PDF链接]" target="_blank">[PDF]</a>
@@ -40,9 +40,9 @@ title: 主页
       <a href="[项目主页链接]" target="_blank">[Project Page]</a>
       <a href="[演讲视频链接]" target="_blank">[Video]</a>
     </div>
-  </li>
+  </li> -->
   <li>
-    <p>[作者A]*, <strong>Minnan Pei</strong>*, [作者C]. "另一篇也很棒的论文标题 (Another Great Paper Title)". <em>[著名期刊名称, e.g., Nature Machine Intelligence]</em>, 2024.</p>
+    <p><strong>Minnan Pei</strong>, Gang Li,Junwen Si, Zeyu Zhu, Zitao Mo, Peisong Wang, Zhuoran Song, Xiaoyao Liang, Jian Cheng. "GCC: A 3DGS Inference Architecture with Gaussian-Wise and Cross-Stage Conditional Processing". <em>[MICRO]</em>, 2025.</p>
     <div class="resource-links">
       <a href="[PDF链接]" target="_blank">[PDF]</a>
       <a href="[代码的GitHub链接]" target="_blank">[Code]</a>
