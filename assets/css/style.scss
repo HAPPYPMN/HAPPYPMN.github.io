@@ -20,12 +20,20 @@ body {
   padding: 20px;
 }
 
-/* 头部导航栏 */
-header nav {
-  padding: 10px 0;
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
   border-bottom: 1px solid #e0e0e0;
   margin-bottom: 20px;
-  text-align: right;
+}
+
+header .site-title a {
+  font-size: 1.2em;
+  color: #333;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 header nav a {
