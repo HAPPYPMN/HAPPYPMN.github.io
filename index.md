@@ -41,6 +41,16 @@ title: 主页
       <a href="[演讲视频链接]" target="_blank">[Video]</a>
     </div>
   </li> -->
+
+  <li>
+    <p>Siting Wang, Luoyang Sun, Cheng Deng, Kun Shao,<strong>Minnan Pei</strong>,
+      Zheng Tian, Haifeng Zhang, Jun Wang. "SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs". <em>[arxiv]</em>, 2025.</p>
+    <div class="resource-links">
+      <a href="[PDF链接]" target="_blank">[PDF]</a>
+      <a href="[代码的GitHub链接]" target="_blank">[Code]</a>
+    </div>
+  </li>
+
   <li>
     <p><strong>Minnan Pei</strong>, Gang Li,Junwen Si, Zeyu Zhu, Zitao Mo, Peisong Wang, Zhuoran Song, Xiaoyao Liang, Jian Cheng. "GCC: A 3DGS Inference Architecture with Gaussian-Wise and Cross-Stage Conditional Processing". <em>[MICRO]</em>, 2025.</p>
     <div class="resource-links">
@@ -48,4 +58,14 @@ title: 主页
       <a href="[代码的GitHub链接]" target="_blank">[Code]</a>
     </div>
   </li>
+
+  <li>
+    <p>Jiahao Cui, Ruoxin Xiao, Shiyuan Fang, Minnan Pei, Yixuan Yu. "Encoding feature supervised UNet++: Redesigning Supervision for liver and tumor segmentation". <em>[CoRR]</em>, 2022.</p>
+    <div class="resource-links">
+      <a href="https://arxiv.org/pdf/2211.08146" target="_blank">[PDF]</a>
+      <a href="[代码的GitHub链接]" target="_blank">[Code]</a>
+    </div>
+  </li>
+
+
 </ul>
