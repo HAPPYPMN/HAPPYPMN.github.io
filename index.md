@@ -22,7 +22,7 @@ title: 主页
 
     <div class="contact-links">
       <a href="mailto:[peiminnan19@mails.ucas.ac.cn]">Email</a> / 
-      <!-- <a href="[你的Google Scholar链接]" target="_blank">Google Scholar</a> /  -->
+      <a href="[https://scholar.google.com/citations?hl=en&user=McR2_kgAAAAJ]" target="_blank">Google Scholar</a> / 
       <!-- <a href="[你的GitHub链接]" target="_blank">GitHub</a> /  -->
       <!-- <a href="[你的CV文件链接]" target="_blank">下载 CV</a> -->
     </div>
