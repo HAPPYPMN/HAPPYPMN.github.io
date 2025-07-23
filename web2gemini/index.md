@@ -1,6 +1,7 @@
 ---
 layout: default
-title: 主页
+title: Home
+lang: en
 ---
 
 <div class="profile-container">
