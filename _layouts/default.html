@@ -20,7 +20,34 @@
     <footer>
         <p>&copy; 2025 {{ site.author }}. All rights reserved.</p>
     </footer>
+
+    <a id="back-to-top" href="#" title="返回顶部">↑</a>
+
   </div>
+
+  <script>
+    // 获取按钮元素
+    var backToTopBtn = document.getElementById("back-to-top");
+
+    // 监听窗口滚动事件
+    window.onscroll = function() {
+        // 当用户向下滚动超过300像素时，显示按钮
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            backToTopBtn.style.display = "block";
+        } else {
+            backToTopBtn.style.display = "none";
+        }
+    };
+
+    // (可选) 为按钮添加平滑滚动回顶部的效果
+    backToTopBtn.addEventListener("click", function(e) {
+        e.preventDefault(); // 阻止a标签的默认跳转行为
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
+  </script>
 
 </body>
 </html>

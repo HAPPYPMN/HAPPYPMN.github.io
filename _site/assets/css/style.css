@@ -254,15 +254,11 @@ header nav a:hover { color: #007bff; }
 /* 页脚 */
 footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #888; font-size: 0.9em; }
 
-html { height: 100%; }
-
-body { min-height: 100%; display: flex; flex-direction: column; }
-
-.container { flex: 1 0 auto; }
-
-footer { flex-shrink: 0; }
-
 body { min-width: 800px; }
 
 /* 同时，我们取消header在小屏幕上的绝对定位，让它表现更稳定 */
 header { position: absolute; /* 保持您原有的样式 */ top: 35px; right: 20px; }
+
+#back-to-top { display: none; /* 默认隐藏 */ position: fixed; /* 固定定位，不随页面滚动 */ bottom: 30px; /* 距离视口底部30px */ right: 30px; /* 距离视口右侧30px */ z-index: 99; /* 确保它在其他元素之上 */ /* 外观样式 */ border: none; outline: none; background-color: #007bff; /* 使用您主题中的蓝色 */ color: white; cursor: pointer; padding: 10px 15px; border-radius: 50%; /* 圆形按钮 */ font-size: 18px; text-decoration: none; /* 过渡效果 */ transition: background-color 0.3s, opacity 0.5s, visibility 0.5s; }
+
+#back-to-top:hover { background-color: #0056b3; /* 鼠标悬停时颜色变深 */ }
