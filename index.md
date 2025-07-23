@@ -13,16 +13,15 @@ title: 主页
     CASIA, UCAS<br>
     Beijing, China</p>
     
-    <p>
-      My research focuses on efficient computing for artificial intelligence algorithms and hardware-software co-optimization, with a particular emphasis on accelerating 3D Gaussian Splatting (3DGS). I am currently conducting academic research at <a href="http://clab.ia.ac.cn">CLab</a>, under the guidance of <a href="
-      https://people.ucas.ac.cn/~chengjian">Prof. Jian Cheng</a> and Prof. Gang Li.
+  <p>
+    My research focuses on efficient computing for artificial intelligence algorithms and hardware-software co-optimization, with a particular emphasis on accelerating 3D Gaussian Splatting (3DGS). I am currently conducting academic research at <a href="http://clab.ia.ac.cn">CLab</a>, under the guidance of <a href="https://people.ucas.ac.cn/~chengjian">Prof. Jian Cheng</a> and Prof. Gang Li.
 
-      I graduated from the University of Chinese Academy of Sciences (UCAS) with a degree in Electronic Information Engineering. During my studies, I was honored with the Beijing Outstanding Student Award, Beijing Distinguished Graduate Award, and the National Scholarship.
-    </p>
+    I graduated from the University of Chinese Academy of Sciences (UCAS) with a degree in Electronic Information Engineering, where I also served as the class monitor of the School of Electronics. During my studies, I was honored with the Beijing Outstanding Student Award<a href="https://onestop.ucas.ac.cn/home/infob/48d6092a-be91-442a-adcf-50953a455869/0"></a>, Beijing Distinguished Graduate Award<a href="https://bkjy.ucas.ac.cn/index.php/2020-11-10-07-29-19/2020-11-10-07-32-02/6979-2019-9"></a>, and the National Scholarship<a href="https://bkjy.ucas.edu.cn/index.php/tzgg/6433-2021-2050"></a>. Additionally, I served as the President of the Student Union of the School of Artificial Intelligence during my graduate studies.
+  </p>
 
     <div class="contact-links">
-      <a href="mailto:[peiminnan19@mails.ucas.ac.cn]">Email</a> / 
-      <a href="[https://scholar.google.com/citations?hl=en&user=McR2_kgAAAAJ]" target="_blank">Google Scholar</a> / 
+      <a href="mailto:[peiminnan19@mails.ucas.ac.cn]">Email</a>/ 
+      <a href="https://scholar.google.com/citations?hl=en&user=McR2_kgAAAAJ" target="_blank">Google Scholar</a>/ 
       <!-- <a href="[你的GitHub链接]" target="_blank">GitHub</a> /  -->
       <!-- <a href="[你的CV文件链接]" target="_blank">下载 CV</a> -->
     </div>
