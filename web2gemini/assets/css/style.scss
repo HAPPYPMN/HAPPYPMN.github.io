@@ -18,17 +18,26 @@ body {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  position: relative; 
 }
 
 header {
-  position: absolute;
-  top: 35px;
-  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+header .site-title a {
+  font-size: 1.2em;
+  color: #333;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 header nav a {
-  margin-left: 0;
+  margin-left: 20px;
   color: #333;
   text-decoration: none;
   font-weight: bold;
@@ -38,6 +47,7 @@ header nav a:hover {
   color: #007bff;
 }
 
+/* 个人简介区域的双栏布局 */
 .profile-container {
   display: flex;
   align-items: flex-start;

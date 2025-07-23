@@ -1,30 +1,16 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home | Minnan Pei</title>
-  <link rel="stylesheet" href="/assets/css/style.css">
-</head>
-<body>
+---
+layout: default
+title: 主页
+---
 
-  <div class="container">
-    <header>
-  <nav>
-    
-      <a href="/index_zh.html" lang="zh" hreflang="zh">[ 中文 ]</a>
-    
-  </nav>
-</header>
-    <main>
-      <div class="profile-container">
+<div class="profile-container">
   <div class="profile-pic">
-    <img src="/assets/images/1.jpg" alt="Minnan Pei" />
+    <img src="/assets/images/1.jpg" alt="Minnan Pei">
   </div>
   <div class="profile-text">
     <h1>Minnan Pei</h1>
-    <p><strong>PhD student</strong><br />
-    CASIA, UCAS<br />
+    <p><strong>PhD student</strong><br>
+    CASIA, UCAS<br>
     Beijing, China</p>
     
   <p>
@@ -35,7 +21,7 @@
 
     <div class="contact-links">
       <a href="mailto:[peiminnan19@mails.ucas.ac.cn]">Email</a>/ 
-      <a href="https://scholar.google.com/citations?hl=en&amp;user=McR2_kgAAAAJ" target="_blank">Google Scholar</a>/ 
+      <a href="https://scholar.google.com/citations?hl=en&user=McR2_kgAAAAJ" target="_blank">Google Scholar</a>/ 
       <!-- <a href="[你的GitHub链接]" target="_blank">GitHub</a> /  -->
       <!-- <a href="[你的CV文件链接]" target="_blank">下载 CV</a> -->
     </div>
@@ -82,12 +68,3 @@
 
 
 </ul>
-
-    </main>
-    <footer>
-        <p>&copy; 2025 Minnan Pei. All rights reserved.</p>
-    </footer>
-  </div>
-
-</body>
-</html>
