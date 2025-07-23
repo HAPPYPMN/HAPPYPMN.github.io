@@ -1,9 +1,13 @@
 <!DOCTYPE html>
+{% if page.lang == "zh" %}
 <html lang="zh-CN">
+{% else %}
+<html lang="en">
+{% endif %}
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ page.title }} | {{ site.title }}</title>
+  <meta name="description" content="{{ site.description }}"> <title>{{ page.title }} | {{ site.title }}</title>
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
