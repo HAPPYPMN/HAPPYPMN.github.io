@@ -43,7 +43,7 @@ lang: en
   </li> -->
 
   <li>
-    <p>Siting Wang, Luoyang Sun, Cheng Deng, Kun Shao, <strong>Minnan Pei</strong>,
+    <p>Siting Wang, <strong>Minnan Pei</strong>, Luoyang Sun, Cheng Deng, Kun Shao, 
       Zheng Tian, Haifeng Zhang, Jun Wang. "SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs". <em>[arxiv]</em>, 2025.</p>
     <div class="resource-links">
       <a href="https://arxiv.org/pdf/2507.07610" target="_blank">[PDF]</a>
