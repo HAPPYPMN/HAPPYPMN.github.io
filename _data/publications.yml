@@ -1,0 +1,57 @@
+﻿- key: memebq
+  authors: "Yuanhui Wang, Kunlong Liu, <strong>Minnan Pei</strong>, Zhangming Li, Peisong Wang, Peisong Wang and Qinghao Hu."
+  title: "MemeBQ: Memory Efficient Binary Quantization of LLMs"
+  venue: "[AAAI]"
+  year: 2026
+- key: apex
+  authors: "Peihuan Ni, Zitao Mo, Tielong Liu, Hongli Wen, Zeyu Zhu, <strong>Minnan Pei</strong>, Junwen Si, Weifan Guan, Peisong Wang, Qinghao Hu, Gang Li and Jian Cheng."
+  title: "APEX: Integer-only Non-linear Function Approximation for Efficient Cross-Modal Inference"
+  venue: "[DATE]"
+  year: 2026
+- key: speculative
+  authors: "Tielong Liu, Gang Li, Zitao Mo, Zeyu Zhu, <strong>Minnan Pei</strong> and Jian Cheng."
+  title: "Boosting the Performance of Tree-Based Speculative Decoding of LLMs on FPGAs"
+  venue: "[DATE]"
+  year: 2026
+- key: spatialviz
+  authors: "Siting Wang, <strong>Minnan Pei</strong>, Luoyang Sun, Cheng Deng, Kun Shao, Zheng Tian, Haifeng Zhang, Jun Wang."
+  title: "SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs"
+  venue: "[arxiv]"
+  year: 2025
+  resources:
+    - url: "https://arxiv.org/pdf/2507.07610"
+      label:
+        en: "[PDF]"
+        zh: "[PDF]"
+    - url: "https://github.com/wangst0181/Spatial-Visualization-Benchmark"
+      label:
+        en: "[Code]"
+        zh: "[代码]"
+- key: gcc
+  authors: "<strong>Minnan Pei</strong>, Gang Li,Junwen Si, Zeyu Zhu, Zitao Mo, Peisong Wang, Zhuoran Song, Xiaoyao Liang, Jian Cheng."
+  title: "GCC: A 3DGS Inference Architecture with Gaussian-Wise and Cross-Stage Conditional Processing"
+  venue: "[MICRO]"
+  year: 2025
+  resources:
+    - url: "https://arxiv.org/pdf/2507.15300"
+      label:
+        en: "[PDF]"
+        zh: "[PDF]"
+    - url: "[代码的GitHub链接]"
+      label:
+        en: "[Code]"
+        zh: "[代码]"
+- key: unetpp
+  authors: "Jiahao Cui, Ruoxin Xiao, Shiyuan Fang, <strong>Minnan Pei</strong>, Yixuan Yu."
+  title: "Encoding feature supervised UNet++: Redesigning Supervision for liver and tumor segmentation"
+  venue: "[CoRR]"
+  year: 2022
+  resources:
+    - url: "https://arxiv.org/pdf/2211.08146"
+      label:
+        en: "[PDF]"
+        zh: "[PDF]"
+    - url: "[代码的GitHub链接]"
+      label:
+        en: "[Code]"
+        zh: "[代码]"
