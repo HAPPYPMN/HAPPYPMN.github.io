@@ -21,13 +21,8 @@ lang: zh
   </p>
 
     <div class="contact-links">
-      {% assign contacts = site.data.contacts %}
-      {% if contacts %}
-        {% for contact in contacts %}
-          {% assign contact_label = contact.label[page.lang] | default: contact.label.en | default: contact.label %}
-          <a href="{{ contact.url }}" {% if contact.new_tab %}target="_blank"{% endif %}>{{ contact_label }}</a>{% unless forloop.last %}/ {% endunless %}
-        {% endfor %}
-      {% endif %}
+      <a href="mailto:[peiminnan19@mails.ucas.ac.cn]">Email</a>/ 
+      <a href="https://scholar.google.com/citations?hl=en&user=McR2_kgAAAAJ" target="_blank">Google Scholar</a>/ 
       <!-- <a href="[你的GitHub链接]" target="_blank">GitHub</a> /  -->
       <!-- <a href="[你的CV文件链接]" target="_blank">下载 CV</a> -->
     </div>
@@ -37,23 +32,55 @@ lang: zh
 <h2 id="publications">研究</h2>
 
 <ul class="publications-list">
-  {% assign publications = site.data.publications %}
-  {% assign resource_labels = site.data.resource_labels %}
-  {% assign current_labels = resource_labels[page.lang] | default: resource_labels.en %}
-  {% for publication in publications %}
+
   <li>
-    <p> {{ publication.authors }} "{{ publication.title }}". <em>{{ publication.venue }}</em>, {{ publication.year }}.</p>
-    {% if publication.resources %}
+    <p> Yuanhui Wang, Kunlong Liu, <strong>Minnan Pei</strong>, Zhangming Li, Peisong Wang, Peisong Wang and Qinghao Hu. "MemeBQ: Memory Efficient Binary Quantization of LLMs". <em>[AAAI]</em>, 2026.</p>
     <div class="resource-links">
-      {% for resource in publication.resources %}
-        {% assign resource_label = resource.label %}
-        {% if resource_label == nil %}
-          {% assign resource_label = current_labels[resource.type] | default: resource.type %}
-        {% endif %}
-        <a href="{{ resource.url }}" {% unless resource.new_tab == false %}target="_blank"{% endunless %}>{{ resource_label }}</a>
-      {% endfor %}
+      <!-- <a href="https://arxiv.org/pdf/2507.07610" target="_blank">[PDF]</a>
+      <a href="https://github.com/wangst0181/Spatial-Visualization-Benchmark" target="_blank">[Code]</a> -->
     </div>
-    {% endif %}
   </li>
-  {% endfor %}
+
+  <li>
+    <p> Peihuan Ni, Zitao Mo, Tielong Liu, Hongli Wen, Zeyu Zhu, <strong>Minnan Pei</strong>, Junwen Si, Weifan Guan, Peisong Wang, Qinghao Hu, Gang Li and Jian Cheng. "APEX: Integer-only Non-linear Function Approximation for Efficient Cross-Modal Inference". <em>[DATE]</em>, 2026.</p>
+    <div class="resource-links">
+      <!-- <a href="https://arxiv.org/pdf/2507.07610" target="_blank">[PDF]</a>
+      <a href="https://github.com/wangst0181/Spatial-Visualization-Benchmark" target="_blank">[Code]</a> -->
+    </div>
+  </li>
+
+  <li>
+    <p> Tielong Liu, Gang Li, Zitao Mo, Zeyu Zhu, <strong>Minnan Pei</strong> and Jian Cheng. "Boosting the Performance of Tree-Based Speculative Decoding of LLMs on FPGAs". <em>[DATE]</em>, 2026.</p>
+    <div class="resource-links">
+      <!-- <a href="https://arxiv.org/pdf/2507.07610" target="_blank">[PDF]</a>
+      <a href="https://github.com/wangst0181/Spatial-Visualization-Benchmark" target="_blank">[Code]</a> -->
+    </div>
+  </li>
+
+  <li>
+    <p>Siting Wang, <strong>Minnan Pei</strong>, Luoyang Sun, Cheng Deng, Kun Shao, 
+      Zheng Tian, Haifeng Zhang, Jun Wang. "SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs". <em>[arxiv]</em>, 2025.</p>
+    <div class="resource-links">
+      <a href="https://arxiv.org/pdf/2507.07610" target="_blank">[PDF]</a>
+      <a href="https://github.com/wangst0181/Spatial-Visualization-Benchmark" target="_blank">[代码]</a>
+    </div>
+  </li>
+
+  <li>
+    <p><strong>Minnan Pei</strong>, Gang Li,Junwen Si, Zeyu Zhu, Zitao Mo, Peisong Wang, Zhuoran Song, Xiaoyao Liang, Jian Cheng. "GCC: A 3DGS Inference Architecture with Gaussian-Wise and Cross-Stage Conditional Processing". <em>[MICRO]</em>, 2025.</p>
+    <div class="resource-links">
+      <a href="https://arxiv.org/pdf/2507.15300" target="_blank">[PDF]</a>
+      <a href="[代码的GitHub链接]" target="_blank">[代码]</a>
+    </div>
+  </li>
+
+  <li>
+    <p>Jiahao Cui, Ruoxin Xiao, Shiyuan Fang, <strong>Minnan Pei</strong>, Yixuan Yu. "Encoding feature supervised UNet++: Redesigning Supervision for liver and tumor segmentation". <em>[CoRR]</em>, 2022.</p>
+    <div class="resource-links">
+      <a href="https://arxiv.org/pdf/2211.08146" target="_blank">[PDF]</a>
+      <a href="[代码的GitHub链接]" target="_blank">[代码]</a>
+    </div>
+  </li>
+
+
 </ul>
