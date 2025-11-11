@@ -34,6 +34,30 @@ lang: zh
 <ul class="publications-list">
 
   <li>
+    <p> Yuanhui Wang, Kunlong Liu, <strong>Minnan Pei</strong>, Zhangming Li, Peisong Wang, Peisong Wang and Qinghao Hu. "MemeBQ: Memory Efficient Binary Quantization of LLMs". <em>[AAAI]</em>, 2026.</p>
+    <div class="resource-links">
+      <!-- <a href="https://arxiv.org/pdf/2507.07610" target="_blank">[PDF]</a>
+      <a href="https://github.com/wangst0181/Spatial-Visualization-Benchmark" target="_blank">[Code]</a> -->
+    </div>
+  </li>
+
+  <li>
+    <p> Peihuan Ni, Zitao Mo, Tielong Liu, Hongli Wen, Zeyu Zhu, <strong>Minnan Pei</strong>, Junwen Si, Weifan Guan, Peisong Wang, Qinghao Hu, Gang Li and Jian Cheng. "APEX: Integer-only Non-linear Function Approximation for Efficient Cross-Modal Inference". <em>[DATE]</em>, 2026.</p>
+    <div class="resource-links">
+      <!-- <a href="https://arxiv.org/pdf/2507.07610" target="_blank">[PDF]</a>
+      <a href="https://github.com/wangst0181/Spatial-Visualization-Benchmark" target="_blank">[Code]</a> -->
+    </div>
+  </li>
+
+  <li>
+    <p> Tielong Liu, Gang Li, Zitao Mo, Zeyu Zhu, <strong>Minnan Pei</strong> and Jian Cheng. "Boosting the Performance of Tree-Based Speculative Decoding of LLMs on FPGAs". <em>[DATE]</em>, 2026.</p>
+    <div class="resource-links">
+      <!-- <a href="https://arxiv.org/pdf/2507.07610" target="_blank">[PDF]</a>
+      <a href="https://github.com/wangst0181/Spatial-Visualization-Benchmark" target="_blank">[Code]</a> -->
+    </div>
+  </li>
+
+  <li>
     <p>Siting Wang, <strong>Minnan Pei</strong>, Luoyang Sun, Cheng Deng, Kun Shao, 
       Zheng Tian, Haifeng Zhang, Jun Wang. "SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs". <em>[arxiv]</em>, 2025.</p>
     <div class="resource-links">
