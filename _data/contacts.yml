@@ -1,0 +1,13 @@
+---
+# Shared contact links rendered on all language variants.
+- key: email
+  label:
+    en: "Email"
+    zh: "Email"
+  url: "mailto:peiminnan19@mails.ucas.ac.cn"
+- key: scholar
+  label:
+    en: "Google Scholar"
+    zh: "Google Scholar"
+  url: "https://scholar.google.com/citations?hl=en&user=McR2_kgAAAAJ"
+  new_tab: true
