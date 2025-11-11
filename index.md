@@ -76,7 +76,7 @@ lang: en
   </li>
 
   <li>
-    <p><strong>Minnan Pei</strong>, Gang Li,Junwen Si, Zeyu Zhu, Zitao Mo, Peisong Wang, Zhuoran Song, Xiaoyao Liang, Jian Cheng. "GCC: A 3DGS Inference Architecture with Gaussian-Wise and Cross-Stage Conditional Processing". <em>[MICRO]</em>, 2025.</p>
+    <p><strong>Minnan Pei</strong>, Gang Li, Junwen Si, Zeyu Zhu, Zitao Mo, Peisong Wang, Zhuoran Song, Xiaoyao Liang, Jian Cheng. "GCC: A 3DGS Inference Architecture with Gaussian-Wise and Cross-Stage Conditional Processing". <em>[MICRO]</em>, 2025.</p>
     <div class="resource-links">
       <a href="https://arxiv.org/pdf/2507.15300" target="_blank">[PDF]</a>
       <a href="[代码的GitHub链接]" target="_blank">[Code]</a>
