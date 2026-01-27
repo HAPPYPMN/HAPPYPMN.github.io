@@ -16,7 +16,7 @@
 - key: spatialviz
   authors: "Siting Wang, <strong>Minnan Pei</strong>, Luoyang Sun, Cheng Deng, Kun Shao, Zheng Tian, Haifeng Zhang, Jun Wang."
   title: "SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs"
-  venue: "[arxiv]"
+  venue: "[ICLR]"
   year: 2025
   resources:
     - url: "https://arxiv.org/pdf/2507.07610"
