@@ -33,6 +33,23 @@ lang: zh
 
 <ul class="publications-list">
 
+<li>
+    <p>Zeyu Zhu, Gang Li, Peisong Wang, Zitao Mo, <strong>Minnan Pei</strong>, Zhuoran Song, Xiaoyao Liang, Jian Cheng. 
+      "DALI: A Workload-Aware Offloading Framework for Efficient MoE Inference on Local PCs." <em>[arXiv]</em>, 2026.</p>
+    <div class="resource-links">
+      <a href="https://arxiv.org/pdf/2602.03495" target="_blank">[PDF]</a>
+      <!-- <a href="https://github.com/wangst0181/Spatial-Visualization-Benchmark" target="_blank">[Code]</a> -->
+    </div>
+  </li>
+
+  <li>
+    <p>Zeyu Zhu, Gang Li, <strong>Minnan Pei</strong>, Zitao Mo, Peihuan Ni, Peisong Wang, Tielong Liu and Jian Cheng. "KL-MoE: A Hierarchical MoE Pruning Framework Exploiting KL Divergence". <em>[DAC]</em>, 2026.</p>
+    <div class="resource-links">
+      <!-- <a href="https://arxiv.org/pdf/2507.07610" target="_blank">[PDF]</a>
+      <a href="https://github.com/wangst0181/Spatial-Visualization-Benchmark" target="_blank">[Code]</a> -->
+    </div>
+  </li>
+
   <li>
     <p>Siting Wang, <strong>Minnan Pei</strong>, Luoyang Sun, Cheng Deng, Kun Shao, 
       Zheng Tian, Haifeng Zhang, Jun Wang. "SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs". <em>[ICLR]</em>, 2026.</p>
