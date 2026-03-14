@@ -55,8 +55,8 @@ lang: en
   <li>
     <p>Zeyu Zhu, Gang Li, <strong>Minnan Pei</strong>, Zitao Mo, Peihuan Ni, Peisong Wang, Tielong Liu and Jian Cheng. "KL-MoE: A Hierarchical MoE Pruning Framework Exploiting KL Divergence". <em>[DAC]</em>, 2026.</p>
     <div class="resource-links">
-      <a href="https://arxiv.org/pdf/2507.07610" target="_blank">[PDF]</a>
-      <a href="https://github.com/wangst0181/Spatial-Visualization-Benchmark" target="_blank">[Code]</a>
+      <!-- <a href="https://arxiv.org/pdf/2507.07610" target="_blank">[PDF]</a>
+      <a href="https://github.com/wangst0181/Spatial-Visualization-Benchmark" target="_blank">[Code]</a> -->
     </div>
   </li>
 
