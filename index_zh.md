@@ -34,6 +34,24 @@ lang: zh
 <ul class="publications-list">
 
 <li>
+    <p><strong>Minnan Pei</strong>, Gang Li, Zuyu Zhu, Siting Wang, Junwen Si, Zhuoran Song, Yu Feng, Fangxin Liu, Xiaoyao Liang and Jian Cheng. 
+      "DeGS: A Scalable 3DGS Architecture via Decoupled Workload Parsing and Reorganization." <em>[MICRO]</em>, 2026.</p>
+    <div class="resource-links">
+      <a href="" target="_blank">[PDF]</a>
+      <!-- <a href="" target="_blank">[Code]</a> -->
+    </div>
+  </li>
+
+  <li>
+    <p>Zhuoran Song, Haozhe Jiang, Chunyu Qi, <strong>Minnan Pei</strong>, Gang Li, Xiaoyao Liang and Haibing Guan. 
+      "VQVLA: Motion-Aware Vector Quantization with Computation Fusion for VLA Acceleration." <em>[MICRO]</em>, 2026.</p>
+    <div class="resource-links">
+      <a href="" target="_blank">[PDF]</a>
+      <!-- <a href="" target="_blank">[Code]</a> -->
+    </div>
+  </li>
+
+<li>
     <p>Zeyu Zhu, Gang Li, Peisong Wang, Zitao Mo, <strong>Minnan Pei</strong>, Zhuoran Song, Xiaoyao Liang, Jian Cheng. 
       "DALI: A Workload-Aware Offloading Framework for Efficient MoE Inference on Local PCs." <em>[arXiv]</em>, 2026.</p>
     <div class="resource-links">
