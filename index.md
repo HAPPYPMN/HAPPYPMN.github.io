@@ -32,15 +32,6 @@ lang: en
 <h2 id="publications">Research</h2>
 
 <ul class="publications-list">
-  <!-- <li>
-    <p><strong>Minnan Pei</strong>, [作者B], [作者C]. "一篇非常重要的论文标题 (A Very Important Paper Title)". <em>[顶级会议或期刊名称, e.g., CVPR]</em>, 2025.</p>
-    <div class="resource-links">
-      <a href="[PDF链接]" target="_blank">[PDF]</a>
-      <a href="[代码的GitHub链接]" target="_blank">[Code]</a>
-      <a href="[项目主页链接]" target="_blank">[Project Page]</a>
-      <a href="[演讲视频链接]" target="_blank">[Video]</a>
-    </div>
-  </li> -->
 
 <li>
     <p><strong>Minnan Pei</strong>, Gang Li, Zuyu Zhu, Siting Wang, Junwen Si, Zhuoran Song, Yu Feng, Fangxin Liu, Xiaoyao Liang and Jian Cheng. 
