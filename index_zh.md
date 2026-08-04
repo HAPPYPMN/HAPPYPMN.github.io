@@ -37,8 +37,16 @@ lang: zh
     <p><strong>Minnan Pei</strong>, Gang Li, Zuyu Zhu, Siting Wang, Junwen Si, Zhuoran Song, Yu Feng, Fangxin Liu, Xiaoyao Liang and Jian Cheng. 
       "DeGS: A Scalable 3DGS Architecture via Decoupled Workload Parsing and Reorganization." <em>[MICRO]</em>, 2026.</p>
     <div class="resource-links">
-      <a href="" target="_blank">[PDF]</a>
+      <a href="https://arxiv.org/pdf/2608.02099" target="_blank">[PDF]</a>
       <!-- <a href="" target="_blank">[Code]</a> -->
+    </div>
+  </li>
+
+  <li>
+    <p>Runhao Liu<sup>*</sup>, <strong>Minnan Pei<sup>*</sup></strong>, Fei Ding, Guangzhen Yao, You Li, Peng Xiao, Gang Li and Peng Zhang.
+      "LATTICE: Constraint-Directed Scheduling, Memory Planning, and Pipeline Refinement for NPUs." <em>[arXiv]</em>, 2026.（<sup>*</sup> 共同第一作者）</p>
+    <div class="resource-links">
+      <a href="https://arxiv.org/pdf/2607.17422v2" target="_blank">[PDF]</a>
     </div>
   </li>
 
