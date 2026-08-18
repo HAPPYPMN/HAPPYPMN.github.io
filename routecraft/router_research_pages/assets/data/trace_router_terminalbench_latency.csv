@@ -1,0 +1,3 @@
+strategy,mean_task_latency_seconds,resolved_rate_percent,tasks,source_location
+Always Qwen3.5-27B-FP8,270,39.7,48,TRACE-Router Section 4.2
+TRACE-Router alpha=0.75,172,46.8,48,TRACE-Router Section 4.2

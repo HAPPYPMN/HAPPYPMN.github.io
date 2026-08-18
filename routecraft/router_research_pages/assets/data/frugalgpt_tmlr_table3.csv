@@ -1,0 +1,6 @@
+dataset,task_type,best_single_llm,best_single_cost_usd,frugalgpt_cost_usd,cost_saving_percent,source
+HEADLINES,4-way classification,GPT-4,33.1,0.6,98.3,FrugalGPT TMLR 2024 Table 3
+OVERRULING,2-way classification,GPT-4,9.7,2.6,73.3,FrugalGPT TMLR 2024 Table 3
+COQA,free-form QA,GPT-3,72.5,29.6,59.2,FrugalGPT TMLR 2024 Table 3
+AGNEWS,4-way classification,GPT-4,64.6,15.9,75.4,FrugalGPT TMLR 2024 Table 3
+SCIQ,free-form QA,GPT-3,132.4,63.1,52.3,FrugalGPT TMLR 2024 Table 3

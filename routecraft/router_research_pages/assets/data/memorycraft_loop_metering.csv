@@ -1,0 +1,4 @@
+system,turns,cache_miss_input_tokens,cache_hit_input_tokens,output_tokens,tool_success_percent,total_metered_tokens,output_share_percent,source
+Mem0,2.5,8584,49492,382,99,58458,0.6535,MemoryCraft unpublished submission Table 9 n=1049
+Supermemory,3.1,73002,53178,831,98,127011,0.6543,MemoryCraft unpublished submission Table 9 n=1049
+MemOS,3.7,63617,65519,861,95,129997,0.6623,MemoryCraft unpublished submission Table 9 n=1049

@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="LLM Router 是什么、为什么需要它：模型异质性、Agent loop 成本放大、厂商公开路线与 RouteCraft 的研究缺口。">
+  <title>01 · LLM Router 是什么，为什么需要它？｜RouteCraft Research Pages</title>
+  <style>
+    :root{
+      --ink:#14233a;--muted:#607086;--faint:#8995a5;--paper:#f4f1e9;--card:#fffefa;
+      --line:#d9d4ca;--accent:#086f69;--accent2:#d85f42;--blue:#4361a9;--gold:#b8821e;
+      --fresh:#d85f42;--cache:#4361a9;--output:#0b857d;--shadow:0 18px 54px rgba(29,40,59,.08);
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth;max-width:100%;overflow-x:hidden}body{margin:0;max-width:100%;overflow-x:hidden;background:var(--paper);color:var(--ink);font-family:Inter,"Noto Sans SC","Microsoft YaHei",Arial,sans-serif;line-height:1.72}
+    a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}a:hover{color:#064e4a}.shell{width:100%;max-width:1240px;margin:auto;padding:0 30px}.serif,h1,h2,h3{font-family:Georgia,"Noto Serif SC","Songti SC",serif}p,h1,h2,h3{overflow-wrap:anywhere}
+    .topbar{position:sticky;top:0;z-index:20;background:rgba(244,241,233,.93);backdrop-filter:blur(14px);border-bottom:1px solid rgba(20,35,58,.1)}.topbar .shell{display:flex;justify-content:space-between;align-items:center;min-height:58px}.brand{font-weight:850;letter-spacing:.03em}.brand a{color:inherit;text-decoration:none}.crumb{font-size:13px;color:var(--muted)}
+    .hero{padding:82px 0 56px;border-bottom:1px solid var(--line)}.kicker{font-size:12px;font-weight:850;letter-spacing:.17em;text-transform:uppercase;color:var(--accent)}h1{font-size:clamp(48px,7.7vw,98px);line-height:.97;letter-spacing:-.045em;margin:22px 0 28px;max-width:1120px}.dek{font-size:clamp(19px,2.2vw,27px);line-height:1.52;color:#45566e;max-width:1000px;margin:0}
+    .scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:46px}.scenario{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:22px;box-shadow:0 8px 28px rgba(29,40,59,.04)}.scenario .n{font:800 12px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2)}.scenario h3{font-size:21px;line-height:1.27;margin:13px 0 8px}.scenario p{margin:0;color:var(--muted);font-size:14px}
+    .layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:54px;padding-top:54px}.toc{position:sticky;top:84px;align-self:start;font-size:13px}.toc strong{display:block;margin-bottom:14px}.toc a{display:block;color:var(--muted);text-decoration:none;border-left:2px solid var(--line);padding:6px 0 6px 13px}.toc a:hover{color:var(--accent);border-color:var(--accent)}main{min-width:0;padding-bottom:100px}
+    section{padding:36px 0 62px;border-bottom:1px solid var(--line)}section:last-child{border-bottom:0}h2{font-size:clamp(31px,4vw,50px);line-height:1.08;letter-spacing:-.025em;margin:0 0 23px}h3{font-size:25px;line-height:1.25;margin:34px 0 14px}p{margin:0 0 18px}.lead{font-size:20px;color:#3e5068;max-width:850px}.caption{font-size:12.5px;line-height:1.55;color:var(--muted);margin-top:12px}.cite{font-size:.72em;vertical-align:super;font-weight:800;text-decoration:none}.mark{display:inline-flex;align-items:center;border-radius:5px;padding:2px 7px;margin-right:7px;font-size:11px;font-weight:850;letter-spacing:.03em}.fact{color:#075f5a;background:#dcefeb}.infer{color:#814423;background:#f5e4d8}.hyp{color:#394e91;background:#e1e6f7}.warn{color:#7a5a16;background:#f5e7bd}
+    .callout{border-left:4px solid var(--accent);background:rgba(255,255,255,.54);padding:20px 22px;margin:26px 0;border-radius:0 14px 14px 0}.callout.warm{border-color:var(--accent2)}.callout strong{color:var(--ink)}
+    .taxonomy{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0}.taxon{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:20px}.taxon .label{font:800 12px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent)}.taxon h3{font:700 20px/1.25 Georgia,"Noto Serif SC",serif;margin:12px 0 8px}.taxon p{font-size:14px;color:var(--muted);margin:0}.taxon.focus{border-color:#6db5af;box-shadow:inset 0 0 0 1px #6db5af}
+    .agent-figure{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px;margin:30px 0;box-shadow:var(--shadow)}.agent-map{display:grid;grid-template-columns:minmax(0,1fr) 165px;gap:14px}.agent-stack{display:grid;gap:10px}.agent-layer{position:relative;border:1px solid var(--line);border-radius:14px;padding:17px 18px;background:#faf8f3;display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:start}.agent-layer:not(:last-child):after{content:"↓";position:absolute;z-index:2;left:73px;bottom:-18px;width:22px;height:22px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);font-weight:900}.agent-layer.harness{border-color:#65b6af;background:#edf7f4;box-shadow:inset 0 0 0 1px #65b6af}.agent-layer.model{border-color:#91a1d2;background:#f2f4fb}.agent-layer.world{border-color:#d8a17b;background:#fbf3ed}.layer-id{font:800 11px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);margin-bottom:8px}.layer-title{font:700 20px/1.18 Georgia,"Noto Serif SC",serif}.layer-desc{font-size:13px;color:var(--muted);margin:0 0 10px}.chip-row{display:flex;flex-wrap:wrap;gap:6px}.chip{font-size:10.5px;line-height:1;border:1px solid rgba(60,80,105,.22);border-radius:999px;padding:6px 8px;background:rgba(255,255,255,.7);color:#4b5d73}.router-slot{display:flex;align-items:center;gap:8px;margin-top:10px;padding:9px 11px;border-radius:9px;background:#17263c;color:#edf4f7;font-size:11px}.router-slot b{color:#7ad3ca}.telemetry-rail{border-radius:14px;padding:18px 15px;background:#17263c;color:#eef3f6;display:flex;flex-direction:column;justify-content:space-between}.telemetry-rail .rail-label{font:800 11px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;color:#7ad3ca;letter-spacing:.06em}.telemetry-rail h3{font:700 19px/1.25 Georgia,"Noto Serif SC",serif;margin:13px 0 10px}.telemetry-rail p{font-size:11.5px;color:#c7d1dc;margin:0}.telemetry-rail .rail-arrow{font-size:25px;color:#7ad3ca;margin:18px 0}.agent-cycle{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:16px}.cycle-step{position:relative;border:1px solid var(--line);border-radius:10px;padding:10px 8px;background:#fff;font-size:11px;color:var(--muted);text-align:center}.cycle-step b{display:block;color:var(--ink);font-size:12px;margin-bottom:3px}.cycle-step:not(:last-child):after{content:"→";position:absolute;right:-8px;top:31%;z-index:2;color:var(--accent);font-weight:900}.cycle-note{margin-top:12px;padding:10px 12px;border-radius:9px;background:#f1eee7;color:var(--muted);font-size:11.5px}.cycle-note b{color:var(--ink)}.agent-insights{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:22px}.agent-insight{border-top:3px solid var(--accent);background:var(--card);padding:15px;border-radius:0 0 12px 12px}.agent-insight b{font-size:13px}.agent-insight p{font-size:12px;color:var(--muted);margin:6px 0 0}.phase-math{display:block;margin-top:7px;font:700 10.5px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue)}
+    .figure{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px;margin:30px 0;box-shadow:var(--shadow)}.figure-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px}.figure h3{font-size:24px;margin:0}.figure-no{font:800 11px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);white-space:nowrap;padding-top:6px}.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin:10px 0 16px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}
+    .cost-row{display:grid;grid-template-columns:115px minmax(0,1fr) 82px;gap:14px;align-items:center;margin:14px 0}.cost-name{font-size:13px;font-weight:800}.tracks{display:grid;gap:4px}.track{height:14px;background:#ede9e1;border-radius:999px;overflow:hidden}.bar{height:100%;border-radius:999px;min-width:2px}.bar.single{background:#b8c0cc}.bar.frugal{background:var(--accent)}.saving{text-align:right;font-weight:850;color:var(--accent);font-variant-numeric:tabular-nums}.cost-values{grid-column:2/4;display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:-10px}
+    .latency-row{display:grid;grid-template-columns:145px minmax(0,1fr) 64px 112px;gap:13px;align-items:center;margin:17px 0}.latency-name{font-size:13px;font-weight:850}.latency-track{height:28px;background:#ede9e1;border-radius:7px;overflow:hidden}.latency-bar{height:100%;border-radius:7px}.latency-bar.baseline{background:#aeb8c5}.latency-bar.routed{background:var(--accent)}.latency-value{text-align:right;font:850 13px/1 ui-monospace,SFMono-Regular,Consolas,monospace}.latency-outcome{font-size:11px;color:var(--muted)}.latency-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:23px}.latency-stat{border:1px solid var(--line);border-radius:12px;padding:14px;background:#faf8f3}.latency-stat b{display:block;font-size:24px;line-height:1.1;color:var(--accent)}.latency-stat span{font-size:11px;color:var(--muted)}
+    .unit-compare{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin:27px 0 34px}.unit-card{border:1px solid var(--line);border-radius:16px;padding:20px;background:var(--card)}.unit-card.call{border-top:4px solid var(--blue)}.unit-card.task{border-top:4px solid var(--accent)}.unit-card .unit-label{font:850 11px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);letter-spacing:.03em}.unit-card h3{font-size:21px;margin:10px 0 8px}.unit-card>p{font-size:13px;color:var(--muted);margin:0 0 14px}.unit-metrics{display:grid;gap:6px}.unit-metrics span{font-size:11.5px;padding:7px 9px;border-radius:7px;background:#f2efe8;color:#506078}.unit-metrics b{color:var(--ink)}
+    .metric-intro{margin:4px 0 14px;font-size:13px;color:var(--muted)}.metric-ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:8px 0 24px}.metric-step{position:relative;border:1px solid var(--line);border-radius:12px;padding:14px;background:#faf8f3}.metric-step:not(:last-child):after{content:"→";position:absolute;right:-9px;top:38%;z-index:2;color:var(--accent);font-weight:900}.metric-step b{display:block;font:850 11px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);margin-bottom:7px}.metric-step span{display:block;font-size:11.5px;color:var(--muted)}.audit-key{margin:0 0 14px;padding:10px 13px;border-left:3px solid var(--accent);background:#f2f6f4;font-size:12px;color:var(--ink)}.audit-key strong{color:var(--accent2)}.audit-group-title{margin:14px 0 8px;font:800 12px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.03em;color:var(--accent2)}.audit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.audit-card{border-top:3px solid var(--accent);background:#f7f4ed;border-radius:0 0 12px 12px;padding:14px}.audit-card b{display:block;font-size:23px;line-height:1.1}.audit-card span{font-size:11px;color:var(--muted)}.audit-card.zero{border-color:var(--accent2)}.audit-card.zero b{color:var(--accent2)}
+    .token-row{display:grid;grid-template-columns:118px minmax(0,1fr) 80px;gap:14px;align-items:center;margin:20px 0}.token-label{font-size:13px;font-weight:800}.total-track{height:25px;background:#eeeae3;border-radius:6px;overflow:hidden}.scaled{height:100%;display:flex;border-radius:6px;overflow:hidden}.seg{height:100%;min-width:2px}.fresh{background:var(--fresh)}.cache{background:var(--cache)}.output{background:var(--output)}.total{text-align:right;font:800 12px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--muted)}.ratio-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:24px}.ratio{border:1px solid var(--line);border-radius:12px;padding:14px;background:#faf8f3}.ratio b{display:block;font-size:24px;line-height:1.1;color:var(--accent2)}.ratio span{font-size:11px;color:var(--muted)}.loop-chain{display:grid;grid-template-columns:1.05fr 1.2fr .9fr;gap:11px;margin:18px 0}.loop-card{position:relative;border:1px solid var(--line);border-radius:14px;padding:17px;background:#faf8f3}.loop-card:not(:last-child):after{content:"→";position:absolute;right:-10px;top:47%;z-index:2;color:var(--accent);font-weight:900}.loop-card .loop-label{font:850 10.5px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);letter-spacing:.03em}.loop-card h4{font:750 17px/1.3 Georgia,"Noto Serif SC",serif;margin:9px 0 11px}.control-pair{display:grid;gap:7px}.control-pair div{padding:8px 9px;border-radius:8px;background:#f0ede6;font-size:11px;color:var(--muted)}.control-pair b{color:var(--ink)}.amplify-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:11px}.amplify-row:last-child{border-bottom:0}.amplify-row>strong{font-size:12px}.amplify-stat{min-width:62px;text-align:center}.amplify-stat b{display:block;font-size:19px;line-height:1.05;color:var(--accent2)}.amplify-stat span{font-size:9px;color:var(--muted)}.input-dominance b{display:block;font-size:36px;line-height:1;color:var(--accent2);margin:12px 0 6px}.input-dominance p{font-size:11px;color:var(--muted);margin:0}.loop-why{border-left:4px solid var(--accent);padding:13px 15px;background:#f2f6f4;font-size:12.5px;margin:18px 0 0}.loop-why strong{color:var(--accent2)}
+    .equation{font-family:Cambria Math,"Times New Roman",serif;font-size:clamp(18px,2.4vw,26px);line-height:1.75;padding:24px;background:#17263c;color:#f3f6f8;border-radius:17px;overflow-wrap:anywhere;margin:28px 0}.equation .sub{color:#94d4ce}.cost-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:27px 0}.cost-card{border-top:3px solid var(--accent);background:var(--card);padding:18px;border-radius:0 0 12px 12px}.cost-card> b{font-size:17px}.cost-card>p{font-size:12px;color:var(--muted);margin:7px 0 12px}.cost-axis{display:grid;gap:7px}.cost-axis span{display:block;padding:9px 10px;border-radius:8px;background:#f2efe8;font-size:11.5px;color:var(--muted)}.cost-axis b{color:var(--ink);font-size:11.5px}.measure-note{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:22px 0}.measure-note div{border:1px solid var(--line);border-radius:12px;padding:14px;background:#faf8f3}.measure-note b{display:block;color:var(--accent);font-size:13px;margin-bottom:4px}.measure-note span{font-size:11.5px;color:var(--muted)}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:var(--shadow);margin:28px 0}table{border-collapse:collapse;width:100%;min-width:980px;font-size:13px}th{text-align:left;background:#17263c;color:#f7f3eb;padding:13px 12px;font-size:11px;letter-spacing:.04em;position:sticky;top:0}td{vertical-align:top;padding:14px 12px;border-bottom:1px solid #e7e2d9}tr:last-child td{border-bottom:0}tbody tr:hover{background:#faf8f2}.entity{font-weight:850;font-size:14px}.mini{font-size:11px;color:var(--muted)}.tag{display:inline-block;border:1px solid #a9b4c4;border-radius:999px;padding:2px 7px;font-size:10px;white-space:nowrap;margin-top:5px}.tag.auto{border-color:#62aaa4;color:#075f5a}.tag.rule{border-color:#d3a67f;color:#874c25}.tag.none{border-color:#aaa;color:#666}.tag.agent{border-color:#8495cf;color:#3b4e91}.vendor-table{min-width:0;table-layout:fixed;font-size:12px}.vendor-table th:nth-child(1){width:23%}.vendor-table th:nth-child(2){width:24%}.vendor-table th:nth-child(3){width:20%}.vendor-table th:nth-child(4){width:33%}.vendor-table td{padding:12px 11px;overflow-wrap:anywhere}.vendor-table .tag{white-space:normal;margin:0 4px 3px 0}
+    .spectrum{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:27px 0}.spec{position:relative;border:1px solid var(--line);border-radius:14px;padding:19px;background:var(--card)}.spec:after{content:"→";position:absolute;right:-12px;top:43%;color:var(--faint);font-weight:900}.spec:last-child:after{display:none}.spec .level{font:800 11px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2)}.spec h3{font-size:19px;margin:10px 0 8px}.spec p{font-size:12.5px;color:var(--muted);margin:0}
+    .timeline{position:relative;margin:28px 0 5px;padding-left:24px;border-left:2px solid #b7c3ca}.event{position:relative;padding:0 0 29px 22px}.event:before{content:"";position:absolute;left:-30px;top:6px;width:11px;height:11px;border-radius:50%;background:var(--paper);border:3px solid var(--accent)}.event time{font:800 11px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2)}.event h3{font-size:19px;margin:6px 0 5px}.event p{font-size:13px;color:var(--muted);margin:0}
+    .gap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:27px 0}.gap{border:1px solid var(--line);border-radius:15px;padding:20px;background:var(--card)}.gap .icon{font-size:22px}.gap h3{font-size:20px;margin:10px 0 7px}.gap p{font-size:13px;color:var(--muted);margin:0}
+    .verdict{background:#17263c;color:#f7f4ec;border-radius:22px;padding:30px;margin-top:28px}.verdict h3{font-size:29px;margin:0 0 13px}.verdict p{color:#c6d0dc}.verdict strong{color:#fff}.verdict .decision{color:#72d0c7;font-weight:900;letter-spacing:.06em}
+    .refs{font-size:13px}.refs li{margin:0 0 12px;padding-left:7px;color:var(--muted)}.refs a{font-weight:750}.source-box{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}.source-box a{display:inline-block;border:1px solid var(--line);border-radius:9px;background:var(--card);padding:9px 12px;text-decoration:none;font-size:12px;font-weight:750}
+    footer{padding:32px 0 50px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+    @media(max-width:980px){.layout{grid-template-columns:1fr}.toc{display:none}.scenario-grid,.taxonomy{grid-template-columns:1fr}.cost-grid{grid-template-columns:repeat(2,1fr)}.spectrum{grid-template-columns:repeat(2,1fr)}.spec:nth-child(2):after{display:none}.ratio-grid{grid-template-columns:repeat(2,1fr)}.agent-cycle{grid-template-columns:repeat(3,1fr)}.cycle-step:nth-child(3):after{display:none}.metric-ladder{grid-template-columns:repeat(2,1fr)}.metric-step:nth-child(2):after{display:none}}
+    @media(max-width:650px){.shell{padding:0 18px}.hero{padding-top:56px}.scenario-grid{margin-top:34px}.figure,.agent-figure{padding:18px}.figure-head{display:block}.figure-no{margin-top:8px}.cost-row{grid-template-columns:88px minmax(0,1fr) 57px;gap:8px}.cost-values{display:none}.latency-row{grid-template-columns:100px minmax(0,1fr) 54px;gap:8px}.latency-outcome{grid-column:2/4}.latency-summary,.audit-grid,.unit-compare,.measure-note{grid-template-columns:1fr}.token-row{grid-template-columns:90px minmax(0,1fr) 62px;gap:8px}.cost-grid,.spectrum,.gap-grid,.agent-insights,.loop-chain{grid-template-columns:1fr}.loop-card:not(:last-child):after{content:"↓";right:auto;left:50%;top:auto;bottom:-14px}.spec:after{display:none}.topbar .crumb{display:none}.agent-map{grid-template-columns:1fr}.agent-layer{grid-template-columns:1fr;gap:10px}.agent-layer:not(:last-child):after{left:50%;transform:translateX(-50%)}.telemetry-rail{display:block}.telemetry-rail .rail-arrow{display:none}.agent-cycle,.metric-ladder{grid-template-columns:repeat(2,1fr)}.cycle-step:nth-child(3):after{display:block}.cycle-step:nth-child(2n):after,.metric-step:nth-child(2n):after{display:none}}
+    @media(max-width:650px){.vendor-table,.vendor-table tbody,.vendor-table tr,.vendor-table td{display:block;width:100%}.vendor-table thead{display:none}.vendor-table tr{padding:10px 0;border-bottom:1px solid var(--line)}.vendor-table tr:last-child{border-bottom:0}.vendor-table td{display:grid;grid-template-columns:86px minmax(0,1fr);gap:8px;padding:6px 12px;border:0}.vendor-table td:before{font:800 9.5px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);letter-spacing:.03em}.vendor-table td:nth-child(1):before{content:"平台 / 产品"}.vendor-table td:nth-child(2):before{content:"选择什么"}.vendor-table td:nth-child(3):before{content:"何时选择"}.vendor-table td:nth-child(4):before{content:"本页归类"}}
+    @media print{.topbar,.toc{display:none}.layout{display:block}.shell{max-width:none}.figure,.table-wrap{box-shadow:none;break-inside:avoid}.agent-figure,.callout{break-inside:avoid}body{background:white}a{color:inherit;text-decoration:none}.hero{padding-top:30px}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="shell"><div class="brand"><a href="index.html">RouteCraft / Research Pages</a></div><div class="crumb">PUBLIC WEB EDITION · 01 · Background · Verified 2026-08-17</div></div></header>
+
+  <div class="hero"><div class="shell">
+    <div class="kicker">Background / decision page 01</div>
+    <h1>LLM Router 是什么？<br>为什么需要它？</h1>
+    <p class="dek">LLM Router 是位于应用或 Agent 与多个完整模型之间的决策层：它根据当前请求和执行状态，决定下一次调用交给哪个模型。真正的问题是，为什么不能从头到尾固定使用同一个模型？</p>
+    <div class="scenario-grid">
+      <article class="scenario"><div class="n">现实场景 01</div><h3>代码能力最强的模型，写中文政府报告却满是“AI 味”。</h3><p>在代码 benchmark 上领先，不代表它擅长中文政务表达；套话、翻译腔和重复总结可能比技术错误更难直接量化。</p></article>
+      <article class="scenario"><div class="n">现实场景 02</div><h3>为了降低成本选了便宜模型，跑三轮反而比强模型一次通过更贵且更慢。</h3><p>单次调用价格更低，不等于整项任务更便宜。返工、重试和上下文重读都可能把节省反向放大。</p></article>
+      <article class="scenario"><div class="n">现实场景 03</div><h3>市面上模型越来越多，却不知道怎样选择才能真正节约成本。</h3><p>始终用强模型会浪费预算，始终用便宜模型又可能增加失败；模型更新和价格变化还会让人工规则迅速过时。</p></article>
+    </div>
+  </div></div>
+
+  <div class="shell layout">
+    <aside class="toc"><strong>本页目录</strong><a href="#agent">LLM Agent 如何工作</a><a href="#boundary">LLM Router 是什么</a><a href="#why">为什么需要 Router</a><a href="#evidence">调用成本 vs 任务成本</a><a href="#cost">完整任务成本</a><a href="#vendors">云平台类 Router 产品</a><a href="#evolution">研究走到哪一步</a><a href="#gap">仍未回答什么</a><a href="#decision">从证据到判断</a><a href="#references">来源</a></aside>
+
+    <main>
+      <section id="agent">
+        <h2>LLM Agent。</h2>
+        <p class="lead">大模型本身只完成一次推理或生成；Agent harness 把模型放进一个可持续运行的闭环，负责维护状态、组织上下文、执行工具、处理失败，并判断任务是否完成。</p>
+        <p><span class="mark infer">框架</span>为了分析 Router，我们把现代 LLM Agent 功能性地拆成四层,以看清每次模型调用的输入从哪里来、结果会改变什么。</p>
+
+        <figure class="agent-figure">
+          <div class="figure-head"><h3>一个现代 LLM Agent 的四层运行结构</h3><div class="figure-no">FIGURE 01 / FUNCTIONAL DECOMPOSITION</div></div>
+          <div class="agent-map">
+            <div class="agent-stack">
+              <article class="agent-layer">
+                <div><div class="layer-id">LAYER 01</div><div class="layer-title">任务与应用层</div></div>
+                <div><p class="layer-desc">定义 Agent 要完成什么，以及什么结果可以被接受。</p><div class="chip-row"><span class="chip">用户目标</span><span class="chip">系统指令</span><span class="chip">权限与安全策略</span><span class="chip">预算</span><span class="chip">完成标准</span></div></div>
+              </article>
+              <article class="agent-layer harness">
+                <div><div class="layer-id">LAYER 02 · CONTROL PLANE</div><div class="layer-title">Agent Harness / Runtime</div></div>
+                <div><p class="layer-desc">把一次请求变成可运行的多步过程。Harness 决定模型看到什么、何时调用工具、失败后是否重试，以及何时结束。</p><div class="chip-row"><span class="chip">session / event log</span><span class="chip">context builder</span><span class="chip">agent loop</span><span class="chip">tool dispatch</span><span class="chip">memory / retrieval</span><span class="chip">retry / recovery</span><span class="chip">verification</span><span class="chip">termination</span></div></div>
+              </article>
+              <article class="agent-layer model">
+                <div><div class="layer-id">LAYER 03 · INTELLIGENCE</div><div class="layer-title">模型推理层</div></div>
+                <div><p class="layer-desc">LLM 读取 Harness 组装的上下文，生成自然语言、结构化计划或 tool call。模型提出动作，但通常不直接执行外部操作。</p><div class="chip-row"><span class="chip">理解与推理</span><span class="chip">规划</span><span class="chip">代码生成</span><span class="chip">tool-call generation</span><span class="chip">答案生成</span></div></div>
+              </article>
+              <article class="agent-layer world">
+                <div><div class="layer-id">LAYER 04 · EXECUTION</div><div class="layer-title">工具与外部世界</div></div>
+                <div><p class="layer-desc">真正产生可观察结果和副作用：文件被修改、命令退出、网页变化、数据库更新、测试通过或失败。</p><div class="chip-row"><span class="chip">Shell / code sandbox</span><span class="chip">browser / search</span><span class="chip">files</span><span class="chip">database</span><span class="chip">external API</span><span class="chip">environment state</span></div></div>
+              </article>
+            </div>
+            <aside class="telemetry-rail">
+              <div><div class="rail-label">CROSS-LAYER<br>OBSERVABILITY</div><h3>可观测与控制面</h3><p>把整条轨迹变成可计量、可回放和可验证的系统记录。</p></div>
+              <div class="rail-arrow">↕</div>
+              <div><p>event / trace ID<br>model / provider<br>token / cache<br>latency / queue<br>tool result<br>error / retry<br>cost / budget<br>verifier outcome</p></div>
+            </aside>
+          </div>
+
+          <div class="agent-cycle" aria-label="Agent execution cycle">
+            <div class="cycle-step"><b>1 · OBSERVE</b>系统读取；复杂感知可用 LLM</div>
+            <div class="cycle-step"><b>2 · COMPILE</b>规则为主；压缩/检索可用 LLM</div>
+            <div class="cycle-step"><b>3 · INFER</b>执行本轮核心 LLM 推理</div>
+            <div class="cycle-step"><b>4 · ACT</b>工具执行；动作通常由模型提出</div>
+            <div class="cycle-step"><b>5 · VERIFY</b>测试/规则，或 LLM verifier</div>
+            <div class="cycle-step"><b>6 · LOOP</b>规则或 LLM 判断继续/终止</div>
+          </div>
+          <div class="cycle-note"><b>如何读这六步：</b>它们是系统阶段，不代表固定的六次 LLM 调用。INFER 必然调用模型；OBSERVE、COMPILE、VERIFY 和 LOOP 是否调用 LLM 取决于任务与 Harness；ACT 的外部执行通常由工具完成，但动作往往由前一步模型生成。</div>
+          <figcaption class="caption"><span class="mark infer">本文综合</span>四层结构是为了分析 Router 而采用的功能性拆分，不是某篇论文提出的统一标准。其组成依据分别来自：ReAct 的 reasoning/action/observation 闭环、Harness-Native 对 observation、context、control、action、state 与 verification 的系统描述，以及 DeepSeek Harness 已实现的 session event、model request hook、工具事件与 token/cache 计量。<a class="cite" href="#r0">[P0]</a><a class="cite" href="#r4">[P4]</a><a class="cite" href="#r17">[H1]</a></figcaption>
+        </figure>
+
+        <div class="agent-insights">
+          <article class="agent-insight"><b>模型提供能力，Harness 组织工作。</b><p>同一个模型放进不同 context、tool 和 recovery 机制，可能产生完全不同的成功率与成本。</p></article>
+          <article class="agent-insight"><b>不同阶段可能需要不同的模型。</b><p>Agent 每个部分对 LLM 推理、代码、工具和上下文能力的需求不同提供了重新路由的机会。</p></article>
+          <article class="agent-insight"><b>Router 优化对象是完整 Agent 系统。</b><p>Router 不替代 Harness；它利用 Harness 暴露的状态，在模型调用边界选择合适的完整模型。</p></article>
+        </div>
+      </section>
+
+      <section id="boundary">
+        <h2>第一问：LLM Router 是什么？</h2>
+        <p class="lead"><span class="mark fact">本文定义</span>LLM Router 是位于应用或 Agent harness 与模型服务之间的决策层：它既可以决定请求落到哪个服务端点，也可以选择由哪个<strong>完整模型</strong>处理，还可以在 Agent 运行过程中决定何时保持或重新选择模型。</p>
+        <p>本文的研究范围包含下面三个相互衔接的层次：服务入口决定“到哪里调用”，完整模型路由决定“调用谁”，Agent 路由进一步决定“沿轨迹何时继续使用或重新选择”。三者共同决定一次 Agent 任务的成功率、成本与延迟。</p>
+        <div class="taxonomy">
+          <article class="taxon"><div class="label">SCOPE 01 · GATEWAY ROUTING</div><h3>同模型，选 provider / region</h3><p>优化可用性、吞吐、价格或数据驻留；也决定故障切换、网络延迟与缓存能否延续。模型能力通常不变。</p></article>
+          <article class="taxon focus"><div class="label">SCOPE 02 · FULL-MODEL ROUTING</div><h3>多个完整模型之间选择</h3><p>决定由 GPT、Claude、Gemini、DeepSeek 等哪组完整权重处理请求，是能力—质量—成本权衡的核心层。</p></article>
+          <article class="taxon"><div class="label">SCOPE 03 · AGENT ROUTING</div><h3>Agent 执行中，决定何时保持或切换模型</h3><p>根据工具反馈、错误、剩余预算、cache 和当前执行阶段，继续使用当前模型，或切换、升级、回退到其他完整模型。</p></article>
+        </div>
+        <div class="callout warm"><strong>研究边界：</strong>上面三层都属于本文讨论的 Router 系统；本研究明确排除 MoE 内部 token-to-expert、Tool Router、RAG/Memory Router、多 Agent role selection、speculative decoding与动态层跳过。相邻方向可以提供理论参考，但不能混称为完整模型 Router。</div>
+      </section>
+
+      <section id="why">
+        <h2>第二问：为什么需要 Router？</h2>
+        <p class="lead">因为“最强模型”“最便宜模型”和“当前最合适的模型”通常不是同一个概念。成本不仅是调用费用，也包括任务完成时间。要让 Router 真正产生价值，还需要下面四个条件同时出现。</p>
+        <div class="spectrum">
+          <article class="spec"><div class="level">01 · MODEL TRADE-OFFS</div><h3>不同模型各有所长，调用代价也不同</h3><p>没有一个模型能同时在推理、代码、工具使用、长上下文、速度、价格和隐私等方面全部占优。</p></article>
+          <article class="spec"><div class="level">02 · CHANGING BEST CHOICE</div><h3>任务内需要出现“最佳模型变化”</h3><p>简单步骤可能由便宜模型完成，复杂推理或失败恢复可能需要强模型；但这种阶段性反转是动态 Agent Router 必须实测的前提，不能预先当作事实。</p></article>
+          <article class="spec"><div class="level">03 · OBSERVABLE SIGNALS</div><h3>系统必须能够判断当前更适合哪个模型</h3><p>Prompt、执行历史、工具结果或验证状态，需要包含足以预测各候选模型成功率和成本的信号；否则 Router 只能猜测。</p></article>
+          <article class="spec"><div class="level">04 · NET SYSTEM SAVINGS</div><h3>选对模型带来的收益必须超过路由开销</h3><p>节省模型费用还不够；扣除 Router 计算、模型切换、cache 丢失、上下文重传和失败恢复后，整个任务仍需更便宜或更快。</p></article>
+        </div>
+        <p><span class="mark infer">推断</span>前两个条件说明“存在 Oracle 空间”，第三个条件决定能否学习，第四个条件决定系统是否真正节约成本。只证明模型价格不同，无法证明 Router 有净价值。</p>
+        <div class="callout"><strong>Router 的必要性不能由厂商数量证明：</strong>真正需要验证的是，不同模型是否会在任务或执行状态上各有胜负，以及扣除路由与切换开销后，动态选择是否仍优于固定使用一个模型。</div>
+      </section>
+
+      <section id="evidence">
+        <h2>Router 能否节约成本，要分别看一次调用和一项完整任务。</h2>
+        <p class="lead">一次调用层决定当前 LLM request 交给哪个模型；完整任务层决定 Agent 在多轮推理和工具交互中采用什么模型策略。前者衡量一次响应，后者衡量一项任务能否以更少费用和时间成功完成，不能直接互相替代。</p>
+
+        <div class="unit-compare">
+          <article class="unit-card call">
+            <div class="unit-label">LEVEL 01 · LLM REQUEST</div>
+            <h3>一次调用：为当前请求选择模型</h3>
+            <p>输入主要是 prompt 与本次可见 context；路由当前请求，不观察后续 Agent 执行轨迹。</p>
+            <div class="unit-metrics"><span><b>质量</b>：本次回答或调用是否正确</span><span><b>价格</b>：本次 input、cache 与 output 费用</span><span><b>时间</b>：TTFT 与 request E2E latency</span></div>
+          </article>
+          <article class="unit-card task">
+            <div class="unit-label">LEVEL 02 · AGENT TASK</div>
+            <h3>完整任务：为多轮执行选择模型策略</h3>
+            <p>一个任务可能包含多次模型调用、工具反馈、重试和恢复；模型可以固定，也可以在执行中切换。</p>
+            <div class="unit-metrics"><span><b>质量</b>：外部 verifier 判断任务是否成功</span><span><b>价格</b>：全部调用、工具、重试与切换费用</span><span><b>时间</b>：task wall-clock 与 time-to-success</span></div>
+          </article>
+        </div>
+
+        <figure class="figure">
+          <div class="figure-head"><h3>一次调用层：同等准确率下，可以减少模型调用费用</h3><div class="figure-no">FIGURE 02 / FRUGALGPT TABLE 3</div></div>
+          <div class="legend"><span><i class="dot" style="background:#b8c0cc"></i>最佳单模型成本</span><span><i class="dot" style="background:var(--accent)"></i>FrugalGPT 达到同等准确率的成本</span></div>
+          <div class="cost-row"><div class="cost-name">HEADLINES</div><div class="tracks"><div class="track"><div class="bar single" style="width:25%"></div></div><div class="track"><div class="bar frugal" style="width:.46%"></div></div></div><div class="saving">−98.3%</div><div class="cost-values"><span>$33.1 → $0.6</span><span>matched accuracy</span></div></div>
+          <div class="cost-row"><div class="cost-name">OVERRULING</div><div class="tracks"><div class="track"><div class="bar single" style="width:7.33%"></div></div><div class="track"><div class="bar frugal" style="width:1.96%"></div></div></div><div class="saving">−73.3%</div><div class="cost-values"><span>$9.7 → $2.6</span><span>matched accuracy</span></div></div>
+          <div class="cost-row"><div class="cost-name">COQA</div><div class="tracks"><div class="track"><div class="bar single" style="width:54.76%"></div></div><div class="track"><div class="bar frugal" style="width:22.36%"></div></div></div><div class="saving">−59.2%</div><div class="cost-values"><span>$72.5 → $29.6</span><span>matched accuracy</span></div></div>
+          <div class="cost-row"><div class="cost-name">AGNEWS</div><div class="tracks"><div class="track"><div class="bar single" style="width:48.79%"></div></div><div class="track"><div class="bar frugal" style="width:12.01%"></div></div></div><div class="saving">−75.4%</div><div class="cost-values"><span>$64.6 → $15.9</span><span>matched accuracy</span></div></div>
+          <div class="cost-row"><div class="cost-name">SCIQ</div><div class="tracks"><div class="track"><div class="bar single" style="width:100%"></div></div><div class="track"><div class="bar frugal" style="width:47.66%"></div></div></div><div class="saving">−52.3%</div><div class="cost-values"><span>$132.4 → $63.1</span><span>matched accuracy</span></div></div>
+          <figcaption class="caption"><span class="mark fact">论文事实</span>FrugalGPT 对每个 query 在模型或级联之间做选择。原论文 Table 3 报告的是各数据集评测中达到相同准确率的<strong>总 API 费用</strong>，不是单次请求价格；作者报告 52.3%–98.3% 的节省，条长按本表最大费用 $132.4 缩放。结果使用论文当时的模型池、数据划分与价格，因此只能说明 prompt-level 选择存在经济空间，不能直接外推为 2026 年 Agent 的 cost per successful task。<a class="cite" href="#r1">[P1]</a> 原始数据：<a href="assets/data/frugalgpt_tmlr_table3.csv">CSV</a>。</figcaption>
+        </figure>
+
+        <figure class="figure">
+          <div class="figure-head"><h3>完整任务层：模型策略可同时提高成功率、缩短总时间</h3><div class="figure-no">FIGURE 03 / TRACE-ROUTER TERMINAL-BENCH</div></div>
+          <div class="legend"><span><i class="dot" style="background:#aeb8c5"></i>固定使用 27B 模型</span><span><i class="dot" style="background:var(--accent)"></i>TRACE-Router，α = 0.75</span></div>
+          <div class="latency-row"><div class="latency-name">ALWAYS 27B</div><div class="latency-track"><div class="latency-bar baseline" style="width:100%"></div></div><div class="latency-value">270 s</div><div class="latency-outcome">39.7% resolved</div></div>
+          <div class="latency-row"><div class="latency-name">TRACE-ROUTER</div><div class="latency-track"><div class="latency-bar routed" style="width:63.70%"></div></div><div class="latency-value">172 s</div><div class="latency-outcome">46.8% resolved</div></div>
+          <div class="latency-summary"><div class="latency-stat"><b>−36%</b><span>作者报告的平均 task wall-clock 变化</span></div><div class="latency-stat"><b>+7.1pp</b><span>任务 resolved rate 同时提高</span></div><div class="latency-stat"><b>48</b><span>Terminal-Bench matched tasks</span></div></div>
+          <figcaption class="caption"><span class="mark fact">论文事实</span>TRACE-Router 在 live end-to-end 运行中按任务计时，wall-clock 包含工具执行和环境交互。正文结果段报告 27B 固定策略为 270 秒、39.7%，TRACE-Router 为 172 秒、46.8%；引言概述写作 268 秒，图中采用正文 §4.2 的数值。该结果来自 48 个任务，只报告均值，未分解 queue、retry、cache 与 switch，因此不能外推为普遍的 Agent time-to-success 收益。<a class="cite" href="#r18">[P5]</a> 原始数据：<a href="assets/data/trace_router_terminalbench_latency.csv">CSV</a>。</figcaption>
+        </figure>
+
+        <figure class="figure">
+          <div class="figure-head"><h3>Agent loop 会放大成本：多做几轮，就多次读入上下文</h3><div class="figure-no">FIGURE 04 / UNPUBLISHED LOCAL EVIDENCE</div></div>
+          <p class="metric-intro">MemoryCraft 不研究模型 Router。它在相同任务、memory store、ingestion 与预算下，只改变“由谁决定检索”，因此可用来观察 Agent 控制方式如何改变完整任务的调用次数与输入量。</p>
+          <div class="loop-chain">
+            <div class="loop-card">
+              <div class="loop-label">01 · 只改变控制方式</div>
+              <h4>谁决定何时检索？</h4>
+              <div class="control-pair">
+                <div><b>Harness-issued</b><br>Harness 按固定协议构造并执行检索。</div>
+                <div><b>Agent-issued</b><br>LLM 在执行过程中自行决定并生成检索。</div>
+              </div>
+            </div>
+            <div class="loop-card">
+              <div class="loop-label">02 · Agent-issued 相对 Harness-issued</div>
+              <h4>模型轮次与输入量同时增加</h4>
+              <div class="amplify-row"><strong>MemOS</strong><div class="amplify-stat"><b>3.7×</b><span>模型轮次</span></div><div class="amplify-stat"><b>2.9×</b><span>input tokens</span></div></div>
+              <div class="amplify-row"><strong>Supermemory</strong><div class="amplify-stat"><b>3.1×</b><span>模型轮次</span></div><div class="amplify-stat"><b>2.5×</b><span>input tokens</span></div></div>
+            </div>
+            <div class="loop-card input-dominance">
+              <div class="loop-label">03 · Agent-issued 任务内</div>
+              <h4>绝大多数 token 用于输入</h4>
+              <b>&lt; 1%</b>
+              <p>三个系统的 output 仅占计量 token 的 0.65%–0.66%；其余主要是 cache-miss 与 cache-hit input。</p>
+            </div>
+          </div>
+          <div class="loop-why"><strong>与 Router 的关系：</strong>便宜模型若导致更多思考轮次、检索和恢复，就会反复读入上下文；因此“一次调用更便宜”不保证“完整任务更便宜”。Agent Router 的账本必须记录物理调用次数、输入重读与 cache 状态。</div>
+          <figcaption class="caption"><span class="mark warn">证据</span>倍率来自 MemoryCraft 的 agent-issued / harness-issued 对照；token 构成来自 Table 9 的 1,049 个共同实例。它支持的是“Agent loop 会改变资源消耗”的方法学观察，不证明任何模型 Router 已经节约成本。token 份额也不等于美元份额，因为 cache-read、cache-miss 与 output 的价格不同。该稿件尚未正式发表。<a class="cite" href="#r5">[L1]</a> 原始数据：<a href="assets/data/memorycraft_loop_metering.csv">计量 CSV</a>、<a href="assets/data/memorycraft_regime_multiplier.csv">倍率 CSV</a>。</figcaption>
+        </figure>
+
+        <p><span class="mark infer">综合推断</span>FrugalGPT 说明一次请求选对模型可以减少调用费用；TRACE-Router 说明完整任务的模型策略可能同时改善成功率和完成时间；MemoryCraft 则提示多轮执行会累积额外调用与上下文重读。因此，一次调用更便宜、更快，并不等于 Agent 任务的总费用更低、完成时间更短。</p>
+      </section>
+
+      <section id="cost">
+        <h2>Agent Router 要核算的是完整任务成本，而不是 token 单价。</h2>
+        <p class="lead">完整任务的成本按来源分别记录。每一项同时保留实际费用和经过时间，再与任务最终是否成功对应起来。</p>
+        <div class="cost-grid">
+          <article class="cost-card"><b>01 · 模型推理</b><p>每次实际发给模型的请求，包括失败但已经消耗资源的 attempt。</p><div class="cost-axis"><span><b>价格：</b>cache miss/read/write、input、output、reasoning token，本地 GPU 与能耗</span><span><b>时间：</b>queue、TTFT/prefill、decode/TPOT 与网络等待</span></div></article>
+          <article class="cost-card"><b>02 · Router 与评估</b><p>决定选谁以及判断结果是否可接受所增加的计算。</p><div class="cost-axis"><span><b>价格：</b>Router 的 CPU/GPU/token，Judge、verifier、profile 与在线校准</span><span><b>时间：</b>路由决策、探测候选、Judge/verifier 的额外等待</span></div></article>
+          <article class="cost-card"><b>03 · 工具、环境与恢复</b><p>模型请求之外，为推进任务或恢复外部状态发生的实际操作。</p><div class="cost-axis"><span><b>价格：</b>工具与外部服务、存储、数据库、环境重置等支出</span><span><b>时间：</b>工具执行与等待、timeout、环境回滚和恢复操作</span></div></article>
+          <article class="cost-card"><b>04 · 模型切换与连续性</b><p>从当前模型或 provider 转移到另一执行路径带来的额外负担。</p><div class="cost-axis"><span><b>价格：</b>cache loss 后的重复 token、上下文重传、模型加载与驻留</span><span><b>时间：</b>序列化、重新 prefill、queue、网络与 handoff</span></div></article>
+        </div>
+        <div class="measure-note"><div><b>价格侧怎么报告</b><span>汇总所有物理 attempt 与外部服务支出，并报告 cost per successful task；失败任务产生的支出不能删除。</span></div><div><b>时间侧怎么报告</b><span>报告 time-to-success 的 p50/p95 与 deadline success；只报成功任务的平均 latency 会低估失败和恢复。</span></div></div>
+        <div class="callout"><strong>避免重复计量：</strong>一次失败模型调用的 token 和时间记在“模型推理”；retry/recovery 用作原因与阶段标签，只有新增工具、调用或等待才计入额外成本。共享的训练与 profile 构建费用应单独披露摊销范围，不能随意除以任务数。</div>
+        <div class="callout warm"><strong>错误的不对称性：</strong>over-routing 通常只是多付一次强模型费用；under-routing 可能造成不可逆动作、污染状态或多轮恢复。因此 Router 不能只训练“最便宜模型分类器”，而应预测成功率、成本、延迟与失败风险，并用成功率下置信界约束选择。</div>
+      </section>
+
+      <section id="vendors">
+        <h2>主要云平台的类 Router 产品</h2>
+        <p class="lead"><span class="mark fact">公开产品</span>模型选择已经成为云平台能力，但“Router”并不都在解决同一个问题：有的选择完整模型，有的选择推理档位，有的只负责 provider 故障切换。下表只呈现最关键的差别。</p>
+        <div class="table-wrap"><table class="vendor-table">
+          <thead><tr><th>平台 / 产品</th><th>选择什么</th><th>何时选择</th><th>本页归类</th></tr></thead>
+          <tbody>
+            <tr><td><div class="entity">OpenAI</div>GPT-5 system router</td><td>快速回答、深度推理与 mini</td><td>每次响应</td><td><span class="tag auto">内部模型 / 推理档位选择</span> 封闭产品 Router，并非开放的多模型 Agent Router。<a class="cite" href="#r6">[V1]</a></td></tr>
+            <tr><td><div class="entity">Microsoft</div>Foundry Model Router</td><td>GPT、Claude、DeepSeek 等完整模型</td><td>每次请求；Agent 中每 turn</td><td><span class="tag agent">完整模型选择</span> 公开产品中最接近 per-turn Agent Router。<a class="cite" href="#r7">[V2]</a></td></tr>
+            <tr><td><div class="entity">Google Cloud</div>Vertex AI Model Optimizer</td><td>Gemini 模型与 intelligence level</td><td>每个 prompt</td><td><span class="tag auto">Prompt Router</span> 用户先指定 Cost / Balanced / Quality。<a class="cite" href="#r8">[V3]</a></td></tr>
+            <tr><td><div class="entity">AWS</div>Bedrock Intelligent Prompt Routing</td><td>同一模型家族内的两个模型</td><td>每个 prompt</td><td><span class="tag auto">Prompt Router</span> 按质量阈值选择，不读取 Agent 历史。<a class="cite" href="#r9">[V4]</a></td></tr>
+            <tr><td><div class="entity">OpenRouter</div>Auto Router</td><td>跨厂商完整模型与 provider</td><td>按 prompt；可保持 session sticky</td><td><span class="tag agent">模型选择 + 连续性</span> 兼顾 cache 与 failover，但不读取 verifier 状态。<a class="cite" href="#r10">[V5]</a></td></tr>
+            <tr><td><div class="entity">Cloudflare</div>AI Gateway Dynamic Routing</td><td>模型或 provider endpoint</td><td>每次请求</td><td><span class="tag rule">规则 / 流量路由</span> 面向预算、配额、分流与 fallback。<a class="cite" href="#r12">[V7]</a></td></tr>
+            <tr><td><div class="entity">腾讯云</div>模型路由（内测）</td><td>同一模型的不同供应商</td><td>请求失败时</td><td><span class="tag rule">可用性路由</span> 解决故障切换，不按任务能力选模型。<a class="cite" href="#r13">[V8]</a></td></tr>
+          </tbody>
+        </table></div>
+        <p class="caption"><span class="mark infer">阅读结论</span>平台公开产品主要覆盖 prompt-level 模型选择、session stickiness 和 provider failover；读取工具结果、错误恢复与外部验证状态的 Agent Router 仍少见。已审阅的 Anthropic、DeepSeek 与阿里云官方资料主要提供人工选型或模型目录，尚未核验到其第一方公开自动完整模型 Router；这不代表内部系统不存在。非云产品的 vLLM SAAR 作为 session-aware 系统先例放在后文讨论。<a class="cite" href="#r11">[V6]</a><a class="cite" href="#r14">[V9]</a><a class="cite" href="#r15">[V10]</a><a class="cite" href="#r16">[V11]</a> 完整结构化数据：<a href="assets/data/vendor_router_landscape_2026-08-17.csv">CSV</a>。</p>
+
+        <h3>公开产品真正形成的共识</h3>
+        <div class="gap-grid">
+          <article class="gap"><div class="icon">✓</div><h3>一个 endpoint，背后多个模型</h3><p>OpenAI、Microsoft、Google、AWS 和 OpenRouter 都在隐藏或简化模型选择。</p></article>
+          <article class="gap"><div class="icon">✓</div><h3>质量—成本不是固定权重</h3><p>Balanced/Cost/Quality profile 或可调 threshold 已成为标准产品接口。</p></article>
+          <article class="gap"><div class="icon">△</div><h3>session continuity 只被部分系统正视</h3><p>OpenRouter stickiness 与 vLLM SAAR 明确处理；许多 prompt router 仍逐请求独立。</p></article>
+          <article class="gap"><div class="icon">×</div><h3>公开产品很少决定“什么时候重新选择模型”</h3><p>系统通常预先固定为 per-prompt、per-turn 或 sticky session，重新选择的时机很少由 Router 学习。</p></article>
+        </div>
+      </section>
+
+      <section id="evolution">
+        <h2>Router 已经从单次请求走进 Agent 轨迹，但研究问题还没有闭合。</h2>
+        <p class="lead">前文说明了三件事：模型能力与价格存在差异，Agent loop 会改变任务成本，云平台也已把模型选择产品化。结合已核验论文，当前研究大致推进到下面四步。</p>
+        <div class="callout"><strong>当前成熟度判断：</strong>“选择哪个模型”已经覆盖 prompt、task、turn、call 和 workflow node 等多种粒度；trajectory-aware、history-aware、harness-native 与 session-aware 也已有明确先例。尚未充分解决的不是再增加一种固定粒度，而是判断<strong>什么新信息值得触发下一次模型选择，以及扣除全部系统代价后是否仍有净收益</strong>。</div>
+        <div class="spectrum">
+          <article class="spec"><div class="level">01 · PROMPT ROUTING</div><h3>一次请求选模型</h3><p>FrugalGPT、RouteLLM 与云产品已经证明 prompt-level 质量—成本选择具有价值；决策通常在请求开始时完成。<a class="cite" href="#r1">[P1]</a><a class="cite" href="#r2">[P2]</a></p></article>
+          <article class="spec"><div class="level">02 · TASK COMMITMENT</div><h3>整任务固定或条件升级</h3><p>TRACE-Router 按任务固定模型，SWE-Router 让便宜模型探索固定 K 轮后决定是否升级；重决策时机仍由系统预设。<a class="cite" href="#r18">[P5]</a><a class="cite" href="#r21">[P7]</a></p></article>
+          <article class="spec"><div class="level">03 · TRAJECTORY ROUTING</div><h3>每 turn 或 call 读取历史</h3><p>MTRouter、TwinRouterBench 与 Harness-Native 开始使用对话历史、工具结果、错误和 verification；默认仍在每 turn/call 重新决策。<a class="cite" href="#r20">[P6]</a><a class="cite" href="#r3">[P3]</a><a class="cite" href="#r4">[P4]</a></p></article>
+          <article class="spec"><div class="level">04 · SYSTEM CONTINUITY</div><h3>把切换后果放进策略</h3><p>HyDRA 与 vLLM SAAR 开始考虑 session stickiness、cache、handoff 和 provider state，说明频繁切换并不是免费动作。<a class="cite" href="#r22">[P8]</a><a class="cite" href="#r11">[V6]</a></p></article>
+        </div>
+
+        <figure class="figure">
+          <div class="figure-head"><h3>评测没有同步跟上：很少有工作算清 Router 是否让 Agent 更快完成任务</h3><div class="figure-no">FIGURE 05 / TIME EVIDENCE AUDIT</div></div>
+          <p class="metric-intro">TRACE-Router 等工作已经报告积极的任务级结果，但单个案例不能说明整个领域是否形成完整证据。为此，我们审计了本页纳入的 18 项主要 Router 与直接邻近工作，检查它们从单次响应到成功完成任务分别测到了哪一层。</p>
+          <div class="metric-ladder">
+            <div class="metric-step"><b>CALL · 首 TOKEN 时间</b><span>模型请求到首个 token，衡量响应何时开始。</span></div>
+            <div class="metric-step"><b>CALL · 单次请求总时长</b><span>模型请求到最后一个 token，衡量一次调用。</span></div>
+            <div class="metric-step"><b>TASK · 任务总时长</b><span>Agent 从开始到终止，包含工具、重试与多轮调用。</span></div>
+            <div class="metric-step"><b>TASK · 成功完成时间</b><span>直到外部 verifier 确认成功，并把失败任务纳入统计。</span></div>
+          </div>
+          <div class="audit-key"><strong>如何读这些数字：</strong>“3 / 18 项”表示本页选定的 18 项完整模型 Router、Agent Router 与直接邻近系统中，有 3 项明确报告该类证据。它衡量的是<strong>测量覆盖</strong>，不是性能胜率；纳入清单与逐项判定见 <a href="#r19">[A1]</a>。</div>
+          <div class="audit-group-title">A · 是否测到了用户真正等待的任务时间？</div>
+          <div class="audit-grid">
+            <div class="audit-card"><b>3 / 18 项</b><span>明确实测 Agent 完整任务的 wall-clock</span></div>
+            <div class="audit-card"><b>2 / 18 项</b><span>报告任务级 p95/p99，而不只报告均值</span></div>
+            <div class="audit-card zero"><b>0 / 18 项</b><span>以外部验证成功为终点，并纳入失败任务</span></div>
+          </div>
+          <div class="audit-group-title">B · 是否算清了 Router 带来的额外等待？</div>
+          <div class="audit-grid">
+            <div class="audit-card"><b>2 / 18 项</b><span>实测 Router 自身增加的决策时间</span></div>
+            <div class="audit-card zero"><b>0 / 18 项</b><span>完整拆分重试与错误恢复耗时</span></div>
+            <div class="audit-card zero"><b>0 / 18 项</b><span>单独归因跨模型切换与 cache loss 耗时</span></div>
+          </div>
+          <figcaption class="caption"><span class="mark infer">审计结论</span>现有工作已经说明 Router 可能降低价格或缩短时间，但尚未同时闭合任务成功、尾延迟、Router 开销、失败恢复与模型切换。这组数字统计的是证据完整度，不是否定已有工作。该审计覆盖本页选定的 18 项工作，不是全部公开论文的系统综述。<a class="cite" href="#r19">[A1]</a> 数据：<a href="assets/data/latency_evidence_coverage_audit.csv">CSV</a>。</figcaption>
+        </figure>
+      </section>
+
+      <section id="gap">
+        <h2>尚未被完全回答的问题</h2>
+        <p class="lead">下一页将逐项说明已有方法如何回答、哪些假设尚未验证，以及哪些看似新颖的主张其实已有先例。</p>
+        <div class="gap-grid">
+          <article class="gap"><div class="icon">01</div><h3>何时应该重新选择模型？</h3><p>task、turn、call、tool observation 或 milestone 哪个粒度最合适？重决策时机能否成为策略变量，而不是固定超参数？</p></article>
+          <article class="gap"><div class="icon">02</div><h3>哪些状态真的带来新信息？</h3><p>Prompt、工具结果、测试、错误和恢复状态中，哪些会改变最佳模型？哪些只是重复已有上下文？</p></article>
+          <article class="gap"><div class="icon">03</div><h3>动态选择是否产生净收益？</h3><p>模型费用、Router、Judge、重试、queue、cache loss 与 handoff 全部计入后，是否仍优于最佳 task pinning？</p></article>
+          <article class="gap"><div class="icon">04</div><h3>局部选择是否造成终局改善？</h3><p>观察日志混合了任务难度和策略选择；怎样用同状态、同世界、共同 continuation 的反事实执行获得可靠标签？</p></article>
+          <article class="gap"><div class="icon">05</div><h3>Router 应该看原始轨迹还是结构化状态？</h3><p>完整历史信息多但昂贵；压缩状态更便宜，却可能丢失决定模型选择的关键信息或引入教师偏见。</p></article>
+          <article class="gap"><div class="icon">06</div><h3>方法能否跨模型与 Harness 泛化？</h3><p>固定 model ID 分类器容易随模型池过时；改变 workflow 的方法又难与固定 Agent Router 公平比较。</p></article>
+        </div>
+        <div class="callout"><strong>下一页的内容：</strong>按决策粒度、观察状态、Router 类型、训练标签、成本口径和是否改变原 workflow，逐项拆解当前工作的内容、方法、结果与局限。<a href="02_related_work_decision_granularity.html">继续阅读 Page 02 →</a></div>
+      </section>
+
+      <section id="decision">
+        <h2>可以得到的初步判断</h2>
+        <div class="verdict">
+          <div class="decision">PAPER EVIDENCE → SYNTHESIS → OPEN QUESTION</div>
+          <h3>已有论文表明“模型可以动态选择”，但还没有回答“Agent 应在何时重新选择”。</h3>
+          <p><strong>论文分别给出的证据：</strong>FrugalGPT 与 RouteLLM 说明，不同请求适合不同模型，选择模型可以改善质量—价格权衡；MTRouter 与 Harness-Native 进一步说明，对话历史、工具结果和错误状态能够进入 Agent 的模型选择；HyDRA 与 vLLM SAAR 则提醒我们，保持当前模型可以保留 cache 与会话连续性，切换并不是免费的。<a class="cite" href="#r1">[P1]</a><a class="cite" href="#r2">[P2]</a><a class="cite" href="#r20">[P6]</a><a class="cite" href="#r4">[P4]</a><a class="cite" href="#r22">[P8]</a><a class="cite" href="#r11">[V6]</a></p>
+          <p><strong>把这些结果放在一起：</strong>Agent 的中间状态可能改变最佳模型，但“看到更多状态”不等于“每一步都值得重新路由”。现有方法多把重决策时机预先固定为 task、固定 K 轮、每 turn、每 call 或特定系统事件；与此同时，跨模型切换还可能增加 Router 等待、上下文重读、cache loss 与失败恢复成本。已有论文分别覆盖了其中一部分，却尚未把信息收益与这些代价放在同一个任务级评测中比较。</p>
+          <p><strong>因此得到的研究判断：</strong>下一步不应只是再训练一个“选择哪个模型”的 Router，而应先检验：工具反馈、验证结果或错误恢复等新事件出现后，重新选择模型带来的预期收益，是否足以覆盖切换的价格与时间代价。只有这个条件成立，研究“何时重新开放模型选择”才具有独立价值；否则，更简单的整任务固定或固定事件路由就已经足够。</p>
+        </div>
+      </section>
+
+      <section id="references">
+        <h2>来源与证据状态</h2>
+        <ol class="refs">
+          <li id="r0"><a href="https://openreview.net/forum?id=WE_vluYUL-X">[P0] Yao et al. ReAct: Synergizing Reasoning and Acting in Language Models.</a> ICLR 2023；用于说明 reasoning、action 与 observation 交替的基本 Agent loop。</li>
+          <li id="r1"><a href="https://openreview.net/forum?id=cSimKw5p6R">[P1] Chen, Zaharia & Zou. FrugalGPT.</a> TMLR 2024；图 02 重录其 Table 3。</li>
+          <li id="r2"><a href="https://openreview.net/forum?id=8sSqNntaMr">[P2] Ong et al. RouteLLM.</a> ICLR 2025。</li>
+          <li id="r3"><a href="https://arxiv.org/abs/2605.18859">[P3] TwinRouterBench.</a> arXiv preprint, 2026；<a href="https://github.com/CommonstackAI/TwinRouterBench">官方代码</a>。</li>
+          <li id="r4"><a href="https://arxiv.org/abs/2607.11399">[P4] Agentic Routing: The Harness-Native Data Flywheel.</a> technical report/preprint, 2026；<a href="https://github.com/opensquilla/opensquilla">OpenSquilla</a>。</li>
+          <li id="r5"><span>[L1] MemoryCraft local manuscript.</span> 未正式发表投稿稿，公开网页版不提供原稿；仅作内部方法学证据，不能写作已发表结论。</li>
+          <li id="r6"><a href="https://openai.com/index/gpt-5-system-card/">[V1] OpenAI GPT-5 System Card.</a></li>
+          <li id="r7"><a href="https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-router">[V2] Microsoft Foundry Model Router concepts</a>；<a href="https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/model-router-agents">Agent integration</a>。</li>
+          <li id="r8"><a href="https://cloud.google.com/blog/products/ai-machine-learning/gemini-2-5-pro-flash-on-vertex-ai">[V3] Google Cloud Vertex AI Model Optimizer announcement</a>；<a href="https://cloud.google.com/vertex-ai/generative-ai/pricing">pricing</a>。</li>
+          <li id="r9"><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-routing.html">[V4] AWS Bedrock Intelligent Prompt Routing.</a></li>
+          <li id="r10"><a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">[V5] OpenRouter Auto Router</a>；<a href="https://openrouter.ai/docs/guides/routing/provider-selection">Provider Routing</a>。</li>
+          <li id="r11"><a href="https://vllm-project.github.io/2026/06/02/session-aware-agentic-routing.html">[V6] vLLM Session-Aware Agentic Routing.</a> 作者报告的 synthetic/live 结果只在其公开条件内陈述。</li>
+          <li id="r12"><a href="https://developers.cloudflare.com/ai-gateway/features/dynamic-routing/">[V7] Cloudflare AI Gateway Dynamic Routing.</a></li>
+          <li id="r13"><a href="https://cloud.tencent.com/document/product/214/130981">[V8] 腾讯云模型路由产品介绍.</a></li>
+          <li id="r14"><a href="https://platform.claude.com/docs/en/about-claude/models/choosing-a-model">[V9] Anthropic: Choosing the right model</a>；<a href="https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions">model IDs</a>。</li>
+          <li id="r15"><a href="https://api-docs.deepseek.com/quick_start/pricing">[V10] DeepSeek Models & Pricing</a>；<a href="https://api-docs.deepseek.com/guides/reasoning_model">reasoning model guide</a>。</li>
+          <li id="r16"><a href="https://www.alibabacloud.com/help/en/model-studio/models">[V11] Alibaba Cloud Model Studio models</a>；<a href="https://www.alibabacloud.com/help/en/model-studio/model-pricing">pricing</a>。</li>
+          <li id="r17"><a href="https://github.com/deepseek-ai/deepseek-harness/tree/47f943859bef60e4160492346772ded9b24f765a">[H1] DeepSeek Harness official repository, fixed commit 47f9438.</a> 用于核验 session event、model-request hook、工具事件与 token/cache 计量能力。</li>
+          <li id="r18"><a href="https://arxiv.org/abs/2607.22465">[P5] Raj et al. TRACE-ROUTER: Task-Consistent and Adaptive Online Routing for Agentic AI.</a> arXiv preprint, 2026；图 03 重录正文 §4.2 的 Terminal-Bench 均值。</li>
+          <li id="r19"><a href="../research_notes/D_latency_academic_audit.md">[A1] RouteCraft local latency-evidence audit.</a> 2026-08-17；逐项核对 18 项主要工作对 call、task、tail、router、queue/tool、retry/recovery 与 switch/cache 时间的覆盖，并链接论文原文。</li>
+          <li id="r20"><a href="https://aclanthology.org/2026.acl-long.2045/">[P6] Zhang et al. MTRouter.</a> ACL 2026 long paper；<a href="https://github.com/ZhangYiqun018/MTRouter">官方代码</a>。</li>
+          <li id="r21"><a href="https://arxiv.org/abs/2607.00053">[P7] Son et al. SWE-Router.</a> ICML 2026 Workshop preprint；已核验<a href="https://huggingface.co/SWE-Router">官方 Hugging Face 组织</a>，源码仓库未核验。</li>
+          <li id="r22"><a href="https://arxiv.org/abs/2605.17106">[P8] Garg et al. HyDRA.</a> arXiv preprint, 2026；官方代码未核验。</li>
+        </ol>
+        <div class="source-box"><a href="sources/01_background_sources.md">完整 source ledger</a><a href="assets/data/vendor_router_landscape_2026-08-17.csv">厂商结构化数据</a><a href="../reports/RouteCraft_research_decision_report_2026-08-17.md">完整科研决策报告</a></div>
+        <p class="caption" style="margin-top:24px"><strong>AI-assisted research disclosure：</strong>来源检索、比较、数据转录和页面撰写使用了 AI 辅助；关键事实以论文原文、官方文档或本地原稿核验。厂商文档会变化，正式发表或采购决策前应再次核验。</p>
+      </section>
+    </main>
+  </div>
+
+  <footer><div class="shell">RouteCraft Research Pages · Background 01 · Standalone HTML with local data · Last verified 2026-08-17</div></footer>
+</body>
+</html>

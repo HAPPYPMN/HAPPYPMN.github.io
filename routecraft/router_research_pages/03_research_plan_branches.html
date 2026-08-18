@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="先验证动态重选是否有净收益，再判断哪些 Agent 事件值得重新运行 Router，并据此安排 RouteCraft 的最小实验。">
+  <title>03 · 先找出何时值得重选，再决定训练什么｜RouteCraft Research Pages</title>
+  <style>
+    :root{
+      --ink:#14233a;--muted:#5f7087;--paper:#f4f1e9;--card:#fffefa;--line:#d9d4ca;
+      --accent:#086f69;--accent2:#d85f42;--blue:#4361a9;--gold:#a9771b;--dark:#17263c;
+      --green-bg:#e4f2ee;--blue-bg:#e8edf8;--warm-bg:#f8e9df;--gold-bg:#faf1d9;
+      --shadow:0 18px 54px rgba(29,40,59,.08)
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth;max-width:100%;overflow-x:hidden}body{margin:0;max-width:100%;overflow-x:hidden;background:var(--paper);color:var(--ink);font-family:Inter,"Noto Sans SC","Microsoft YaHei",Arial,sans-serif;line-height:1.72}
+    a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}a:hover{color:#064e4a}.shell{width:100%;max-width:1240px;margin:auto;padding:0 30px}h1,h2,h3,h4{font-family:Georgia,"Noto Serif SC","Songti SC",serif}p,h1,h2,h3,h4{overflow-wrap:anywhere}
+    .topbar{position:sticky;top:0;z-index:30;background:rgba(244,241,233,.94);backdrop-filter:blur(14px);border-bottom:1px solid rgba(20,35,58,.1)}.topbar .shell{display:flex;justify-content:space-between;align-items:center;min-height:58px;gap:18px}.brand{font-weight:850;letter-spacing:.03em}.brand a{color:inherit;text-decoration:none}.page-nav{display:flex;align-items:center;gap:16px;font-size:12.5px}.page-nav a{text-decoration:none}.page-nav span{color:var(--muted)}
+    .hero{padding:82px 0 58px;border-bottom:1px solid var(--line)}.kicker{font-size:12px;font-weight:850;letter-spacing:.17em;text-transform:uppercase;color:var(--accent)}h1{font-size:clamp(48px,7.4vw,92px);line-height:.98;letter-spacing:-.045em;margin:22px 0 28px;max-width:1080px}.dek{font-size:clamp(19px,2.05vw,26px);line-height:1.52;color:#45566e;max-width:1040px;margin:0}.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:42px}.hero-card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:21px;box-shadow:0 8px 28px rgba(29,40,59,.04)}.hero-card .n{font:850 11px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);letter-spacing:.04em}.hero-card h3{font-size:20px;line-height:1.28;margin:12px 0 8px}.hero-card p{margin:0;color:var(--muted);font-size:13.5px}
+    .layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:54px;padding-top:54px}.toc{position:sticky;top:84px;align-self:start;font-size:13px}.toc strong{display:block;margin-bottom:14px}.toc a{display:block;color:var(--muted);text-decoration:none;border-left:2px solid var(--line);padding:6px 0 6px 13px}.toc a:hover{color:var(--accent);border-color:var(--accent)}main{min-width:0;padding-bottom:100px}
+    section{padding:36px 0 64px;border-bottom:1px solid var(--line)}section:last-child{border-bottom:0}h2{font-size:clamp(31px,4vw,50px);line-height:1.09;letter-spacing:-.025em;margin:0 0 22px}h3{font-size:24px;line-height:1.27;margin:30px 0 13px}p{margin:0 0 18px}.lead{font-size:19px;color:#3e5068;max-width:920px}.caption{font-size:12.5px;line-height:1.58;color:var(--muted);margin-top:12px}.mark{display:inline-flex;align-items:center;border-radius:5px;padding:2px 7px;margin-right:7px;font-size:10.5px;font-weight:850;letter-spacing:.03em}.fact{color:#075f5a;background:#dcefeb}.infer{color:#814423;background:#f5e4d8}.hyp{color:#394e91;background:#e1e6f7}.plan{color:#795712;background:#f4e5b7}
+    .callout{border-left:4px solid var(--accent);background:rgba(255,255,255,.6);padding:19px 21px;margin:25px 0;border-radius:0 14px 14px 0}.callout.warm{border-color:var(--accent2)}.callout.blue{border-color:var(--blue)}.callout strong{color:var(--ink)}
+    .evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:28px 0}.evidence-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}.evidence-card .tag{font:850 10px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2)}.evidence-card h3{font-size:22px;margin:10px 0 10px}.evidence-card p{font-size:13px;color:var(--muted);margin:0 0 10px}.evidence-card .open{border-top:1px solid var(--line);padding-top:10px;color:#71462f}.logic-chain{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:center;background:var(--dark);color:#fff;border-radius:20px;padding:24px;margin-top:25px}.logic-node{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:13px;padding:15px}.logic-node b{display:block;color:#7ad3ca;font-size:13px;margin-bottom:5px}.logic-node span{display:block;color:#d4dde4;font-size:11.5px}.arrow{font-size:25px;color:#7ad3ca;font-weight:900}
+    .stage-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:27px 0}.stage{position:relative;border-radius:13px;padding:14px 9px;text-align:center;background:var(--card);border:1px solid var(--line)}.stage b{display:block;font:850 10.5px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace}.stage span{display:block;font-size:9.5px;color:var(--muted);margin-top:5px}.stage.high{border-top:5px solid var(--accent)}.stage.medium{border-top:5px solid var(--gold)}.stage.risk{border-top:5px solid var(--accent2)}.stage.low{border-top:5px solid #9aa3b0}
+    .table{display:grid;gap:7px;margin:25px 0}.tr{display:grid;grid-template-columns:.72fr 1.5fr 1.15fr 1.25fr;gap:7px}.tr>div{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:12px;font-size:11.5px;color:var(--muted)}.tr>div:first-child{font-weight:850;color:var(--ink)}.thead>div{background:var(--dark);color:#f4f6f7!important;border-color:var(--dark);font:800 10.5px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace}.tr .high-text{color:#075f5a;font-weight:750}.tr .risk-text{color:#9b4b2d;font-weight:750}
+    .state-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:23px}.state-card{border-radius:13px;padding:15px;background:var(--card);border:1px solid var(--line)}.state-card b{display:block;font-size:13px;margin-bottom:6px}.state-card span{display:block;font-size:11px;color:var(--muted)}.state-card.reliable{border-top:4px solid var(--accent)}.state-card.rule{border-top:4px solid var(--blue)}.state-card.model{border-top:4px solid var(--gold)}.state-card.guess{border-top:4px solid var(--accent2)}
+    .hyp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:26px 0}.hyp-card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:20px}.hyp-card .code{font:900 18px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue)}.hyp-card h3{font-size:22px;margin:10px 0}.hyp-card p{font-size:12px;color:var(--muted)}.hyp-card dl{margin:15px 0 0}.hyp-card dt{font-size:10px;font-weight:850;color:var(--accent2);margin-top:10px}.hyp-card dd{font-size:11.5px;color:#536379;margin:3px 0 0}
+    .gate-stack{display:grid;gap:12px;margin:30px 0}.gate{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:10px;align-items:stretch}.gate-q,.gate-no,.gate-yes,.gate-uncertain{border-radius:14px;padding:16px;border:1px solid var(--line)}.gate-q{background:var(--dark);color:#fff}.gate-q .g{font:850 10px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;color:#7ad3ca}.gate-q b{display:block;font-size:15px;margin-top:7px}.gate-q span{display:block;color:#d4dce4;font-size:11px;margin-top:6px}.gate-no{background:var(--warm-bg);border-color:#e0ad91}.gate-yes{background:var(--green-bg);border-color:#8bbdb8}.gate-uncertain{grid-column:2/4;background:var(--gold-bg);border-color:#dec890}.gate-no b,.gate-yes b,.gate-uncertain b{display:block;font-size:12px;margin-bottom:5px}.gate-no p,.gate-yes p,.gate-uncertain p{font-size:11px;color:var(--muted);margin:0}.gate-connector{text-align:center;font-size:19px;color:var(--accent);line-height:1}.scope-exits{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:24px 0}.scope-exit{background:var(--gold-bg);border:1px solid #dec890;border-radius:14px;padding:16px}.scope-exit b{display:block;font-size:13px}.scope-exit p{font-size:11.5px;color:#6e5a2d;margin:7px 0 0}
+    .outcome-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:27px 0}.outcome{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:19px}.outcome h3{font-size:21px;margin:0 0 12px}.outcome .pattern{font-size:12px;color:var(--muted);margin-bottom:11px}.outcome .deliverable{font-size:11.5px;padding:10px;border-radius:9px;background:var(--blue-bg);color:#42547e}.outcome .spend{font-size:11.5px;margin-top:9px;padding:10px;border-radius:9px;background:var(--green-bg);color:#365e58}.outcome.stop{border-top:5px solid var(--accent2)}.outcome.simple{border-top:5px solid var(--gold)}.outcome.data{border-top:5px solid var(--blue)}.outcome.method{border-top:5px solid var(--accent)}
+    .run-definition{background:var(--dark);color:#fff;border-radius:19px;padding:23px;margin:25px 0}.run-definition h3{font-size:23px;margin:0 0 10px}.run-definition p{font-size:13px;color:#d5dde4;margin:0}.run-definition strong{color:#fff}.equation{font:800 14px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;background:rgba(255,255,255,.08);border-radius:10px;padding:11px 14px;margin-top:14px;color:#8ed7cf;overflow-wrap:anywhere}
+    .resource-table{display:grid;gap:7px;margin:25px 0}.rr{display:grid;grid-template-columns:1.05fr 1.1fr 1fr 1.35fr;gap:7px}.rr>div{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:12px;font-size:11.5px;color:var(--muted)}.rr>div:first-child{font-weight:850;color:var(--ink)}.rrhead>div{background:var(--dark);color:#f4f6f7!important;border-color:var(--dark);font:800 10.5px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace}.not-default>div{background:#fff5ed}.cost-gates{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:25px 0}.cost-gate{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:17px}.cost-gate .n{font:850 10px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2)}.cost-gate h3{font-size:19px;margin:10px 0 8px}.cost-gate p{font-size:11.5px;color:var(--muted);margin:0}.unlock{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:24px}.unlock-step{border-radius:13px;padding:14px;background:var(--card);border:1px solid var(--line)}.unlock-step b{display:block;font-size:12px}.unlock-step span{display:block;font-size:10.5px;color:var(--muted);margin-top:6px}.unlock-step.now{border-top:5px solid var(--accent)}.unlock-step.conditional{border-top:5px solid var(--gold)}.unlock-step.later{border-top:5px solid #9aa3b0}
+    .roadmap{display:grid;gap:8px;margin:28px 0}.week{display:grid;grid-template-columns:90px 1.5fr 1.2fr 1fr;gap:8px}.week>div{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:12px;font-size:11.5px;color:var(--muted)}.week>div:first-child{font-weight:900;color:var(--accent2)}.week.head>div{background:var(--dark);color:#fff;border-color:var(--dark);font:800 10px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace}.week.locked>div{background:#f7f3e8}.verdict{background:var(--dark);color:#eff3f5;border-radius:21px;padding:28px;margin:24px 0}.verdict .decision{font:850 11px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:#7ad3ca;letter-spacing:.06em}.verdict h3{font-size:31px;margin:13px 0 14px}.verdict p{color:#d2dae3;font-size:14px}.verdict strong{color:#fff}.next-page{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:20px;background:var(--card);margin-top:18px}.next-page b{display:block;font-size:17px}.next-page span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.next-page a{text-decoration:none;font-weight:850}
+    .refs{padding-left:22px}.refs li{margin:12px 0;color:var(--muted);font-size:12px}.source-box{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.source-box a{display:inline-flex;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);font-size:11px;text-decoration:none}footer{border-top:1px solid var(--line);padding:32px 0;color:var(--muted);font-size:11px}
+    .detail-block{margin:24px 0;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.48);overflow:hidden}.detail-block summary{cursor:pointer;padding:15px 18px;font-weight:850;color:var(--accent);list-style:none}.detail-block summary::-webkit-details-marker{display:none}.detail-block summary:after{content:"展开";float:right;font:800 10px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--muted)}.detail-block[open] summary{border-bottom:1px solid var(--line)}.detail-block[open] summary:after{content:"收起"}.detail-inner{padding:4px 18px 18px}.resource-note{border-top:5px solid var(--accent)}.resource-note h3{margin-top:10px}.resource-note strong{color:var(--ink)}
+    @media(max-width:980px){.layout{grid-template-columns:1fr;gap:20px}.toc{position:static;display:flex;flex-wrap:wrap;gap:5px 10px;padding-bottom:15px;border-bottom:1px solid var(--line)}.toc strong{width:100%;margin-bottom:5px}.toc a{border-left:0;border-bottom:1px solid var(--line);padding:4px 0}.stage-strip{grid-template-columns:repeat(4,1fr)}.tr{grid-template-columns:.7fr 1.45fr 1fr}.tr>div:nth-child(3){display:none}.logic-chain{grid-template-columns:1fr}.logic-chain .arrow{transform:rotate(90deg);text-align:center}.unlock{grid-template-columns:repeat(3,1fr)}.week{grid-template-columns:80px 1.5fr 1fr}.week>div:nth-child(3){display:none}}
+    @media(max-width:720px){.shell{padding:0 18px}.hero{padding-top:55px}.hero-grid,.evidence-grid,.hyp-grid,.state-grid,.scope-exits,.outcome-grid,.cost-gates{grid-template-columns:1fr}.stage-strip{grid-template-columns:repeat(2,1fr)}.gate{grid-template-columns:1fr}.gate-uncertain{grid-column:auto}.tr,.rr,.week{grid-template-columns:1fr}.thead,.rrhead,.week.head{display:none}.tr>div,.rr>div,.week>div{display:block!important}.tr>div:before,.rr>div:before,.week>div:before{display:block;font:800 9px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);margin-bottom:3px}.tr>div:nth-child(1):before{content:"阶段"}.tr>div:nth-child(2):before{content:"新信息"}.tr>div:nth-child(3):before{content:"验证与风险"}.tr>div:nth-child(4):before{content:"首先检验的路由方式"}.rr>div:nth-child(1):before{content:"实验阶段"}.rr>div:nth-child(2):before{content:"状态与动作规模"}.rr>div:nth-child(3):before{content:"累计分支数"}.rr>div:nth-child(4):before{content:"要回答的问题"}.week>div:nth-child(1):before{content:"周次"}.week>div:nth-child(2):before{content:"完成什么"}.week>div:nth-child(3):before{content:"回答什么问题"}.week>div:nth-child(4):before{content:"什么条件下继续"}.unlock{grid-template-columns:1fr}.next-page{grid-template-columns:1fr}.page-nav span{display:none}}
+    @media print{.topbar,.toc{display:none}.layout{display:block}.hero{padding-top:40px}.shell{max-width:none;padding:0 18mm}.evidence-card,.hyp-card,.gate,.outcome,.run-definition,.verdict,.next-page{break-inside:avoid}a{color:inherit;text-decoration:none}section{break-before:auto}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="shell">
+    <div class="brand"><a href="index.html">RouteCraft Research Pages</a></div>
+    <nav class="page-nav" aria-label="页面导航"><a href="02_related_work_decision_granularity.html">← Page 02</a><span>PUBLIC WEB EDITION · Page 03</span></nav>
+  </div></header>
+
+  <div class="hero"><div class="shell">
+    <div class="kicker">RESEARCH PLAN · PAGE 03</div>
+    <h1>先找出何时值得重选，再决定训练什么</h1>
+    <p class="dek">Page 02 已经说明，Router 可以读取 Agent 的执行状态，保持当前模型也能减少 cache 丢失和状态交接。Page 03 只回答三个决策问题：<strong>为什么值得继续探索、最小实验怎样验证、第一周需要投入哪些资源。</strong></p>
+    <div class="hero-grid">
+      <article class="hero-card"><div class="n">WHY</div><h3>先确认“何时重选”具有独立价值</h3><p>只有自适应重选在扣除 Router、cache、重试和模型交接开销后仍超过固定策略，才值得训练新 Router。</p></article>
+      <article class="hero-card"><div class="n">HOW</div><h3>从同一状态执行不同模型和重选时机</h3><p>保存 Agent 状态与外部世界快照，运行配对分支，用确定性验证器比较成功、价格和完成时间。</p></article>
+      <article class="hero-card"><div class="n">FIRST-WEEK INPUT</div><h3>先投入一周工程试验，不投入训练集群</h3><p>160 个分支起步；建议一台 32 vCPU / 128 GB / 2 TB NVMe 服务器。若模型均走 API，Phase 0 不需要训练 GPU。</p></article>
+    </div>
+  </div></div>
+
+  <div class="shell layout">
+    <aside class="toc" aria-label="本页目录"><strong>本页目录</strong>
+      <a href="#inherit">为什么值得探索</a><a href="#stages">信息在哪里出现</a><a href="#hypotheses">三个关键判断</a><a href="#tree">最小实验怎么做</a><a href="#cost">机器与 API 投入</a><a href="#outcomes">结果如何解释</a><a href="#roadmap">通过后再做什么</a><a href="#decision">当前投入决策</a><a href="#sources">来源</a>
+    </aside>
+
+    <main>
+      <section id="inherit">
+        <h2>现有工作已经利用执行状态和会话连续性，但还没有算清自适应重选的净收益</h2>
+        <p class="lead"><span class="mark infer">综合分析</span>Page 02 中的工作已经让 Router 读取执行历史，也开始考虑 cache 和状态交接。接下来需要回答的是：中间状态改变模型优先级以后，实际切换是否仍然更划算；Router 又能否只根据决策当时可见的信息识别这种机会。</p>
+        <details class="detail-block"><summary>查看支撑这一判断的相关工作</summary><div class="detail-inner"><div class="evidence-grid">
+          <article class="evidence-card"><div class="tag">TRAJECTORY EVIDENCE</div><h3>执行状态已经被用于下一次模型选择</h3><p>MTRouter、Hera 与 EvoRoute 已让 Router 读取历史、环境状态或经验，并在每一步选择完整模型。</p><p class="open"><strong>仍未回答：</strong>每一步都运行 Router，扣除额外开销后是否仍比稀疏事件路由更好。</p></article>
+          <article class="evidence-card"><div class="tag">CONTINUITY EVIDENCE</div><h3>保持当前模型本身具有系统价值</h3><p>TRACE 为整项任务固定模型，HyDRA 在会话中保持模型，vLLM SAAR 根据 cache、模型交接和供应商内部续写状态限制切换。</p><p class="open"><strong>仍未回答：</strong>学习得到的重选时机能否稳定超过这些强固定策略和系统规则。</p></article>
+          <article class="evidence-card"><div class="tag">COUNTERFACTUAL EVIDENCE</div><h3>已有评测会从相同轨迹状态执行不同分支</h3><p>TwinRouterBench 从相同前缀出发，并在分支后采用共同的后续策略；Harness-Native 则记录工具、错误、恢复和验证状态。</p><p class="open"><strong>仍未回答：</strong>在本次已核验工作中，尚未发现从同一个 Harness 状态和同一个外部世界快照出发，系统比较“模型 × 下次重选事件”长期结果的实验。</p></article>
+          <article class="evidence-card"><div class="tag">LEARNABILITY WARNING</div><h3>事后知道最佳选择，不代表 Router 能提前选对</h3><p>Opportunity Is Not Realizability 区分三种收益：看到所有结果后的理论上限、只给定当前可见信息时的最优收益，以及 Router 在独立测试数据上真正实现的收益。</p><p class="open"><strong>仍未回答：</strong>PlanIR 或 Harness 状态是否保留了路由所需的信息，以及这些字段是否混入了决策之后才出现的结果。</p></article>
+        </div></div></details>
+        <div class="logic-chain">
+          <div class="logic-node"><b>执行状态带来新信息</b><span>新的工具结果或错误可能改变最合适的模型。</span></div><div class="arrow">→</div>
+          <div class="logic-node"><b>重新判断和切换都要付出代价</b><span>收益必须覆盖 Router 计算、cache 丢失、上下文重读和状态交接。</span></div><div class="arrow">→</div>
+          <div class="logic-node"><b>Router 还要能够提前识别</b><span>只有决策时可见的状态能够预测结果，理论机会才能转化为实际收益。</span></div>
+        </div>
+      </section>
+
+      <section id="stages">
+        <h2>工具返回、测试结果和错误恢复，最可能提供新的路由信息</h2>
+        <p class="lead"><span class="mark hyp">待检验判断</span>“Agent 当前处于哪个阶段”未必能从系统中直接读出。因此先使用 Harness 已经记录的事件和可验证状态。若 Agent 没有明确输出计划或里程碑，就不让强模型补写一个无法核验的阶段标签。</p>
+        <div class="stage-strip" aria-label="Agent 阶段的信息价值示意">
+          <div class="stage high"><b>OBSERVE</b><span>外部状态到达</span></div><div class="stage low"><b>PLAN</b><span>多为内部派生</span></div><div class="stage high"><b>RETRIEVE</b><span>文档与 schema 到达</span></div><div class="stage risk"><b>ACT</b><span>切换与不可逆风险</span></div><div class="stage high"><b>VERIFY</b><span>确定性结果</span></div><div class="stage high"><b>RECOVER</b><span>错误类型与回滚</span></div><div class="stage low"><b>ANSWER</b><span>通常没有新外部证据</span></div>
+        </div>
+        <div class="callout"><strong>第一轮实验只抓三类事件：</strong>工具或检索结果返回、外部验证完成、错误与恢复结果出现。这些事件既能从 Harness 中直接定位，也最可能带来足以改变模型选择的新信息。</div>
+        <details class="detail-block"><summary>查看七个 Agent 阶段的完整分析</summary><div class="detail-inner">
+        <div class="table" role="table" aria-label="Agent 阶段、信息价值与推荐路由粒度">
+          <div class="tr thead" role="row"><div>阶段</div><div>产生什么新信息</div><div>验证与切换风险</div><div>首先检验的路由方式</div></div>
+          <div class="tr" role="row"><div>OBSERVE</div><div><span class="high-text">工具结果、页面、数据库状态或用户补充信息</span>，可能直接暴露原输入中没有出现的约束。</div><div>可以通过事件记录和状态差异验证；需要保留未经改写的原始结果。</div><div>先检验在外部结果到达后重选，并保持到下一次外部事件。</div></div>
+          <div class="tr" role="row"><div>PLAN</div><div>子目标、约束和假设主要由模型生成，通常没有增加外部证据。</div><div>计划写得清楚不等于计划正确；中途换模型还可能破坏术语和计划的一致性。</div><div>默认保持到下一次外部结果；只有计划检查失败时才重新选择模型。</div></div>
+          <div class="tr" role="row"><div>RETRIEVE</div><div><span class="high-text">检索到的文档、数据结构、记忆命中或空结果</span>会改变上下文长度和所需领域能力。</div><div>检索是否完成通常可以验证；只交接摘要可能丢失模型选择所需的细节。</div><div>在检索结果返回后重选，不在生成检索词的过程中切换。</div></div>
+          <div class="tr" role="row"><div>ACT</div><div>拟执行的工具动作主要由模型内部推导；新的外部信息通常要等工具执行后才出现。</div><div><span class="risk-text">不可逆操作和工具参数错误使这一阶段的切换风险最高。</span></div><div>高风险动作前可以用规则升级模型；动作发出后保持到执行结果返回。</div></div>
+          <div class="tr" role="row"><div>VERIFY</div><div><span class="high-text">测试结果、代码差异、环境奖励和约束检查</span>可以直接区分成功与不同失败类型。</div><div>确定性验证器最可靠，而且多数验证失败仍可以恢复。</div><div>在验证结果返回后重选；机器可检查的证据优先于 LLM 判断。</div></div>
+          <div class="tr" role="row"><div>RECOVER</div><div><span class="high-text">错误类型、重试次数、回滚结果和剩余预算</span>可能突然提高对推理、代码或工具能力的要求。</div><div>错误事件通常可以验证；新模型需要读懂前面已经发生的失败。</div><div>明确失败时允许提前结束当前模型的保持期，并选择更适合恢复的模型。</div></div>
+          <div class="tr" role="row"><div>ANSWER</div><div>通常没有新的外部信息，主要任务是汇总结果并满足格式和表达要求。</div><div>此时换模型容易造成结论、术语和语气不一致。</div><div>最终回答阶段保持当前模型；只有终检失败时才重新选择。</div></div>
+        </div>
+        <div class="state-grid">
+          <div class="state-card reliable"><b>Harness 直接记录的状态</b><span>工具结果、错误、重试、用量、cache 和当前模型。直接提取，并保留事件 ID。</span></div>
+          <div class="state-card rule"><b>可以由规则确定的状态</b><span>退出码、测试是否通过、上下文是否超过阈值。规则需要版本化，缺失值保留为“未知”。</span></div>
+          <div class="state-card model"><b>由小模型概括的语义状态</b><span>当前子目标、粗略能力需求和文档类型。保留置信度，并用实际执行结果校准。</span></div>
+          <div class="state-card guess"><b>由强模型推断、但难以核验的状态</b><span>隐含里程碑、精确进度和剩余任务。只作为离线候选；不能与外部证据对应的字段不用作可靠标签。</span></div>
+        </div>
+        </div></details>
+      </section>
+
+      <section id="hypotheses">
+        <h2>只有三个判断都成立，训练 Router 才有意义</h2>
+        <p class="lead">这三个判断构成研究主线：先证明动态选择在真实系统中值得做，再证明重选可以集中在少数事件，最后确认决策时可见的信息足以支持预测。任意一步失败，都不应通过训练更大的模型来掩盖。</p>
+        <div class="hyp-grid">
+          <article class="hyp-card"><div class="code">H1 · 值不值得</div><h3>动态选择带来净收益</h3><p>从相同状态运行不同分支，比较任务成功率、每个成功任务的费用和首次验证成功所需时间。</p><dl><dt>继续条件</dt><dd>扣除 Router、cache、重试、上下文重读和模型交接后，动态策略仍优于最佳固定策略。</dd><dt>失败后做什么</dt><dd>停止训练 Router，转向 Agent Router 的系统成本测量。</dd></dl></article>
+          <article class="hyp-card"><div class="code">H2 · 何时判断</div><h3>新信息集中在少数事件之后</h3><p>比较工具返回、验证结果和错误恢复之后，与普通模型调用之间的模型排序变化和净收益。</p><dl><dt>继续条件</dt><dd>只在这些事件后运行 Router，能够用更少的判断保留大部分收益。</dd><dt>失败后做什么</dt><dd>采用逐调用 Router，或报告事件类型没有额外预测价值。</dd></dl></article>
+          <article class="hyp-card"><div class="code">H3 · 能不能学</div><h3>决策前的状态能够预测最佳选择</h3><p>只使用当时已经可见的 Harness 状态、PlanIR 或原始轨迹，在独立测试任务上进行预测。</p><dl><dt>继续条件</dt><dd>Logistic 或 LightGBM 扣除自身开销后仍超过最佳固定策略。</dd><dt>失败后做什么</dt><dd>检查状态缺失和标签噪声，不继续扩大 Router。</dd></dl></article>
+        </div>
+        <div class="callout blue"><strong>Phase 0 实际估计什么：</strong>我们从参考策略 π<sub>ref</sub> 到达的同一状态出发，执行不同分支，并比较计入全部成本后的结果。它给出这些状态上的局部反事实收益上限（local Oracle），但没有覆盖新策略改变早期动作后产生的新状态。因此，端到端收益仍要在 Phase 2 中验证。两个候选模型也无法说明对新模型的泛化能力，单一 Harness 只能支持该执行框架内的结论。</div>
+      </section>
+
+      <section id="tree">
+        <h2>最小实验分三步推进，每一步都设有停止条件</h2>
+        <p class="lead">第一周先用少量分支验证实验系统，再扩大到足以判断净收益和重选时机的规模。只有前三步都通过，才进入状态表示和 Router 训练。</p>
+        <div class="hyp-grid">
+          <article class="hyp-card"><div class="code">STEP 1 · 160</div><h3>先确认实验可信</h3><p>20 个状态 × 8 种动作，各运行 1 次。检查世界快照、验证器和每次模型调用记录能否正确复现与归属。</p><dl><dt>停止条件</dt><dd>同一状态无法恢复，或 token、工具和失败调用不能正确计量。</dd></dl></article>
+          <article class="hyp-card"><div class="code">STEP 2 · 480–1,200</div><h3>再确认动态选择有净收益</h3><p>补足重复实验，并在 40–50 个随机状态运行全部动作，比较模型与重选时机是否产生稳定差异。</p><dl><dt>停止条件</dt><dd>扣除切换和恢复成本后，动态策略不再优于最佳固定策略。</dd></dl></article>
+          <article class="hyp-card"><div class="code">STEP 3 · 1,680–3,000</div><h3>最后判断自适应时机是否必要</h3><p>扩展到 120–200 个状态，比较逐调用、固定事件和根据状态选择重选事件的策略。</p><dl><dt>停止条件</dt><dd>一种固定事件已经取得几乎全部收益，或事件附近没有更多可预测信息。</dd></dl></article>
+        </div>
+        <div class="callout blue"><strong>这三步回答的是方法是否值得做，而不是训练什么模型。</strong>Router 训练从第 4 周开始；在此之前只运行规则、固定策略和反事实分支。</div>
+        <details class="detail-block"><summary>查看完整的六项检查、统计条件和转向路径</summary><div class="detail-inner">
+        <div class="gate-stack">
+          <div class="gate"><div class="gate-q"><div class="g">CHECK 0 · 实验是否可信</div><b>快照能否复原同一个外部世界，每次模型调用能否正确计量？</b><span>每个进入分析的分支都要通过世界状态哈希、验证器前置条件和调用归属检查。</span></div><div class="gate-no"><b>未通过：先修实验系统</b><p>此时不能解释 Router 效果，但可以形成可复现的实验系统和失败审计。</p></div><div class="gate-yes"><b>通过：比较不同选择的原始差异</b><p>只有初始状态相同、外部世界相同且成本可归属的分支，才进入配对分析。</p></div></div>
+          <div class="gate-connector">↓</div>
+          <div class="gate"><div class="gate-q"><div class="g">CHECK 1 · 是否存在稳定差异</div><b>不同模型和不同重选事件，是否反复产生有意义的结果差异？</b><span>主要比较相对最佳固定策略的损失，并按参考策略访问各状态的频率加权。“出现多少次排序反转”只能作为辅助描述。</span></div><div class="gate-no"><b>未通过：简单固定策略已经足够</b><p>停止开发动态 Router；结论只适用于当前模型池、任务类型和成本范围。</p></div><div class="gate-yes"><b>通过：继续计算完整系统代价</b><p>这一步只说明存在更好的局部选择，还没有证明实际切换值得。</p></div></div>
+          <div class="gate-connector">↓</div>
+          <div class="gate"><div class="gate-q"><div class="g">CHECK 2 · 完整成本下是否仍有收益</div><b>计入 Router、cache 丢失、上下文重放、重试和状态交接以后，优势还存在吗？</b><span>价格、成功率、p95 延迟和任务成功所需时间分别报告，不合并成一个难以解释的美元效用值。</span></div><div class="gate-no"><b>未通过：停止方法开发，转向系统测量</b><p>此时更有价值的问题是：Agent loop 和模型切换怎样消耗了局部选择优势。</p></div><div class="gate-yes"><b>通过：检查哪些事件值得重新判断</b><p>只有确认净收益存在，才需要进一步研究 Router 应在何时重新运行。</p></div></div>
+          <div class="gate-connector">↓</div>
+          <div class="gate"><div class="gate-q"><div class="g">CHECK 3 · 外部事件是否提供更多信息</div><b>只在工具返回、验证和恢复之后重新判断，能否保留大部分局部收益？</b><span>将这些事件与普通模型调用比较，同时加入每次调用都重选和局部 Oracle 两个参照。</span></div><div class="gate-no"><b>未通过：事件触发没有额外价值</b><p>转向每次调用都判断的 Router，或报告事件类型不能进一步预测模型排序。</p></div><div class="gate-yes"><b>通过：继续比较固定事件和自适应边界</b><p>这说明新信息集中在少数事件附近，减少 Router 调用次数可能可行。</p></div></div>
+          <div class="gate-connector">↓</div>
+          <div class="gate"><div class="gate-q"><div class="g">CHECK 4 · 自适应时机是否优于固定事件</div><b>根据当前状态选择下一次重选事件，能否进一步超过表现最好的固定事件策略？</b><span>小规模试运行结束后，预先登记“停止、继续和证据不足”三类统计区间，并校正选择最佳策略带来的偏差。</span></div><div class="gate-no"><b>停止：额外收益小到可以排除</b><p>若 95% 置信区间上界同时低于 1 个百分点成功率和 5% CPS 改善，就采用更简单的固定事件策略。</p></div><div class="gate-yes"><b>继续：观察到具有实际意义的正收益</b><p>置信区间下界超过预先登记的成功率或 CPS 门槛，且另一项指标不变差，再进入下一项检查。</p></div><div class="gate-uncertain"><b>证据不足：置信区间同时覆盖停止和继续区域</b><p>只有在价格、时间和存储预算允许时才增加随机状态或重复次数。达到资源上限后仍不确定，就如实报告，暂不训练 Router。</p></div></div>
+          <div class="gate-connector">↓</div>
+          <div class="gate"><div class="gate-q"><div class="g">CHECK 5 · Router 能否提前识别最佳选择</div><b>只看决策前的状态，能否在独立测试任务上选出净收益最高的动作？</b><span>依次比较系统事实、PlanIR 和原始轨迹，先使用 Logistic、kNN 与 LightGBM。</span></div><div class="gate-no"><b>未通过：停止训练更大的 Router</b><p>转而研究“机会存在但不可学习”的评测问题，并检查状态信息缺失、结果归因困难和标签噪声。</p></div><div class="gate-yes"><b>通过：进入 Phase 1</b><p>轻量 Router 在独立测试数据上实现净收益后，再进行 Phase 2 的动态端到端实验。</p></div></div>
+        </div>
+        <div class="callout blue"><strong>选择策略和检验策略要使用不同数据：</strong>模型、固定事件和 Router 类型在设计集或嵌套交叉验证中选择，最终收益只在从未参与选择的任务级测试集上计算。同一状态下观察到的最小成本只能称为训练内的局部 Oracle 上限；最佳固定策略的置信区间还要校正“从多种策略中挑出最好者”带来的选择偏差。具有实际意义的收益门槛应在小规模试运行后预先登记，不能因为点估计略高于零就继续投入。</div>
+        <h3>以下三类结果会把研究引向其他问题</h3>
+        <div class="scope-exits">
+          <article class="scope-exit"><b>只有重新规划 workflow 时才有收益</b><p>主要变量已经变成规划和工作流生成，后续应转向 EASy、GraphPlanner 一类问题。</p></article>
+          <article class="scope-exit"><b>几乎所有状态都选择下一次调用时重选</b><p>结果支持现有的逐调用 Router，没有必要继续学习更长的保持时间。</p></article>
+          <article class="scope-exit"><b>几乎所有状态都选择整任务保持模型</b><p>结果支持 task pinning。此时应分析保持同一模型为何更好，而无需提出新的自适应边界方法。</p></article>
+        </div>
+        <div class="callout warm"><strong>先合并实际效果相同的动作：</strong>在某些状态中，下一次模型调用也恰好是下一次工具返回或任务结束；“验证后的里程碑”也可能一直不出现。实验要记录每个状态允许哪些动作，合并实际终点相同的动作，并规定长时间未触发时怎样超时和计入删失数据。否则，同一执行过程可能被误记成不同边界带来的排序变化。</div>
+        </div></details>
+      </section>
+
+      <section id="outcomes">
+        <h2>实验最终只需要支持三种投入决策</h2>
+        <p class="lead"><span class="mark plan">实验前规划</span>结果首先决定是否继续投入，而不是强行导向一种方法。具体统计门槛在小规模试运行后预先登记，并同时约束成功率、费用和完成时间。</p>
+        <div class="outcome-grid">
+          <article class="outcome stop"><h3>停止方法开发</h3><p class="pattern"><strong>如果看到：</strong>动态选择没有稳定差异，或者切换、cache、重试和恢复成本抵消了局部优势。</p><div class="deliverable"><strong>研究产出：</strong>Agent Router 的系统成本测量、评测协议或负结果。</div><div class="spend"><strong>资源决策：</strong>不训练 Router，不扩大 API 分支规模。</div></article>
+          <article class="outcome simple"><h3>实现固定事件 Router</h3><p class="pattern"><strong>如果看到：</strong>工具返回、验证结果或错误恢复后固定重选，已经取得几乎全部净收益。</p><div class="deliverable"><strong>研究产出：</strong>简单、可审计的事件触发规则及其适用条件。</div><div class="spend"><strong>资源决策：</strong>停止训练边界预测器，只实现轻量规则或分类器。</div></article>
+          <article class="outcome method"><h3>继续训练 RouteCraft</h3><p class="pattern"><strong>如果看到：</strong>自适应时机超过最佳固定事件，而且决策前的状态能在独立测试任务上预测这种差异。</p><div class="deliverable"><strong>研究产出：</strong>联合选择模型与重选事件的方法，以及同状态反事实评测集。</div><div class="spend"><strong>资源决策：</strong>先训练 Logistic、kNN 和 LightGBM；只有轻量表示不足时才考虑小模型。</div></article>
+        </div>
+        <details class="detail-block"><summary>查看两类需要先修数据、暂不扩大模型的问题</summary><div class="detail-inner"><div class="scope-exits"><article class="scope-exit"><b>理论机会存在，但决策前无法识别</b><p>先检查状态缺失、结果归因和标签噪声，可转为“机会存在但不可学习”的评测研究。</p></article><article class="scope-exit"><b>原始轨迹有效，但 PlanIR 丢失信息</b><p>先补充状态表示并重新比较，不通过扩大 Router 掩盖过度压缩。</p></article></div></div></details>
+      </section>
+
+      <section id="cost">
+        <h2>第一周需要 API、通用服务器和工程时间，不需要训练 GPU</h2>
+        <p class="lead">最小实验的资源重点是可复现执行和远程模型调用。下面给出可启动工作的建议配置；它属于研究规划值，不是已经实测的硬件下限。API 金额要在前 160 个分支完成后，根据实际 token、重试和任务时长再决定。</p>
+        <div class="evidence-grid">
+          <article class="evidence-card resource-note"><div class="tag">API BUDGET</div><h3>先批准 160 个执行分支</h3><p><strong>起步：</strong>20 个状态 × 8 种动作，各运行 1 次。一个分支可能包含多次模型调用。计量正确后再补到 480，并按证据决定是否扩大到 960–1,200 或一周版的 1,680–3,000。</p><p class="open"><strong>金额怎样确定：</strong>按任务域测得每个分支 API 费用的 P95，再乘下一批分支数；估算上界超过批准预算的 80% 就不扩批。</p></article>
+          <article class="evidence-card resource-note"><div class="tag">COMPUTE</div><h3>一台通用服务器即可起步</h3><p><strong>建议配置：</strong>32 vCPU、128 GB 内存、2 TB NVMe。逻辑上划分一个调度进程和两个隔离的任务 worker，用于容器、快照、验证器和日志。</p><p class="open"><strong>扩容依据：</strong>只有 SWE 容器内存不足或任务排队成为主要工期时，才增加 worker；不先购买训练集群。</p></article>
+          <article class="evidence-card resource-note"><div class="tag">GPU</div><h3>Phase 0 可以不使用训练 GPU</h3><p>若两个候选模型都通过 API 调用，快照、验证器和 LightGBM 都可在 CPU 上运行。本地 GPU 不影响前三个核心判断。</p><p class="open"><strong>以后何时需要：</strong>只有轻量特征不足，而且小型 encoder 或 0.5B–1.5B Router 的预期收益足以覆盖推理开销时，才单独申请 GPU。</p></article>
+          <article class="evidence-card resource-note"><div class="tag">PEOPLE & TIME</div><h3>按一周工程验证安排人员</h3><p><strong>最低投入：</strong>1 名研究工程师全职完成 Harness 接入、快照和调用记录；建议另有 1 名研究人员复核 verifier、抽样和统计设计。</p><p class="open"><strong>第一周交付：</strong>20 个状态可重复恢复、160 个分支可核算，并给出下一批 API、机器时间和存储的实测上界。</p></article>
+        </div>
+        <details class="detail-block"><summary>查看反事实分支的定义和各阶段运行量</summary><div class="detail-inner">
+        <div class="run-definition"><h3>一次反事实分支包含一段完整的 Agent 执行</h3><p>先让参考策略 π<sub>ref</sub> 运行并保存一个 Agent 中间状态，同时保存外部世界快照。随后从该状态执行一种<strong>（模型，下次重选事件）</strong>组合，再使用相同的后续策略运行到可验证终点。这一分支估计该状态附近的局部效果。保持到任务结束的分支通常远长于只保持到下一次调用的分支，因此相同分支数不代表相同价格或时间。</p><div class="equation">N_branch = Σ_state∼d(π_ref) Σ_feasible-action repeats(state, action)</div></div>
+        <div class="resource-table" role="table" aria-label="研究阶段与分支运行量">
+          <div class="rr rrhead" role="row"><div>实验阶段</div><div>状态与动作规模</div><div>累计分支数</div><div>这一阶段要回答的问题</div></div>
+          <div class="rr" role="row"><div>20 个状态的工程试运行</div><div>每项任务暂取 1 个中间状态，共 20 个状态 × 8 种动作；先执行 1 次，工程检查通过后补到 3 次</div><div>160 → 480</div><div>快照能否复原、模型调用能否正确归属，以及单个分支的价格、时间和存储分布</div></div>
+          <div class="rr" role="row"><div>随机参照状态</div><div>40–50 个状态 × 8 种动作 × 3 次重复</div><div>960–1,200</div><div>在不依赖主动抽样的情况下，估计原始差异、完整成本后的收益和排序稳定性</div></div>
+          <div class="rr" role="row"><div>一周版 Phase 0</div><div>120–200 个状态；随机参照状态运行全部动作，其余状态只运行 3–4 种动作</div><div>约 1,680–3,000</div><div>是否继续研究自适应重选，并记录每个状态的可行动作和随机性</div></div>
+          <div class="rr not-default" role="row"><div>扩展的全因子实验</div><div>240–300 个状态 × 2 个模型 × 4 种边界 × 3 次重复</div><div>5,760–7,200</div><div>获得更完整的覆盖，但不作为第一周的默认投入</div></div>
+          <div class="rr" role="row"><div>Phase 1 示例</div><div>500 个状态 × 2 个模型 × 4 种边界 × 3 次重复</div><div>12,000</div><div>形成完整的模型—边界结果向量；若只执行部分动作，需要同时发布已观察动作的标记</div></div>
+          <div class="rr" role="row"><div>Phase 2</div><div>各任务域 × 入选策略 × 重复次数 × Harness</div><div>按任务域单独计算</div><div>真实 Agent loop 中的成功率、每个成功任务成本、p95 延迟和成功所需时间</div></div>
+        </div>
+        <p class="caption">表中数字为累计规模。如果工程试运行中的状态继续作为随机参照状态，不能再次相加。为了获得这些中间状态，参考策略还要先执行原始任务，这部分费用不包含在表中的分支数里。</p>
+        </div></details>
+        <details class="detail-block"><summary>查看如何用试运行结果更新价格、工期和存储预算</summary><div class="detail-inner"><h3>小规模试运行需要同时估算价格、工期和存储</h3>
+        <div class="cost-gates">
+          <article class="cost-gate"><div class="n">PRICE</div><h3>根据分层实测结果估算价格</h3><p>分别汇总不同任务域、模型和边界产生的输入、cache 读写、输出、推理、工具和失败费用。总预算采用 95% 预测上界，并让该上界不超过已批准预算的约 80%，为重试和长尾分支留出余量。</p></article>
+          <article class="cost-gate"><div class="n">TIME</div><h3>分别计算任务完成时间和整批实验工期</h3><p>记录每个分支的 p50/p95、排队、工具执行、快照 I/O 和模型推理时间。整批实验还会受到速率限制和长尾任务影响，不能简单用平均时长除以理论并发数。</p></article>
+          <article class="cost-gate"><div class="n">STORAGE</div><h3>按照实际新增的存储量估算</h3><p>SWE 环境共用只读 OCI 层，每个分支只保存写时复制（CoW）产生的增量。实际测量基础状态、状态差分、日志、工具产物和外部世界差分占用的字节数，并保留约 20% 余量。</p></article>
+        </div>
+        <div class="callout"><strong>工程试运行全部成功，仍不能证明系统绝不会出错：</strong>即使 60 次独立恢复全部成功，按二项模型估计，真实失败率的单侧 95% 上界仍约为 4.87%。因此，每个进入配对分析的分支都要单独检查快照状态。无法归属的供应商调用和缺失的 token 计量应标记为“未知”，不能记为 0。</div>
+        </div></details>
+        <h3>只有前一项结果支持继续，才增加下一类投入</h3>
+        <div class="unlock">
+          <div class="unlock-step now"><b>现在建设</b><span>外部世界快照、每次调用记录、确定性验证器和 20 个状态的工程试运行。</span></div>
+          <div class="unlock-step now"><b>工程检查通过后</b><span>把远程分支从 160 次逐步增加到 480 次和 960–1,200 次，同时检查预算。</span></div>
+          <div class="unlock-step conditional"><b>确认存在净收益后</b><span>训练 Logistic、kNN、LightGBM，并构造确定性的 PlanIR。</span></div>
+          <div class="unlock-step conditional"><b>轻量状态表示确实不足后</b><span>再使用教师生成的 RouteCard、小型 encoder 或 0.5B–1.5B Router。</span></div>
+          <div class="unlock-step later"><b>端到端实验成立后</b><span>再增加第二套 Harness、AppWorld、长记忆压力测试和在线 bandit/RL。</span></div>
+        </div>
+      </section>
+
+      <section id="roadmap">
+        <h2>前三周决定是否停止，后五周属于条件性投入</h2>
+        <p class="lead">W1–W3 分别检查实验可信、动态选择有净收益和自适应时机有额外价值。三项都得到支持后，才开始训练 Router、建设评测集和扩大端到端实验。</p>
+        <div class="roadmap" role="table" aria-label="RouteCraft 条件式研究计划">
+          <div class="week head" role="row"><div>周次</div><div>完成什么</div><div>回答什么问题</div><div>什么条件下继续</div></div>
+          <div class="week" role="row"><div>W1</div><div>固定 Harness 版本；完成 20 个状态的工程试运行；实现世界状态哈希、快照和每次调用记录</div><div>同一个状态和外部世界能否可靠恢复，成本能否正确归属</div><div>若未通过，只修实验系统，不运行大批模型分支</div></div>
+          <div class="week" role="row"><div>W2</div><div>抽取 40–50 个随机参照状态；完整执行 2 个模型 × 4 种边界；每项重复 3 次</div><div>不同选择是否产生稳定差异，计入全部系统代价后是否仍有净收益</div><div>若没有净收益，停止开发动态 Router</div></div>
+          <div class="week" role="row"><div>W3</div><div>扩展到 120–200 个状态；比较事件触发、固定事件、整任务固定和逐调用路由</div><div>外部事件是否提供更多信息，自适应时机是否超过最佳固定事件</div><div>若事件没有额外价值，或固定事件已经足够，MVP 在此结束</div></div>
+        </div>
+        <details class="detail-block"><summary>前三周通过后，查看 W4–W8 的条件性计划</summary><div class="detail-inner"><div class="roadmap" role="table" aria-label="RouteCraft 第四至第八周条件式计划">
+          <div class="week head" role="row"><div>周次</div><div>完成什么</div><div>回答什么问题</div><div>什么条件下继续</div></div>
+          <div class="week locked" role="row"><div>W4</div><div>实现 State Compiler 和 PlanIR v0；比较 Logistic、kNN、LightGBM；检查标签泄漏</div><div>决策时可见的状态能否预测最佳选择</div><div>只有净收益和自适应时机的额外收益都存在才启动</div></div>
+          <div class="week locked" role="row"><div>W5</div><div>整理 Phase 1 数据格式、模型—边界结果向量，以及排序、遗憾和校准基线</div><div>能否形成可发布的反事实评测集，PlanIR 是否保留足够信息</div><div>若 PlanIR 失败，转向状态表示或系统测量问题</div></div>
+          <div class="week locked" role="row"><div>W6</div><div>在 τ²-Bench 和 SWE-bench 子集运行动态端到端实验</div><div>离线观察到的收益能否在真实 Agent loop 中转化为成功率、成本和时间收益</div><div>轻量 Router 仍有净收益才继续</div></div>
+          <div class="week locked" role="row"><div>W7</div><div>增加第二套 Harness，并改变价格、负载和 cache 条件</div><div>结论适用于哪些任务和系统，是否依赖特定 Harness</div><div>若跨系统失败，就把结论限定在已经验证的范围内</div></div>
+          <div class="week locked" role="row"><div>W8</div><div>增加 AppWorld 或长记忆压力测试；整理代码、数据和论文</div><div>证据最终支持新方法、评测集、固定规则还是负结果</div><div>论文主张只覆盖实验真正支持的范围</div></div>
+        </div></div></details>
+      </section>
+
+      <section id="decision">
+        <h2>当前建议：批准一周工程验证和首批 160 个分支</h2>
+        <div class="verdict"><div class="decision">当前判断 · 有条件继续</div><h3>先测清现象和资源消耗，再决定是否训练 Router。</h3><p><strong>本周投入：</strong>1 名研究工程师、一台建议配置为 32 vCPU / 128 GB / 2 TB NVMe 的服务器，以及首批 160 个反事实分支产生的 API 费用。实现薄 HarnessAdapter、外部世界快照、每次实际模型调用记录和确定性验证器。</p><p><strong>本周交付：</strong>20 个状态可以重复恢复；每个分支的成功、token、cache、重试、工具、价格和完成时间可以归属；给出下一批 API 和机器时间的 P95 预算。</p><p><strong>暂时不投入：</strong>训练 GPU、强教师批量标注、0.5B–1.5B Router、强化学习、第二套 Harness、AppWorld 和大规模全因子数据。</p><p><strong>继续条件：</strong>工程检查通过后才扩大到 480 和 960–1,200 个分支；前三周确认净收益和自适应时机的额外价值后，才进入 Router 训练。</p></div>
+        <div class="next-page"><div><b>前三周的检查通过后，下一页再讨论 PlanIR 和 Router 训练。</b><span>下一步先判断哪些状态字段足以支持模型选择，哪些字段会提前暴露执行结果，然后再决定是否需要训练小模型。</span></div><a href="index.html">返回目录 →</a></div>
+      </section>
+
+      <section id="sources">
+        <h2>来源、暂定判断标准与证据状态</h2>
+        <ol class="refs">
+          <li><strong>直接 Agent routing 证据：</strong><a href="https://aclanthology.org/2026.acl-long.2045/">MTRouter（ACL 2026 long）</a>；<a href="https://arxiv.org/abs/2605.24598">Hera</a>、<a href="https://arxiv.org/abs/2601.02695">EvoRoute</a>、<a href="https://arxiv.org/abs/2607.22465">TRACE-Router</a>、<a href="https://arxiv.org/abs/2605.18859">TwinRouterBench</a> 在本页按 preprint 使用。论文报告仅适用于各自模型池和协议。</li>
+          <li><strong>系统连续性证据：</strong><a href="https://arxiv.org/abs/2605.17106">HyDRA</a>、<a href="https://vllm-project.github.io/2026/06/02/session-aware-agentic-routing.html">vLLM SAAR</a> 与 <a href="https://github.com/opensquilla/opensquilla/tree/79d57b2fe63e1f83b364ca2bd022e0cb76081406">OpenSquilla 0.5.3</a>。系统事实来自论文、官方文档和固定代码审计。</li>
+          <li><strong>方法学依据：</strong><a href="https://arxiv.org/abs/2608.08265">Opportunity Is Not Realizability</a> 用于区分事后 Oracle 给出的理论机会和可部署 Router 真正实现的收益；<a href="https://arxiv.org/abs/2607.11399">Harness-Native technical report</a> 提供 Harness 状态和数据积累方法；MemoryCraft 提供固定执行协议、逐调用计量和 Agent loop 成本审计，在本页作为实验方法参考。</li>
+          <li><strong>暂定判断标准：</strong>分支数量来自实验设计的直接计算；1 个百分点的非劣范围、1 个百分点/5% 的额外收益门槛、80% 的预算使用上限和 6–8 周安排，都只作为前期实验的候选值。需要根据小规模试运行结果，在正式预注册前修订。</li>
+        </ol>
+        <div class="source-box"><a href="sources/03_research_plan_sources.md">完整来源清单</a><a href="assets/data/research_plan_decision_branches_2026-08-17.csv">研究分支 CSV</a><a href="../reports/RouteCraft_research_decision_report_2026-08-17.md">完整科研决策报告</a><a href="../research_notes/B_harness_systems.md">Harness 与成本证据</a><a href="../research_notes/C_theory_trajectory.md">理论、反事实与停止条件</a></div>
+        <p class="caption" style="margin-top:23px"><strong>阅读说明：</strong>本页引用的已有结果来自论文和官方系统；三个假设、六项检查和资源上限属于后续研究计划。页面列出多种可能结果，是为了提前规定怎样解释实验，并不表示已经知道实验会得到哪一种结果。</p>
+      </section>
+    </main>
+  </div>
+
+  <footer><div class="shell">RouteCraft Research Pages · 研究计划 03 · Agent 事件、反事实分支与分阶段实验 · 更新于 2026-08-18</div></footer>
+</body>
+</html>

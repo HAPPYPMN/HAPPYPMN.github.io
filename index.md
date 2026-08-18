@@ -23,7 +23,8 @@ lang: en
     <div class="contact-links">
       <a href="mailto:[peiminnan19@mails.ucas.ac.cn]">Email</a>/ 
       <a href="https://scholar.google.com/citations?hl=en&user=McR2_kgAAAAJ" target="_blank">Google Scholar</a>/
-      <a href="/assets/Minnan-Pei-CV.pdf" target="_blank">CV</a>
+      <a href="/assets/Minnan-Pei-CV.pdf" target="_blank">CV</a>/
+      <a href="/routecraft/" target="_blank">RouteCraft Research</a>
       <!-- <a href="[你的GitHub链接]" target="_blank">GitHub</a> /  -->
     </div>
   </div>

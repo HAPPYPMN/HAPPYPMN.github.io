@@ -1,0 +1,7 @@
+metric,explicitly_measured,total_reviewed,coverage_percent,qualification
+task_wall_clock,3,18,16.7,TRACE-Router Harness-Native and Aragog
+task_level_p95_or_p99,2,18,11.1,Harness-Native and Aragog
+router_wall_clock_overhead,2,18,11.1,HyDRA and Aragog
+retry_recovery_time_breakdown,0,18,0.0,None in audited corpus
+switch_cache_loss_time_attribution,0,18,0.0,None in audited corpus
+verifier_grounded_failure_aware_time_to_success,0,18,0.0,None in audited corpus

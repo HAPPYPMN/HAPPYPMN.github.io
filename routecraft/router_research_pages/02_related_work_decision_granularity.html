@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="梳理现有完整模型 Router 已经解决的选模问题，并分析自适应决定下一次重选时机还缺少哪些证据。">
+  <title>02 · 现有 Router 已经解决了什么？｜RouteCraft Research Pages</title>
+  <style>
+    :root{
+      --ink:#14233a;--muted:#607086;--faint:#8a95a3;--paper:#f4f1e9;--card:#fffefa;
+      --line:#d9d4ca;--accent:#086f69;--accent2:#d85f42;--blue:#4361a9;--gold:#a9771b;
+      --dark:#17263c;--green-bg:#e5f2ee;--blue-bg:#e9edf8;--warm-bg:#f8e9df;
+      --shadow:0 18px 54px rgba(29,40,59,.08)
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth;max-width:100%;overflow-x:hidden}body{margin:0;max-width:100%;overflow-x:hidden;background:var(--paper);color:var(--ink);font-family:Inter,"Noto Sans SC","Microsoft YaHei",Arial,sans-serif;line-height:1.72}
+    a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}a:hover{color:#064e4a}.shell{width:100%;max-width:1240px;margin:auto;padding:0 30px}h1,h2,h3,h4{font-family:Georgia,"Noto Serif SC","Songti SC",serif}p,h1,h2,h3,h4{overflow-wrap:anywhere}
+    .topbar{position:sticky;top:0;z-index:30;background:rgba(244,241,233,.94);backdrop-filter:blur(14px);border-bottom:1px solid rgba(20,35,58,.1)}.topbar .shell{display:flex;justify-content:space-between;align-items:center;min-height:58px;gap:18px}.brand{font-weight:850;letter-spacing:.03em}.brand a{color:inherit;text-decoration:none}.page-nav{display:flex;align-items:center;gap:16px;font-size:12.5px}.page-nav a{text-decoration:none}.page-nav span{color:var(--muted)}
+    .hero{padding:82px 0 58px;border-bottom:1px solid var(--line)}.kicker{font-size:12px;font-weight:850;letter-spacing:.17em;text-transform:uppercase;color:var(--accent)}h1{font-size:clamp(48px,7.5vw,94px);line-height:.98;letter-spacing:-.045em;margin:22px 0 28px;max-width:1080px}.dek{font-size:clamp(19px,2.1vw,27px);line-height:1.52;color:#45566e;max-width:1040px;margin:0}
+    .tension-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:42px}.tension{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:21px;box-shadow:0 8px 28px rgba(29,40,59,.04)}.tension .n{font:850 11px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);letter-spacing:.04em}.tension h3{font-size:20px;line-height:1.28;margin:12px 0 8px}.tension p{margin:0;color:var(--muted);font-size:13.5px}
+    .layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:54px;padding-top:54px}.toc{position:sticky;top:84px;align-self:start;font-size:13px}.toc strong{display:block;margin-bottom:14px}.toc a{display:block;color:var(--muted);text-decoration:none;border-left:2px solid var(--line);padding:6px 0 6px 13px}.toc a:hover{color:var(--accent);border-color:var(--accent)}main{min-width:0;padding-bottom:100px}
+    section{padding:36px 0 64px;border-bottom:1px solid var(--line)}section:last-child{border-bottom:0}h2{font-size:clamp(31px,4vw,50px);line-height:1.09;letter-spacing:-.025em;margin:0 0 22px}h3{font-size:24px;line-height:1.27;margin:30px 0 13px}p{margin:0 0 18px}.lead{font-size:19px;color:#3e5068;max-width:900px}.caption{font-size:12.5px;line-height:1.58;color:var(--muted);margin-top:12px}.cite{font-size:.72em;vertical-align:super;font-weight:850;text-decoration:none}.mark{display:inline-flex;align-items:center;border-radius:5px;padding:2px 7px;margin-right:7px;font-size:10.5px;font-weight:850;letter-spacing:.03em}.fact{color:#075f5a;background:#dcefeb}.infer{color:#814423;background:#f5e4d8}.boundary{color:#394e91;background:#e1e6f7}.warn{color:#795712;background:#f4e5b7}
+    .callout{border-left:4px solid var(--accent);background:rgba(255,255,255,.58);padding:19px 21px;margin:25px 0;border-radius:0 14px 14px 0}.callout.warm{border-color:var(--accent2)}.callout strong{color:var(--ink)}
+    .route-map{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:27px;margin:30px 0;box-shadow:var(--shadow)}.route-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.route-head h3{margin:0;font-size:24px}.figure-no{font:850 11px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);white-space:nowrap;padding-top:6px}.route-axis{position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:30px 0 4px}.route-axis:before{display:none}.route-point{position:relative;padding:43px 8px 10px;text-align:center;border:1px solid var(--line);border-radius:12px;background:#faf8f3}.route-point:before{content:"";position:absolute;top:10px;left:calc(50% - 9px);width:18px;height:18px;border-radius:50%;background:var(--card);border:5px solid var(--accent);z-index:2}.route-point.direct:before{border-color:var(--accent)}.route-point.adjacent{background:#fbf3e1}.route-point.adjacent:before{border-color:var(--gold);background:#fff7dd}.route-point b{display:block;font-size:12px;line-height:1.35}.route-point span{display:block;margin-top:5px;font-size:10.5px;line-height:1.42;color:var(--muted)}
+    .matrix{margin:28px 0;display:grid;gap:7px}.matrix-row{display:grid;grid-template-columns:1fr 1.35fr 1.3fr 1.25fr .82fr;gap:8px}.matrix-row>div{border:1px solid var(--line);background:var(--card);padding:11px 12px;border-radius:9px;font-size:11.5px;color:var(--muted)}.matrix-row>div:first-child{font-weight:850;color:var(--ink)}.matrix-head>div{background:var(--dark);color:#f6f4ef!important;border-color:var(--dark);font:800 10.5px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.04em}.matrix-row.adjacent>div{background:#fbf3e1}
+    .family-intro{display:grid;grid-template-columns:140px minmax(0,1fr);gap:20px;align-items:start;margin:24px 0 26px}.family-code{border-radius:12px;padding:16px;background:var(--dark);color:#fff}.family-code b{display:block;font:850 11px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;color:#7ad3ca;letter-spacing:.05em}.family-code span{display:block;font-size:25px;font-weight:850;margin-top:9px}.family-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.family-summary div{background:rgba(255,255,255,.55);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:12px;color:var(--muted)}.family-summary b{display:block;color:var(--ink);font-size:12px;margin-bottom:4px}
+    .work-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:26px 0}.work-grid.single{grid-template-columns:1fr}.work{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 8px 25px rgba(29,40,59,.035)}.work.key{border-color:#76b8b2;box-shadow:inset 0 0 0 1px #76b8b2}.work.counter{border-color:#d69a70}.work-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.work h3{font-size:21px;line-height:1.23;margin:0}.status{font:800 9.5px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--muted);text-align:right;max-width:115px}.evidence-line{display:grid;grid-template-columns:56px minmax(0,1fr);gap:9px;padding:10px 0;border-bottom:1px solid #ece7df;font-size:12px;line-height:1.58}.evidence-line:last-of-type{border-bottom:0}.evidence-line b{font-size:10.5px;color:var(--accent2);letter-spacing:.03em}.evidence-line span{color:#4f6075}.reported{margin-top:12px;padding:10px 11px;border-radius:9px;background:#eef5f2;color:#34554f;font-size:11.5px}.reported strong{color:var(--accent)}.our-read{margin-top:9px;padding:10px 11px;border-radius:9px;background:var(--warm-bg);color:#71462f;font-size:11.5px}.our-read strong{color:#9b4b2d}.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:13px;font-size:10.5px}.links a{text-decoration:none}
+    .deep-label{display:flex;align-items:center;gap:12px;margin:34px 0 16px}.deep-label:after{content:"";height:1px;background:var(--line);flex:1}.deep-label b{font:850 11px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.06em;color:var(--accent2)}.deep-label span{font-size:12px;color:var(--muted)}
+    .method-study{margin:18px 0 26px;border:1px solid #cfc9be;border-radius:20px;background:var(--card);overflow:hidden;box-shadow:0 12px 34px rgba(29,40,59,.055)}.method-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;padding:22px 24px 18px;border-bottom:1px solid #e7e1d8;background:linear-gradient(135deg,#fffefa 0%,#f7f5ef 100%)}.method-head h3{font-size:27px;margin:3px 0 6px}.method-head p{font-size:13px;color:var(--muted);margin:0;max-width:760px}.method-tag{font:850 10px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent);letter-spacing:.05em}.paper-locator{text-align:right;font-size:10.5px;color:var(--muted);white-space:nowrap}.paper-locator a{display:block;text-decoration:none;margin-bottom:4px}.method-body{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(250px,.75fr);gap:18px;padding:22px 24px 24px}.paper-figure{margin:0;border:1px solid var(--line);border-radius:15px;background:#fbfaf6;padding:18px;min-width:0}.figure-title{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:15px}.figure-title h3{font-size:13px;margin:0}.figure-title span{font:800 9.5px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2)}
+    .pipeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;align-items:stretch}.pipe-node{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:86px;padding:11px 9px;border:1px solid #cfd4d6;border-radius:11px;background:#fff;text-align:center}.pipe-node:not(:last-child):after{content:"→";position:absolute;right:-14px;top:calc(50% - 13px);z-index:2;color:var(--accent);font-size:18px;font-weight:900}.pipe-node b{font-size:11.5px;line-height:1.35}.pipe-node span{display:block;margin-top:5px;font-size:9.5px;line-height:1.4;color:var(--muted)}.pipe-node.choice{background:var(--green-bg);border-color:#77b6af}.pipe-node.observe{background:var(--blue-bg);border-color:#aab6d7}.pipe-node.warn-node{background:var(--warm-bg);border-color:#dda37f}
+    .branch-flow{display:grid;grid-template-columns:1fr 32px 1fr;gap:10px;align-items:center}.branch-start{border:1px solid #aab6d7;background:var(--blue-bg);border-radius:12px;padding:14px;text-align:center}.branch-start b{display:block;font-size:12px}.branch-start span{display:block;font-size:9.5px;color:var(--muted);margin-top:4px}.branch-arrow{text-align:center;color:var(--accent);font-size:22px;font-weight:900}.branch-options{display:grid;gap:8px}.branch-option{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;font-size:10.5px;color:var(--muted)}.branch-option b{color:var(--ink);margin-right:5px}.branch-option.accept{border-color:#78b5ad;background:var(--green-bg)}.branch-option.escalate{border-color:#d59b77;background:var(--warm-bg)}
+    .merge-flow{display:grid;grid-template-columns:minmax(0,1.65fr) 34px minmax(135px,.75fr) 34px minmax(120px,.65fr);gap:8px;align-items:center}.merge-lanes{display:grid;gap:9px}.merge-lane{display:grid;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr);gap:5px;align-items:center}.merge-node{display:flex;min-height:76px;flex-direction:column;justify-content:center;border:1px solid #cfd4d6;border-radius:11px;background:#fff;padding:10px;text-align:center}.merge-node.source{background:var(--blue-bg);border-color:#aab6d7}.merge-node.joint{background:var(--green-bg);border-color:#77b6af}.merge-node.final{background:var(--warm-bg);border-color:#dda37f}.merge-node b{font-size:11px;line-height:1.35}.merge-node span{font-size:9.2px;line-height:1.4;color:var(--muted);margin-top:5px}.lane-arrow,.merge-arrow{text-align:center;color:var(--accent);font-size:21px;font-weight:900}
+    .formula-stack{display:grid;gap:10px}.formula-card{border:1px solid #d5dbe7;border-radius:13px;background:#f3f5fa;padding:14px}.formula-card h4{font-family:inherit;font-size:11px;margin:0 0 8px;color:var(--blue);letter-spacing:.03em}.equation{font:600 13px/1.65 "Cambria Math",Cambria,Georgia,serif;color:#21324c;overflow-x:auto;white-space:normal}.equation.big{font-size:15px}.formula-card p{font-size:10.5px;line-height:1.55;color:var(--muted);margin:7px 0 0}.method-points{display:grid;gap:9px}.method-point{border-left:3px solid var(--accent);padding:3px 0 3px 11px}.method-point.warn-point{border-color:var(--accent2)}.method-point b{display:block;font-size:11px;margin-bottom:2px}.method-point span{font-size:10.5px;line-height:1.5;color:var(--muted)}.method-conclusion{grid-column:1/-1;display:grid;grid-template-columns:130px minmax(0,1fr);gap:15px;border-radius:12px;background:var(--dark);color:#d6dfe6;padding:15px 17px;font-size:11.5px}.method-conclusion b{font:850 10.5px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;color:#7ad3ca}.method-conclusion p{margin:0}.method-conclusion strong{color:#fff}.mini-table{display:grid;grid-template-columns:1.1fr .8fr .8fr;gap:5px}.mini-table>div{padding:8px;border:1px solid var(--line);border-radius:7px;background:#fff;font-size:9.5px;color:var(--muted)}.mini-table>.th{background:var(--dark);border-color:var(--dark);color:#fff;font-weight:800}.mini-table>div:nth-child(3n+1):not(.th){color:var(--ink);font-weight:750}
+    .benchmark-band{display:grid;grid-template-columns:170px minmax(0,1fr) auto;gap:18px;align-items:center;border:1px solid #92a0ca;background:var(--blue-bg);border-radius:15px;padding:18px;margin:24px 0}.benchmark-band h3{font-size:20px;margin:0}.benchmark-band p{font-size:12px;color:#4f5d7b;margin:0}.benchmark-stats{display:flex;gap:12px}.benchmark-stats div{text-align:center;min-width:66px}.benchmark-stats b{display:block;color:var(--blue);font-size:23px;line-height:1}.benchmark-stats span{font-size:9px;color:var(--muted)}
+    .lesson{display:grid;grid-template-columns:130px minmax(0,1fr);gap:16px;background:var(--dark);color:#eff4f5;border-radius:16px;padding:20px;margin-top:25px}.lesson .label{font:850 11px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:#7ad3ca}.lesson p{margin:0;color:#d2dbe3;font-size:13px}.lesson strong{color:#fff}
+    .overhead-figure{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px;margin:28px 0;box-shadow:var(--shadow)}.overhead-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:23px 0 5px}.overhead-step{position:relative;border:1px solid var(--line);border-radius:13px;background:#faf8f3;padding:15px 14px;min-height:142px}.overhead-step:not(:last-child):after{content:"→";position:absolute;right:-15px;top:51px;z-index:2;color:var(--accent);font-size:19px;font-weight:900}.overhead-step .phase{display:block;font:850 9.5px/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);letter-spacing:.05em}.overhead-step b{display:block;font-size:13px;line-height:1.42;margin:9px 0 7px}.overhead-step p{font-size:10.5px;line-height:1.55;color:var(--muted);margin:0}.cost-evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:25px 0}.cost-evidence{border:1px solid var(--line);background:var(--card);border-radius:16px;padding:19px}.cost-evidence header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid #ebe6dd}.cost-evidence h3{font-size:20px;margin:0}.coverage{flex:0 0 auto;border-radius:999px;padding:4px 8px;background:#f4e5b7;color:#795712;font:850 9px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace}.coverage.some{background:#dcefeb;color:#075f5a}.evidence-half{padding-top:12px}.evidence-half+ .evidence-half{margin-top:11px;padding-top:11px;border-top:1px dashed #ddd5c8}.evidence-half b{display:block;font-size:10.5px;color:var(--accent2);letter-spacing:.03em;margin-bottom:4px}.evidence-half p{font-size:11.5px;line-height:1.58;color:var(--muted);margin:0}.accounting-rule{display:grid;grid-template-columns:125px minmax(0,1fr);gap:15px;border:1px solid #9db0cc;background:var(--blue-bg);border-radius:14px;padding:17px 18px;margin:22px 0}.accounting-rule b{font:850 10.5px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue)}.accounting-rule p{font-size:12px;color:#4d5d78;margin:0}
+    .neighbor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:25px 0}.neighbor{border:1px solid #dfc690;background:#fffaf0;border-radius:15px;padding:18px}.neighbor h3{font-size:20px;margin:0 0 10px}.neighbor p{font-size:12px;color:var(--muted);margin:0 0 8px}.neighbor .not-same{padding-top:9px;border-top:1px solid #ead9b4;color:#775c24}.neighbor .links{margin-top:10px}
+    .occupied{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin:28px 0}.claim-box{border-radius:18px;padding:22px;border:1px solid var(--line);background:var(--card)}.claim-box.done{border-top:5px solid var(--accent2)}.claim-box.open{border-top:5px solid var(--accent)}.claim-box h3{font-size:23px;margin:0 0 14px}.claim-box ul{margin:0;padding-left:20px}.claim-box li{margin:9px 0;color:var(--muted);font-size:13px}.claim-box strong{color:var(--ink)}
+    .action-figure{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px;margin:30px 0;box-shadow:var(--shadow)}.action-figure h3{margin:0;font-size:24px}.action-flow{display:grid;grid-template-columns:1fr auto 1.35fr auto 1fr;gap:12px;align-items:center;margin:25px 0}.action-node{border:1px solid var(--line);border-radius:14px;padding:17px;background:#faf8f3}.action-node b{display:block;font-size:14px;margin-bottom:6px}.action-node p{font-size:11.5px;color:var(--muted);margin:0}.action-node.action{background:var(--green-bg);border-color:#74b4ad}.arrow{color:var(--accent);font-size:26px;font-weight:900}.boundary-options{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.boundary-options div{border:1px solid #aab4d4;background:var(--blue-bg);border-radius:10px;padding:10px;text-align:center}.boundary-options b{display:block;font:800 10.5px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--blue)}.boundary-options span{font-size:9.5px;color:var(--muted)}
+    .decision-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:25px 0}.decision-card{border-top:4px solid var(--accent);background:var(--card);padding:17px;border-radius:0 0 13px 13px}.decision-card .n{font:850 10.5px/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2)}.decision-card h3{font-size:19px;margin:10px 0 8px}.decision-card p{font-size:12px;color:var(--muted);margin:0}.verdict{background:var(--dark);color:#eff3f5;border-radius:21px;padding:28px;margin:24px 0}.verdict .decision{font:850 11px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:#7ad3ca;letter-spacing:.06em}.verdict h3{font-size:30px;margin:13px 0 14px}.verdict p{color:#d2dae3;font-size:14px}.verdict strong{color:#fff}
+    .refs{padding-left:22px}.refs li{margin:12px 0;color:var(--muted);font-size:12px}.source-box{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.source-box a{display:inline-flex;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);font-size:11px;text-decoration:none}footer{border-top:1px solid var(--line);padding:32px 0;color:var(--muted);font-size:11px}
+
+    /* Page 02 reading rhythm: one hierarchy, one direction. */
+    .layout{grid-template-columns:190px minmax(0,1fr);gap:40px}.hero{padding:68px 0 50px}h1{font-size:clamp(44px,6.7vw,82px)}h2{font-size:clamp(30px,3.2vw,43px)}.tension{box-shadow:none}
+    section{padding:58px 0 78px;scroll-margin-top:72px}section>h2{max-width:920px;margin-bottom:18px}section>.lead{max-width:900px;margin-bottom:30px}.caption{font-size:13px;line-height:1.62}
+    .route-map,.action-figure,.overhead-figure{padding:30px;margin:34px 0}.route-head h3,.action-figure h3{font-size:26px;line-height:1.25}.matrix{gap:9px;margin:30px 0}.matrix-row{grid-template-columns:.78fr 1.2fr 1.45fr 1.12fr;gap:9px}.matrix-row>div{padding:13px 14px;font-size:12.5px;line-height:1.55}.matrix-head>div{font-size:11px}.matrix-row.adjacent>div{background:#fbf3e1}
+    .family-intro{grid-template-columns:112px minmax(0,1fr);gap:14px;margin:30px 0 26px}.family-code{min-height:112px;display:flex;flex-direction:column;justify-content:center;padding:18px;background:#e7f1ee;color:var(--ink);border:1px solid #b9d6d0}.family-code b,.family-code span{color:var(--accent)}.family-code span{font-size:31px}.family-summary{gap:12px}.family-summary div{padding:16px 17px;font-size:13px;line-height:1.6}.family-summary b{font-size:13px}.deep-label{margin:42px 0 18px}.deep-label span{font-size:13px}
+    .method-study{margin:20px 0 48px;border-radius:22px;box-shadow:none}.method-head{grid-template-columns:minmax(0,1fr) 210px;gap:24px;padding:28px 30px 23px;border-top:5px solid var(--accent)}.method-head h3{font-size:30px;line-height:1.22;margin:5px 0 8px}.method-head p{font-size:14px;line-height:1.65;max-width:760px}.method-tag{font-size:10.5px}.paper-locator{font-size:11px;line-height:1.55}.method-body{display:grid;grid-template-columns:1fr;gap:22px;padding:28px 30px 32px}.paper-figure{padding:23px;border-radius:16px}.figure-title{margin-bottom:18px}.figure-title h3{font-size:15px;margin:0}.figure-title span{font-size:10px}.formula-stack{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.formula-card{padding:18px}.formula-card h4{font-size:12px;margin-bottom:10px}.equation{font-size:15px;line-height:1.7;white-space:nowrap;overflow-x:auto}.equation.big{font-size:17px}.formula-card p{font-size:12px;line-height:1.62;margin-top:9px}.method-points{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:11px}.method-point{border:1px solid #d7ddd9;border-left:4px solid var(--accent);border-radius:0 11px 11px 0;background:#f8fbfa;padding:12px 13px}.method-point.warn-point{border-color:#ead6c8;border-left-color:var(--accent2);background:#fff8f4}.method-point b{font-size:12.5px;margin-bottom:5px}.method-point span{font-size:12px;line-height:1.58}.method-conclusion{grid-template-columns:160px minmax(0,1fr);gap:18px;padding:19px 21px;font-size:13px;background:#edf3f7;color:var(--ink);border-left:5px solid var(--blue)}.method-conclusion b{font-size:11px;color:var(--blue)}.method-conclusion p{color:#40546b}.method-conclusion strong{color:var(--ink)}.mini-table>div{padding:10px;font-size:11px}.pipe-node{min-height:96px;padding:13px 10px}.pipe-node b{font-size:12px}.pipe-node span{font-size:10.5px}.merge-node{min-height:88px;padding:12px}.merge-node b{font-size:12px}.merge-node span{font-size:10px}
+    .work-grid{gap:16px;margin:28px 0}.work{padding:22px}.work h3{font-size:22px}.evidence-line{grid-template-columns:64px minmax(0,1fr);padding:12px 0;font-size:13px}.evidence-line b{font-size:11px}.reported,.our-read{padding:12px 13px;font-size:12.5px;line-height:1.6}.benchmark-band{padding:21px;margin:28px 0}.benchmark-band p{font-size:13px;line-height:1.6}
+    .lesson{grid-template-columns:150px minmax(0,1fr);gap:18px;background:#eaf3f0;color:var(--ink);border:1px solid #b9d6d0;border-left:5px solid var(--accent);padding:20px 22px;margin-top:30px}.lesson .label{color:var(--accent);font-size:11px}.lesson p{color:#405a61;font-size:13.5px}.lesson strong{color:var(--ink)}
+    .overhead-flow{gap:13px}.overhead-step{padding:17px;min-height:154px}.overhead-step b{font-size:14px}.overhead-step p{font-size:11.5px}.cost-evidence-grid{gap:16px;margin:30px 0}.cost-evidence{padding:22px}.cost-evidence h3{font-size:21px}.evidence-half p{font-size:12.5px;line-height:1.65}.accounting-rule{padding:20px 21px}.accounting-rule p{font-size:13px;line-height:1.65}
+    .neighbor-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:26px 0 36px}.neighbor{padding:21px}.neighbor h3{font-size:21px}.neighbor p{font-size:13px;line-height:1.62}.neighbor .not-same{color:#5d6470}.occupied{gap:18px;margin:30px 0}.claim-box{padding:24px}.claim-box h3{font-size:24px}.claim-box li{font-size:13.5px;line-height:1.6}.decision-grid{gap:16px;margin:30px 0}.decision-card{padding:20px}.decision-card h3{font-size:21px}.decision-card p{font-size:13px;line-height:1.62}.verdict{padding:32px;margin-top:30px}.verdict h3{font-size:31px}.verdict p{font-size:14.5px;line-height:1.7}.refs li{font-size:13px;line-height:1.65}.source-box a{font-size:12px}
+    .scope-matrix{display:grid;gap:12px;margin:30px 0}.scope-row{display:grid;grid-template-columns:170px minmax(220px,.85fr) minmax(0,1.35fr);gap:14px;align-items:stretch}.scope-row>div{border:1px solid var(--line);border-radius:13px;background:var(--card);padding:18px}.scope-type{display:flex;flex-direction:column;justify-content:center;background:var(--dark)!important;color:#fff!important}.scope-type b{font-size:15px}.scope-type span{font:800 10px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;color:#7ad3ca;margin-top:7px}.scope-work h3{font-size:20px;margin:0 0 8px}.scope-work p,.scope-use p{font-size:12.5px;line-height:1.62;color:var(--muted);margin:0}.scope-use b{display:block;font-size:11px;color:var(--accent2);margin:0 0 4px}.scope-use b:not(:first-child){margin-top:11px}.scope-links{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px;font-size:10.5px}
+    @media(max-width:980px){.layout{grid-template-columns:1fr;gap:20px}.toc{position:static;display:flex;flex-wrap:wrap;gap:5px 10px;padding-bottom:15px;border-bottom:1px solid var(--line)}.toc strong{width:100%;margin-bottom:5px}.toc a{border-left:0;border-bottom:1px solid var(--line);padding:4px 0}.route-axis{grid-template-columns:repeat(3,1fr);row-gap:20px}.route-axis:before{display:none}.matrix-row{grid-template-columns:.8fr 1.2fr 1.35fr 1.05fr}.action-flow{grid-template-columns:1fr}.arrow{transform:rotate(90deg);text-align:center}.benchmark-band{grid-template-columns:1fr}.benchmark-stats{justify-content:flex-start}.pipeline{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:20px}.pipe-node:nth-child(3):after{display:none}.overhead-flow{grid-template-columns:repeat(2,minmax(0,1fr))}.overhead-step:nth-child(2):after{display:none}.scope-row{grid-template-columns:150px .85fr 1.2fr}}
+    @media(max-width:720px){.shell{padding:0 18px}.hero{padding-top:50px}.hero h1{max-width:100%;font-size:clamp(38px,10.5vw,43px);line-height:1.02;letter-spacing:-.035em;word-break:break-word;line-break:anywhere}.dek{font-size:18px}.page-nav{display:none}.tension-grid,.work-grid,.neighbor-grid,.occupied,.decision-grid,.family-summary,.cost-evidence-grid,.formula-stack{grid-template-columns:1fr}.family-intro{grid-template-columns:1fr}.family-code{min-height:auto;display:flex;flex-direction:row;align-items:center;justify-content:space-between}.family-code span{margin:0}.route-head{display:block}.figure-no{white-space:normal;margin-top:8px}.work-top{flex-wrap:wrap}.status{text-align:left;max-width:none}.route-axis{grid-template-columns:repeat(2,1fr)}.matrix-head{display:none}.matrix-row{grid-template-columns:1fr}.matrix-row>div{display:block!important}.matrix-row>div:before{display:block;font:800 9px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);margin-bottom:3px}.matrix-row>div:nth-child(1):before{content:"决策时机"}.matrix-row>div:nth-child(2):before{content:"代表工作与动作"}.matrix-row>div:nth-child(3):before{content:"可利用的状态"}.matrix-row>div:nth-child(4):before{content:"下一次何时重选"}.benchmark-stats{flex-wrap:wrap}.lesson,.accounting-rule{grid-template-columns:1fr}.boundary-options{grid-template-columns:repeat(2,1fr)}.method-head{grid-template-columns:1fr;padding:23px 20px 19px}.paper-locator{text-align:left;white-space:normal}.method-body{padding:20px}.paper-figure{padding:17px}.pipeline{grid-template-columns:1fr}.pipe-node:not(:last-child):after{content:"↓";right:auto;left:calc(50% - 7px);top:auto;bottom:-18px}.pipe-node:nth-child(3):after{display:block}.branch-flow{grid-template-columns:1fr}.branch-arrow{transform:rotate(90deg)}.merge-flow{grid-template-columns:1fr}.merge-lane{grid-template-columns:1fr}.lane-arrow{transform:rotate(90deg)}.merge-arrow{transform:rotate(90deg)}.method-conclusion{grid-template-columns:1fr}.mini-table{grid-template-columns:repeat(3,minmax(0,1fr))}.mini-table>.th{display:block}.mini-table>div:nth-child(3n+1):not(.th){margin-top:0}.overhead-flow{grid-template-columns:1fr}.overhead-step:not(:last-child):after{content:"↓";right:auto;left:calc(50% - 7px);top:auto;bottom:-19px}.overhead-step:nth-child(2):after{display:block}.scope-row{grid-template-columns:1fr}.scope-type{min-height:auto}section{padding:48px 0 62px}}
+    @media print{.topbar,.toc{display:none}.layout{display:block}.hero{padding-top:40px}.hero h1{font-size:42pt}.shell{max-width:none;padding:0 18mm}.method-study{overflow:visible;box-shadow:none;break-inside:auto}.method-head,.figure-title,h2,h3{break-after:avoid}.method-conclusion,.lesson,.accounting-rule,.work,.neighbor,.route-map,.action-figure,.overhead-figure,.cost-evidence,.verdict,.paper-figure,.formula-card,.scope-row{break-inside:avoid}#references{break-before:page}a{color:inherit;text-decoration:none}section{break-before:auto}footer{padding:18px 0}footer .shell{font-size:8px;white-space:nowrap}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="shell">
+    <div class="brand"><a href="index.html">RouteCraft Research Pages</a></div>
+    <nav class="page-nav" aria-label="页面导航"><a href="01_background_why_router.html">← Page 01</a><span>PUBLIC WEB EDITION · Page 02</span><a href="03_research_plan_branches.html">Page 03 →</a></nav>
+  </div></header>
+
+  <div class="hero"><div class="shell">
+    <div class="kicker">RELATED WORK · PAGE 02</div>
+    <h1>现有 Router 已经解决了什么?还缺少哪些证据?</h1>
+    <p class="dek">本页按照模型选择发生的时机梳理相关工作，比较它们如何选模、能读取哪些 Agent 状态，以及计入了哪些系统成本。通过这些比较，可以明确当前研究已经做到哪里，以及要让 Router 根据状态决定下一次何时重选，还需要补充哪些证据。</p>
+    <div class="tension-grid">
+      <article class="tension"><div class="n">DECIDE EARLY</div><h3>在请求或任务开始时选定模型</h3><p>Router 只运行一次，容易保留 cache 和会话连续性；判断依据主要来自初始 prompt。</p></article>
+      <article class="tension"><div class="n">DECIDE OFTEN</div><h3>在执行过程中逐轮重新选择</h3><p>工具结果、测试失败和恢复状态都能进入决策；系统需要承担多次 Router 计算和潜在模型切换。</p></article>
+      <article class="tension"><div class="n">DECIDE ON EVENT</div><h3>在工具或验证事件后重新选择</h3><p>系统等到可观察事件出现再调用 Router；现有实现通常预先规定哪些事件触发重选。</p></article>
+    </div>
+  </div></div>
+
+  <div class="shell layout">
+    <aside class="toc" aria-label="本页目录"><strong>本页目录</strong>
+      <a href="#framework">四个比较问题</a><a href="#request">请求内选择与升级</a><a href="#commitment">任务固定与升级</a><a href="#trajectory">执行状态与标签</a><a href="#continuity">会话连续性</a><a href="#overhead">额外成本证据</a><a href="#adjacent">邻近方法</a><a href="#space">调研留下的问题</a><a href="#decision">下一步验证</a><a href="#references">来源</a>
+    </aside>
+
+    <main>
+      <section id="framework">
+        <h2>比较 Router，需要同时看四个问题</h2>
+        <p class="lead"><span class="mark infer">本页的比较方法</span>第一，Router 何时被调用；第二，它能读取哪些任务状态；第三，它能执行哪些动作；第四，它是否同时改动 Agent workflow。四个问题分别描述调用时机、可见状态、动作范围和流程影响。</p>
+        <figure class="route-map">
+          <div class="route-head"><h3>现有方法常用的六类决策机会</h3><div class="figure-no">FIGURE 01 / DECISION OPPORTUNITY</div></div>
+          <div class="route-axis">
+            <div class="route-point direct"><b>请求前</b><span>Prompt Router</span></div>
+            <div class="route-point direct"><b>任务开始</b><span>Task pinning</span></div>
+            <div class="route-point direct"><b>固定 K 轮后</b><span>Escalation</span></div>
+            <div class="route-point direct"><b>每轮 / 每次调用</b><span>Trajectory routing</span></div>
+            <div class="route-point direct"><b>固定事件触发</b><span>Sticky session</span></div>
+            <div class="route-point adjacent"><b>Workflow 节点</b><span>邻近路线</span></div>
+          </div>
+          <figcaption class="caption">这些节点列出 Router 可能获得决策机会的位置，不表示严格时间顺序或频率高低：事件触发可能比逐调用更密，也可能更疏。是否修改 workflow 需要另看矩阵最后一列。</figcaption>
+        </figure>
+
+        <div class="matrix" role="table" aria-label="Router 决策粒度矩阵">
+          <div class="matrix-row matrix-head" role="row"><div>决策时机</div><div>代表工作与动作</div><div>可利用的状态</div><div>下一次何时重选</div></div>
+          <div class="matrix-row" role="row"><div>请求前</div><div>RouteLLM、SCOPE、R²：选择模型或预算</div><div>Query 与模型实测档案</div><div>通常不再选择</div></div>
+          <div class="matrix-row" role="row"><div>回答后</div><div>FrugalGPT：接受回答或升级模型</div><div>Query、候选回答与升级状态</div><div>验收失败后继续升级</div></div>
+          <div class="matrix-row" role="row"><div>任务开始</div><div>TRACE、Agent-as-a-Router：固定本任务模型</div><div>任务入口信息与过去任务反馈</div><div>任务终止后再选</div></div>
+          <div class="matrix-row" role="row"><div>固定 K 轮后</div><div>SWE-Router：继续便宜模型或升级</div><div>便宜模型已经执行 K 轮的轨迹</div><div>K 由实验者预设</div></div>
+          <div class="matrix-row" role="row"><div>每轮 / 每次调用</div><div>MTRouter、Hera、Twin、SAAR 等</div><div>历史、工具、预算、错误、验证与连续性</div><div>固定在下一轮或下一次调用</div></div>
+          <div class="matrix-row" role="row"><div>固定事件</div><div>HyDRA：事件发生后重新选择模型</div><div>当前消息、session 标记与模型档案</div><div>上下文压缩、摘要等预设事件</div></div>
+          <div class="matrix-row adjacent" role="row"><div>Workflow 节点</div><div>GraphPlanner、EASy、Aragog：生成或调度节点</div><div>Workflow、milestone 或服务负载</div><div>由生成流程或预定义 DAG 决定</div></div>
+        </div>
+        <div class="callout"><strong>这张表给出的核心观察：</strong>本轮样本覆盖了请求前、回答验收、任务开始、固定 K、逐轮调用和系统事件等常见机会集合。多数方法预先规定下一次重选发生在第 K 轮、下一次调用或某个事件；它们学习选择哪个模型，却不学习何时再次调用 Router。</div>
+      </section>
+
+      <section id="request">
+        <h2>面向单次 LLM 请求的 Router：选择模型、分配输出预算或逐级升级</h2>
+        <p class="lead">这类工作把一项用户请求作为评测单位。Prompt Router 在生成前选择模型；R²-Router 还会为本次回答分配输出 token 预算；cascade 则先取得候选回答，再决定接受还是调用更强模型。路由依据主要来自 query、模型实测表现和当前候选回答。</p>
+        <div class="family-intro"><div class="family-code"><b>LLM ROUTER</b><span>01</span></div><div class="family-summary"><div><b>要解决的问题</b>一次独立请求应该调用哪个模型、分配多少输出预算，或者是否接受当前回答。</div><div><b>何时作出选择</b>生成前选择一次；或者在新的候选回答产生后，按级联规则判断是否升级。</div></div></div>
+        <div class="deep-label"><b>REPRESENTATIVE METHODS · 精讲</b><span>按原论文图示和公式重绘，只展开能代表一种决策机制的工作</span></div>
+
+        <article class="method-study">
+          <header class="method-head"><div><div class="method-tag">CASCADE · ANSWER-AWARE</div><h3>FrugalGPT：先试便宜的，回答不可靠时再升级</h3><p>每个候选回答生成后，可靠性预测器判断是直接返回，还是继续调用更强的模型 API。</p></div><div class="paper-locator"><a href="https://openreview.net/forum?id=cSimKw5p6R">TMLR 2024 · 论文</a><a href="https://github.com/stanford-futuredata/Frugalgpt">官方代码</a><a href="https://arxiv.org/pdf/2305.05176">在线 PDF · Figure 3 / Table 3</a></div></header>
+          <div class="method-body">
+            <figure class="paper-figure">
+              <div class="figure-title"><h3>一个学出来的三级 cascade</h3><span>据 FIGURE 3 重绘</span></div>
+              <div class="pipeline">
+                <div class="pipe-node observe"><b>Query</b><span>同一个请求</span></div>
+                <div class="pipe-node"><b>GPT-J</b><span>先调用便宜 API</span></div>
+                <div class="pipe-node choice"><b>可靠性 g ≥ 0.96？</b><span>是：接受；否：升级</span></div>
+                <div class="pipe-node"><b>J1-L</b><span>第二级候选回答</span></div>
+                <div class="pipe-node warn-node"><b>仍不足则 GPT-4</b><span>论文示例阈值 0.37</span></div>
+              </div>
+              <figcaption class="caption">论文在 HEADLINES 上学到 GPT-J → J1-L → GPT-4 的顺序与阈值。图中数值适用于该数据集、模型池和 2023 年价格条件。</figcaption>
+            </figure>
+            <div class="formula-stack">
+              <div class="formula-card"><h4>停止位置</h4><div class="equation big">z(q) = min { i : g(q, f<sub>Lᵢ</sub>(q)) ≥ τ<sub>i</sub> }</div><p>g 读取 query 与当前回答；τ<sub>i</sub> 是第 i 级的接受阈值。返回第 z 个 API 的回答。</p></div>
+              <div class="formula-card"><h4>学习目标</h4><div class="equation">max<sub>L,τ</sub> E[r(a, f<sub>L<sub>z</sub></sub>(q))] &nbsp; s.t. &nbsp; E[Σ<sub>i=1</sub><sup>z</sup> C<sub>Lᵢ</sub>] ≤ b</div><p>模型顺序 L 和阈值 τ 一起搜索；优化的是预算约束下的平均质量。</p></div>
+            </div>
+            <div class="paper-figure">
+              <div class="figure-title"><h3>达到最佳单模型相同准确率时</h3><span>TABLE 3 · 原文数值</span></div>
+              <div class="mini-table"><div class="th">数据集</div><div class="th">最佳单模型成本</div><div class="th">FrugalGPT 成本</div><div>HEADLINES</div><div>33.1</div><div>0.6</div><div>OVERRULING</div><div>9.7</div><div>2.6</div><div>COQA</div><div>72.5</div><div>29.6</div></div>
+              <figcaption class="caption">作者据此报告分别节省 98.3%、73.3% 和 59.2%。成本与价格来自论文当时条件，不能直接外推到今天。</figcaption>
+            </div>
+            <div class="method-points"><div class="method-point"><b>新增信息</b><span>候选回答及其可靠性分数，为升级判断提供了初始 query 中没有的信息。</span></div><div class="method-point"><b>论文已经计入的费用</b><span>停止前发生的各级 API 调用已经累计，因此成本包含已经尝试过的便宜模型。</span></div><div class="method-point warn-point"><b>尚未单独统计的开销</b><span>可靠性预测器的在线时间、离线结果矩阵、级联策略搜索，以及多级模型顺序生成造成的等待。</span></div></div>
+            <div class="method-conclusion"><b>要点</b><p>FrugalGPT 把候选回答视为新的决策信息：可靠性足够时停止，否则继续调用更强模型。它还说明 cascade 的成本应累计停止前已经发生的全部模型调用。</p></div>
+          </div>
+        </article>
+
+        <article class="method-study">
+          <header class="method-head"><div><div class="method-tag">PROMPT ROUTING · PREFERENCE LEARNING</div><h3>RouteLLM：预测强模型是否值得调用，再用阈值控制调用比例</h3><p>它把约 80K 条 Chatbot Arena 偏好转成“强模型胜过弱模型”的概率；阈值变化对应不同的质量—成本工作点。</p></div><div class="paper-locator"><a href="https://openreview.net/forum?id=8sSqNntaMr">ICLR 2025 · 论文</a><a href="https://github.com/lm-sys/RouteLLM">官方代码</a><a href="https://arxiv.org/pdf/2406.18665">在线 PDF · Figure 1 / Eq. 2</a></div></header>
+          <div class="method-body">
+            <figure class="paper-figure">
+              <div class="figure-title"><h3>从偏好监督到一次选模</h3><span>据 FIGURE 1 重绘</span></div>
+              <div class="pipeline">
+                <div class="pipe-node observe"><b>偏好数据</b><span>query + strong/weak 胜负</span></div>
+                <div class="pipe-node"><b>轻量预测器</b><span>MF、BERT 或 causal LLM</span></div>
+                <div class="pipe-node choice"><b>P(strong wins | q)</b><span>估计调用强模型的价值</span></div>
+                <div class="pipe-node"><b>与阈值 α 比较</b><span>扫描 α 得到整条曲线</span></div>
+                <div class="pipe-node warn-node"><b>Weak / Strong</b><span>生成前只选择一次</span></div>
+              </div>
+              <figcaption class="caption">RouteLLM 比较多种 Router 架构，但线上决策都归结为同一个概率与阈值。每个 query 在生成前独立选择一次模型，不读取本次生成结果。</figcaption>
+            </figure>
+            <div class="formula-stack">
+              <div class="formula-card"><h4>路由规则 · Equation (2)</h4><div class="equation big">R<sup>α</sup>(q) = M<sub>weak</sub>, 若 P(strong wins | q) &lt; α；否则为 M<sub>strong</sub></div><p>α 越高，越多请求交给 weak model；调整 α 就能选择所需的成本—质量工作点。</p></div>
+              <div class="formula-card"><h4>恢复了多少强弱模型差距</h4><div class="equation">PGR = [r(M<sub>R</sub>) − r(M<sub>w</sub>)] / [r(M<sub>s</sub>) − r(M<sub>w</sub>)]</div><p>PGR=1 表示恢复全部性能差距；论文再沿调用比例积分得到 APGR。</p></div>
+            </div>
+            <div class="paper-figure">
+              <div class="figure-title"><h3>同一方法的正结果与反例</h3><span>TABLES 1–3 / 7</span></div>
+              <div class="method-points"><div class="method-point"><b>近分布条件</b><span>在 MT-Bench，Arena + judge augmentation 的 matrix-factorization Router 达到 APGR 0.802；论文据其价格假设报告某工作点约 3.66× 节省。</span></div><div class="method-point warn-point"><b>分布偏移</b><span>只用 Arena 训练时，在 MMLU 和 GSM8K 上接近或差于随机 Router；加入少量近分布数据后才改善。</span></div><div class="method-point"><b>Router serving 很轻</b><span>Table 7 中 MF 为 155.16 requests/s、估算每百万请求 3.32 美元；但约 700 美元的 Judge 数据构建和最高 8×A100 的训练没有进入 3.66× 在线结果。</span></div></div>
+            </div>
+            <div class="method-points"><div class="method-point"><b>模型学到的范围</b><span>在训练分布下，哪些 query 更可能需要预先指定的 strong model。</span></div><div class="method-point warn-point"><b>迁移限制</b><span>增加 Router 参数量无法自动解决分布偏移；二元 strong/weak 判断也未提供新模型的实测能力描述。</span></div></div>
+            <div class="method-conclusion"><b>要点</b><p>RouteLLM 表明，小型预测器可以完成请求生成前的强弱模型选择。它的分布外结果也说明，训练数据是否覆盖部署请求，可能比单纯增加 Router 参数量更重要。</p></div>
+          </div>
+        </article>
+
+        <article class="method-study">
+          <header class="method-head"><div><div class="method-tag">JOINT ACTION · MODEL × OUTPUT BUDGET</div><h3>R²-Router：同时选择模型和输出 token 预算，控制本次回答的质量与成本</h3><p>它把输出 token 上限作为显式决策变量，为每个模型预测不同预算下的质量，再从“模型 × 预算”组合中选择本次请求的配置。</p></div><div class="paper-locator"><a href="https://arxiv.org/abs/2602.02823">ICML 2026 · 论文</a><a href="https://github.com/UCF-ML-Research/R2-Router">官方代码</a><a href="https://arxiv.org/pdf/2602.02823">在线 PDF · Figures 2 / 4</a></div></header>
+          <div class="method-body">
+            <figure class="paper-figure">
+              <div class="figure-title"><h3>从“模型点”变成“模型曲线”</h3><span>据 FIGURES 2 / 4 重绘</span></div>
+              <div class="pipeline">
+                <div class="pipe-node observe"><b>30,968 queries</b><span>15 models × 16 budgets</span></div>
+                <div class="pipe-node"><b>0.6B query encoder</b><span>得到 z<sub>x</sub></span></div>
+                <div class="pipe-node choice"><b>模型—预算预测头</b><span>预测每个点的质量</span></div>
+                <div class="pipe-node"><b>质量—预算曲线</b><span>可用 anchor 插值</span></div>
+                <div class="pipe-node warn-node"><b>选择 (M*, b*)</b><span>随后只生成一次</span></div>
+              </div>
+              <figcaption class="caption">论文由强 LLM Judge 为每个回答给出 0–1 质量分，并记录实际 token。Router 训练较轻，但数据生产仍需执行大量 model × budget 组合。</figcaption>
+            </figure>
+            <div class="formula-stack">
+              <div class="formula-card"><h4>质量预测</h4><div class="equation">Q̂(x,M<sub>i</sub>,b<sub>k</sub>) = σ(g<sub>i,k</sub>(Enc(x)))</div><p>每个模型—预算锚点有一个三层 MLP head，以 judge quality 做 MSE 监督。</p></div>
+              <div class="formula-card"><h4>联合决策</h4><div class="equation big">(M*,b*) = arg max<sub>Mᵢ,bₖ</sub> [(1−λ)Q̂(x,Mᵢ,bₖ) − λC<sub>i</sub>(bₖ)]</div><p>b 是本次回答的输出 token 预算。λ 控制预测质量和推理成本之间的取舍。</p></div>
+            </div>
+            <div class="paper-figure"><div class="figure-title"><h3>论文报告与生产代价要同时看</h3><span>FIGURES 5 / 7 / 8</span></div><div class="method-points"><div class="method-point"><b>作者报告</b><span>相近约 0.8 平均质量时，point-based baselines 按被选 LLM 的 input + output inference cost 计算，需要约 4–5× 成本；单 query 路由平均低于 400 ms、低于生成时间 1%。</span></div><div class="method-point"><b>接入新模型</b><span>6–8 个预算 anchor 已接近 16 点效果；新增模型仍需重新测量不同预算下的表现，并训练 Router。</span></div><div class="method-point warn-point"><b>关键反例</b><span>极短 token 限制并非所有模型都可靠遵守；完整数据构建使用强 Judge 和大规模推理，不能只报告小预测头训练时间。</span></div></div></div>
+            <div class="method-points"><div class="method-point"><b>理论保证的边界</b><span>扩大 model × budget 搜索集合只保证 Oracle 最优值不下降，不保证预测器能找到它，也不保证加入数据采集和 Judge 成本后仍然更省。</span></div><div class="method-point warn-point"><b>成本统计范围</b><span>论文的主要成本曲线按被选模型的 input 与 output inference cost 计算；模型能力测量、Judge 和数据生产费用需要另行核算。</span></div></div>
+            <div class="method-conclusion"><b>要点</b><p>R²-Router 说明，同一个模型在不同输出 token 预算下会形成不同的质量—成本点。模型选择和输出长度预算可以作为一个联合路由动作，而不必把每个模型视为固定成本的单一点。</p></div>
+          </div>
+        </article>
+
+        <div class="deep-label"><b>LANDSCAPE INDEX · 其余工作</b><span>保留短卡片用于横向查阅，避免精讲与总览混在一起</span></div>
+        <div class="work-grid single">
+          <article class="work"><div class="work-top"><h3>SCOPE：用校准题构建模型能力档案，以支持未见模型接入</h3><div class="status">ARXIV PREPRINT · 2026</div></div><div class="evidence-line"><b>观察</b><span>固定 model ID 的分类器难以接入新模型；候选模型需要可比较的实测描述。</span></div><div class="evidence-line"><b>方法</b><span>每个模型运行约 250 个校准问题，形成实测能力档案；Qwen3-4B 再预测正确率和输出长度。</span></div><div class="reported"><strong>论文范围：</strong>7 个 seen 与 4 个 unseen models；项目页写代码 future release。</div><div class="our-read"><strong>要点：</strong>SCOPE 根据模型的实测能力档案匹配请求，为接入训练阶段未见过的新模型提供了一种候选条件化方案。</div><div class="links"><a href="https://arxiv.org/abs/2601.22323">论文</a><a href="https://sullivan07043.github.io/SCOPE/">项目页</a><a href="https://arxiv.org/pdf/2601.22323">在线 PDF</a></div></article>
+        </div>
+        <aside class="benchmark-band"><h3>Unified Routing and Cascading：生成前选模型，回答后决定是否升级</h3><p>ICML 2025 的 <a href="https://proceedings.mlr.press/v267/dekoninck25a.html">A Unified Approach to Routing and Cascading</a> 将 routing 定义为生成前选择一个模型，将 cascading 定义为看到回答后判断是否升级，并用同一框架描述两种动作。<a href="https://raw.githubusercontent.com/mlresearch/v267/main/assets/dekoninck25a/dekoninck25a.pdf">在线 PDF</a></p><div class="benchmark-stats"><div><b>ROUTE</b><span>生成前选择</span></div><div><b>CASCADE</b><span>回答后验收</span></div></div></aside>
+        <aside class="benchmark-band"><h3>LLMRouterBench：用统一的 query × model 结果比较请求级 Router</h3><p>它把不同 query 在多个模型上的结果整理成静态路由基准，用同一数据协议比较 10 类 Router。基准包含 400K+ queries、33 个模型和 21 个数据集。</p><div class="benchmark-stats"><div><b>400K+</b><span>QUERIES</span></div><div><b>33</b><span>MODELS</span></div><div><b>21</b><span>DATASETS</span></div></div></aside>
+        <div class="lesson"><div class="label">本节小结</div><p>请求级 LLM Router 已经形成三类主要动作：生成前选择模型、同时分配输出 token 预算，以及看到候选回答后决定是否升级。<strong>它们共同说明，单次请求的成本—质量优化不只是选择一个模型，也可以联合选择生成预算和升级路径。</strong></p></div>
+      </section>
+
+      <section id="commitment">
+        <h2>任务固定与固定 K 升级减少了任务内的重选次数</h2>
+        <p class="lead">Agent 的奖励通常到任务结束才知道，模型切换还可能破坏 cache 和执行一致性。因此，一些工作宁愿在任务开始时固定模型；另一些工作允许便宜模型先执行固定轮数，再做一次升级判断。</p>
+        <div class="family-intro"><div class="family-code"><b>ROUTE FAMILY</b><span>02</span></div><div class="family-summary"><div><b>要解决的问题</b>如何避免逐调用信用分配和频繁切换，同时保留部分成本节省。</div><div><b>下一次何时重选</b>任务结束，或由实验者预先指定的第 K 轮。</div></div></div>
+        <div class="deep-label"><b>REPRESENTATIVE METHODS · 精讲</b><span>一个把模型固定到底，一个先购买 K 轮信息；两者构成自适应边界的强对照</span></div>
+
+        <article class="method-study">
+          <header class="method-head"><div><div class="method-tag">TASK PINNING · DELAYED REWARD</div><h3>TRACE-Router：入口处只选一次，随后固定到任务结束</h3><p>TRACE 不把每个 LLM call 当作独立样本。它按 task_id 维持一个活动任务表，终局正确率与端到端延迟只更新最初负责接纳该任务的 bandit。</p></div><div class="paper-locator"><a href="https://arxiv.org/abs/2607.22465">2026 preprint · 论文</a><a href="https://arxiv.org/pdf/2607.22465">在线 PDF · Figure 2 / Eqs. 9, 11</a></div></header>
+          <div class="method-body">
+            <figure class="paper-figure">
+              <div class="figure-title"><h3>Task admission 与后续复用</h3><span>据 FIGURE 2 重绘</span></div>
+              <div class="pipeline">
+                <div class="pipe-node observe"><b>首次 request</b><span>携带持久 task_id</span></div>
+                <div class="pipe-node"><b>规则 context</b><span>easy / medium / hard</span></div>
+                <div class="pipe-node choice"><b>每 context 一个 UCB</b><span>选择 backend</span></div>
+                <div class="pipe-node"><b>活动任务表</b><span>task_id → model</span></div>
+                <div class="pipe-node warn-node"><b>后续 request 复用</b><span>直到 terminal feedback</span></div>
+              </div>
+              <figcaption class="caption">论文中的 context 由 regex、长度和关键词规则构造，不调用 LLM；后续请求不再运行一次新的模型选择。</figcaption>
+            </figure>
+            <div class="formula-stack">
+              <div class="formula-card"><h4>分桶 UCB · Equation (9)</h4><div class="equation">m<sub>t</sub> = arg max<sub>m</sub> [ μ̂<sub>cₜ,m</sub> + √(2 log(1/δ) / N<sub>cₜ,m</sub>) ]</div><p>每个粗粒度 context 维护独立统计；先强制探索，再在均值与探索项之间取舍。</p></div>
+              <div class="formula-card"><h4>终局更新 · Equation (11)</h4><div class="equation">r<sub>t,m</sub><sup>(α)</sup> = (1−α)a<sub>t,m</sub> − α·min(ℓ<sub>t,m</sub>/ℓ<sub>0</sub>, 1)</div><p>正确率 a 与整任务 latency ℓ 合成一个标量奖励；中间调用不单独分配信用。</p></div>
+            </div>
+            <div class="paper-figure"><div class="figure-title"><h3>Terminal-Bench 报告点</h3><span>TABLE 1 / FIGURE 3</span></div><div class="mini-table"><div class="th">策略</div><div class="th">Resolved</div><div class="th">秒 / 任务</div><div>TRACE · α=0.75</div><div>46.8%</div><div>172</div><div>Always-27B</div><div>39.7%</div><div>270</div></div><figcaption class="caption">作者报告约 +7.1 个百分点、延迟低 36%。该子集只有 48 个任务；wall-clock 含工具和环境交互，但未分解 cache、货币成本或能耗。</figcaption></div>
+            <div class="method-points"><div class="method-point"><b>这样做的好处</b><span>减少每次调用都要判断“哪一步应为最终成败负责”的困难，也降低跨模型切换破坏状态连续性的风险。</span></div><div class="method-point warn-point"><b>这样做的代价</b><span>任务开始后即使出现新的工具证据，系统仍沿用初始模型选择。</span></div></div>
+            <div class="method-conclusion"><b>要点</b><p>TRACE 代表整项任务固定模型的强对照。如果终局监督、cache 与连续性占主导，保持同一模型到任务结束可能比中途重选更省。</p></div>
+          </div>
+        </article>
+
+        <article class="method-study">
+          <header class="method-head"><div><div class="method-tag">FIXED-K ESCALATION · TRAJECTORY VALUE</div><h3>SWE-Router：先让便宜模型执行 K 轮，再判断是否值得升级</h3><p>前 K 轮会产生模型费用和等待时间，同时提供“便宜模型能否完成当前 issue”的执行证据。预测失败时，强模型从原始 issue 重新开始。</p></div><div class="paper-locator"><a href="https://arxiv.org/abs/2607.00053">ICML 2026 workshop · 论文</a><a href="https://huggingface.co/SWE-Router">官方模型页</a><a href="https://arxiv.org/pdf/2607.00053">在线 PDF · Figure 1 / Algorithm 1</a></div></header>
+          <div class="method-body">
+            <figure class="paper-figure">
+              <div class="figure-title"><h3>固定 K 轮后的单次升级判断</h3><span>据 FIGURE 1 / ALGORITHM 1 重绘</span></div>
+              <div class="branch-flow"><div class="branch-start"><b>Cheap model 执行 K 轮</b><span>q,(z₁,a₁,o₁),…,(z<sub>K</sub>,a<sub>K</sub>,o<sub>K</sub>)</span></div><div class="branch-arrow">→</div><div class="branch-options"><div class="branch-option accept"><b>value ≥ θ</b>继续 cheap model</div><div class="branch-option escalate"><b>value &lt; θ</b>strong model 从 q 重启</div></div></div>
+              <figcaption class="caption">Qwen2.5-Coder-7B 加二分类 head，标签来自最终 unit test success。K 由实验者预设；方法最多升级一次。</figcaption>
+            </figure>
+            <div class="formula-stack">
+              <div class="formula-card"><h4>实际部署规则</h4><div class="equation big">continue m<sub>1</sub> ⇔ r̂<sub>1</sub>(T<sub>≤K,1</sub>) ≥ θ</div><p>若低于阈值，系统丢弃前 K 轮上下文，让强模型从原 issue 重新执行。</p></div>
+              <div class="formula-card"><h4>信息单调性 · Theorem 4.1</h4><div class="equation">V(Z)=E[max{E[U<sub>1</sub>|Z],E[U<sub>2</sub>|Z]}], &nbsp; V(S<sub>t</sub>) ≥ V(Q)</div><p>轨迹包含初始问题时，Bayes-optimal 决策能力不会因看到更多状态而下降；定理没有扣除 K 轮 rollout、重启和上下文重读成本。</p></div>
+            </div>
+            <div class="paper-figure"><div class="figure-title"><h3>信息增益并不稳定</h3><span>TABLE 2 · ROUTE-AUC</span></div><div class="method-points"><div class="method-point"><b>SWE-bench Verified</b><span>GPT-5-mini 模型对的最佳固定 K Route-AUC 为 0.709；DeepSeek-V3.2 模型对为 0.780，后者较 K=0 的 0.627 高 15.3 个点。</span></div><div class="method-point warn-point"><b>SWE-Smith 测试集</b><span>读取时序轨迹的 GPT-5-mini 变体没有稳定优于不读取时序轨迹的基线；不同模型对的最佳 K 也不同。</span></div></div></div>
+            <div class="method-points"><div class="method-point"><b>轨迹为何可能有用</b><span>工具 observation、执行动作和早期错误揭示了 prompt 中没有暴露的可解性。</span></div><div class="method-point warn-point"><b>为何不能只看定理</b><span>获得信息本身要付 K 轮价格与时间；重启还可能重复读取上下文并丢失已完成工作。</span></div></div>
+            <div class="method-conclusion"><b>要点</b><p>SWE-Router 的结果显示，检查执行轨迹的轮数 K 会影响路由效果。K 仍由实验者固定，因此自适应方法需要与调优后的最佳固定 K 比较，并计入前 K 轮、重启和上下文重读。</p></div>
+          </div>
+        </article>
+
+        <div class="deep-label"><b>LANDSCAPE INDEX · 横向查阅</b><span>短卡片保留发表状态、结果和与候选方案的边界</span></div>
+        <div class="work-grid single">
+          <article class="work"><div class="work-top"><h3>Agent-as-a-Router</h3><div class="status">ARXIV PREPRINT · 2026</div></div><div class="evidence-line"><b>观察</b><span>静态 Router 会随任务和模型池变化而退化；过去任务的验证结果可以积累。</span></div><div class="evidence-line"><b>方法</b><span>每个 coding task 选择一次模型，完成后把性能、成本和 trace 写回 memory，影响后续任务。</span></div><div class="reported"><strong>论文范围：</strong>跨任务持续学习；单个任务内固定模型，provider cache 被作者标为不可观测。</div><div class="our-read"><strong>研究启示：</strong>过去任务经验可以改进下一项任务的入口选择；当前任务内部仍采用 task pinning。</div><div class="links"><a href="https://arxiv.org/abs/2606.22902">论文</a><a href="https://github.com/LanceZPF/agent-as-a-router">代码</a><a href="https://arxiv.org/pdf/2606.22902">在线 PDF</a></div></article>
+        </div>
+        <div class="lesson"><div class="label">本节小结</div><p>TRACE-Router 把一个模型保持到任务结束，SWE-Router 在预设的第 K 轮判断一次是否升级。两者都主动减少任务内的重选次数，因为终局奖励难以归因，而且切换可能丢失状态或迫使强模型重新开始。<strong>自适应方法需要同时超过最佳 task pinning 和最佳固定 K。</strong></p></div>
+      </section>
+
+      <section id="trajectory">
+        <h2>执行轨迹让 Router 能根据工具结果和错误状态调整模型</h2>
+        <p class="lead">工具返回、测试、错误和剩余预算会改变对任务难度的判断。2026 年多项工作开始让 Router 读取完整历史或 Harness 状态，并在每轮或每次模型调用前重新选择。</p>
+        <div class="family-intro"><div class="family-code"><b>ROUTE FAMILY</b><span>03</span></div><div class="family-summary"><div><b>要解决的问题</b>把工具结果、错误和剩余预算等执行证据加入模型选择。</div><div><b>下一次何时重选</b>下一轮或下一次 LLM call；重新决策频率通常固定。</div></div></div>
+        <div class="deep-label"><b>REPRESENTATIVE METHODS · 精讲</b><span>MTRouter 展示怎样逐轮选模；Twin 展示怎样为逐调用选择制造可执行标签</span></div>
+
+        <article class="method-study">
+          <header class="method-head"><div><div class="method-tag">PER-TURN ROUTING · HISTORY × MODEL</div><h3>MTRouter：把完整历史与候选模型一起评分</h3><p>每个 Agent 交互轮开始前，Router 优先保留最近的执行历史，并逐个预测候选模型从当前状态继续执行后的最终表现。</p></div><div class="paper-locator"><a href="https://aclanthology.org/2026.acl-long.2045/">ACL 2026 long · 论文</a><a href="https://github.com/ZhangYiqun018/MTRouter">官方代码</a><a href="https://aclanthology.org/2026.acl-long.2045.pdf">在线 PDF · Figure 2 / Eqs. 3–8</a></div></header>
+          <div class="method-body">
+            <figure class="paper-figure">
+              <div class="figure-title"><h3>历史编码与候选模型编码在评分器中汇合</h3><span>据 FIGURE 2 重绘</span></div>
+              <div class="merge-flow">
+                <div class="merge-lanes"><div class="merge-lane"><div class="merge-node source"><b>Agent 历史 h<sub>t</sub></b><span>任务、动作、输出和环境反馈</span></div><div class="lane-arrow">→</div><div class="merge-node"><b>历史向量表示</b><span>0.6B 编码器；优先保留最近内容，约 8192 tokens</span></div></div><div class="merge-lane"><div class="merge-node source"><b>候选模型属性</b><span>价格、上下文上限和知识截止时间</span></div><div class="lane-arrow">→</div><div class="merge-node"><b>模型向量表示</b><span>结构化属性 + 可学习残差</span></div></div></div>
+                <div class="merge-arrow">→</div><div class="merge-node joint"><b>联合 outcome estimator</b><span>对每个候选预测终局表现</span></div><div class="merge-arrow">→</div><div class="merge-node final"><b>arg max</b><span>选下一模型；下 turn 再重选</span></div>
+              </div>
+              <figcaption class="caption">结构化模型属性与可学习残差同时存在：前者描述可解释的模型属性，后者补充元数据无法表达的模型差异。</figcaption>
+            </figure>
+            <div class="formula-stack">
+              <div class="formula-card"><h4>候选条件评分 · Equations (3–4, 8)</h4><div class="equation">z<sub>a</sub>=W[MLP(attr<sub>a</sub>);e<sub>a</sub>]+b<br>s̃<sub>θ</sub>(h<sub>t</sub>,a)=f<sub>θ</sub>([z<sub>x</sub>;z<sub>a</sub>])<br>a*<sub>t</sub>=arg max<sub>a</sub> s̃<sub>θ</sub>(h<sub>t</sub>,a)</div><p>评分器逐个回答：当前历史交给这个候选模型，预计结果如何。</p></div>
+              <div class="formula-card"><h4>训练标签 · Equations (5–6)</h4><div class="equation">S̃<sub>t</sub>=S<sub>final</sub>−Σ<sub>i=t</sub><sup>T−1</sup>ρ<sub>i</sub><br>ρ<sub>i</sub>=1[E<sub>i</sub>≠∅]·β<sub>sev(Eᵢ)</sub>·w((i+1)/T<sub>max</sub>)</div><p>终局分数再扣除未来 format、code、invalid-action 或 tool error；越晚错误惩罚越重。</p></div>
+            </div>
+            <div class="paper-figure"><div class="figure-title"><h3>作者报告的质量与 API 成本</h3><span>TABLE 3</span></div><div class="mini-table"><div class="th">ScienceWorld</div><div class="th">Score</div><div class="th">总成本</div><div>MTRouter</div><div>53.8±3.2</div><div>$5.7</div><div>Always GPT-5</div><div>48.4±2.1</div><div>$13.9</div></div><figcaption class="caption">论文另在 HLE 报告 26.0±2.3 / $35.0，对比 GPT-5 的 25.1±1.6 / $61.8。表中费用仅统计模型 API token；cost per successful task 未单独报告。</figcaption></div>
+            <div class="method-points"><div class="method-point"><b>训练规模</b><span>1,291 个实例、29,693 条轨迹、515,221 turns；论文估算一次性采集约 $1,620。</span></div><div class="method-point warn-point"><b>反事实仍不严格匹配</b><span>数据来自逐轮随机选模轨迹和单模型轨迹；并未在每个相同状态下执行全部候选模型，也没有使用 IPS/DR 修正。</span></div><div class="method-point warn-point"><b>成本统计仍不完整</b><span>向量编码 Router、工具、Judge、cache 丢失、模型交接与能耗未一起计入；跨模型 cache 丢失被论文列为局限。</span></div></div>
+            <div class="method-conclusion"><b>要点</b><p>MTRouter 已经使用完整执行历史，并在每轮选择完整模型。RouteCraft 需要进一步检验：是否有必要同时决定模型保持多久，以及扣除切换成本后是否仍有收益。</p></div>
+          </div>
+        </article>
+
+        <article class="method-study">
+          <header class="method-head"><div><div class="method-tag">COUNTERFACTUAL BENCHMARK · SEQUENTIAL LOCKING</div><h3>TwinRouterBench：逐步降级，再用完整任务结果验证标签</h3><p>它首先找强模型已成功的轨迹，然后只改当前 step 的模型 tier、保持过去锁定输出和未来强模型 continuation；只有整条任务仍通过，降级才被接受。</p></div><div class="paper-locator"><a href="https://arxiv.org/abs/2605.18859">2026 preprint · 论文</a><a href="https://github.com/CommonstackAI/TwinRouterBench">官方代码</a><a href="https://arxiv.org/pdf/2605.18859">在线 PDF · Figure 2 / Algorithm A1</a></div></header>
+          <div class="method-body">
+            <figure class="paper-figure">
+              <div class="figure-title"><h3>Sequential-locking downgrade</h3><span>据 FIGURE 2 / ALGORITHM A1 重绘</span></div>
+              <div class="pipeline">
+                <div class="pipe-node observe"><b>Strong 成功轨迹</b><span>只从已通过任务开始</span></div>
+                <div class="pipe-node"><b>锁定过去 steps</b><span>使用已验证的 tier 输出</span></div>
+                <div class="pipe-node choice"><b>当前 step 降级</b><span>尝试 low → high tier</span></div>
+                <div class="pipe-node"><b>未来恢复 strong</b><span>固定 continuation policy</span></div>
+                <div class="pipe-node warn-node"><b>终局 verifier</b><span>通过才接受该 tier</span></div>
+              </div>
+              <figcaption class="caption">逐步锁定把最坏的指数搜索降到 O(|T|N)。结果对应特定的降级顺序和统一后续执行规则，用来判断当前一步能否使用更便宜的模型。</figcaption>
+            </figure>
+            <div class="formula-stack">
+              <div class="formula-card"><h4>当前 prefix 的最低可行 tier</h4><div class="equation">t*<sub>i</sub>=min { t∈T : ∃m∈M<sub>t</sub>, V<sub>i</sub>(m;x<sub>i</sub>)=1 }</div><p>LLM proposer 只用于剪枝；训练标签取自重新执行后的终局 verifier，强模型的文字判断不作为标签。</p></div>
+              <div class="formula-card"><h4>四桶 token 成本</h4><div class="equation">c<sub>i</sub>(t)=[n<sup>in</sup>p<sup>in</sup>+n<sup>cr</sup>p<sup>cr</sup>+n<sup>cw</sup>p<sup>cw</sup>+n<sup>out</sup>p<sup>out</sup>]/10<sup>6</sup></div><p>区分 cache-miss input、cache-read、cache-write 和 output；这是比只乘统一 token 单价更可信的账单。</p></div>
+            </div>
+            <div class="paper-figure"><div class="figure-title"><h3>100 个 held-out SWE-bench Verified</h3><span>TABLE 3 · LIVE TRACK</span></div><div class="mini-table"><div class="th">Policy</div><div class="th">Resolved</div><div class="th">API cost</div><div>Logistic router</div><div>75 / 100</div><div>$25.66</div><div>Opus 4.6</div><div>74 / 100</div><div>$54.73</div></div><figcaption class="caption">作者报告相近 resolved rate 下 API cost 下降 53.1%；加入默认 $0.60 失败补救罚金后，两者账单为 $40.66 与 $70.33。</figcaption></div>
+            <div class="method-points"><div class="method-point"><b>比普通日志监督更强</b><span>当前步骤的标签经过实际执行验证，而且后续执行策略保持一致。</span></div><div class="method-point warn-point"><b>仍有顺序偏差</b><span>逐步锁定的贪心策略可能漏掉多步降级之间的相互影响；只从强模型成功的轨迹出发，也会改变训练数据分布。</span></div><div class="method-point warn-point"><b>任务级成本统计仍不完整</b><span>Router 推理、工具调用、排队与 P95 延迟、能耗，以及换模后的行为衔接尚未统一计入。</span></div></div>
+            <div class="method-conclusion"><b>要点</b><p>Twin 已经从同一前缀比较不同模型，并统一后续执行规则。RouteCraft 若采用反事实数据，需要进一步比较“模型选择与保持时长”的组合，并保存可恢复的外部环境状态。</p></div>
+          </div>
+        </article>
+
+        <div class="deep-label"><b>LANDSCAPE INDEX · 横向查阅</b><span>其余逐步 / Harness-native 工作保留短卡片与证据边界</span></div>
+        <div class="work-grid">
+          <article class="work"><div class="work-top"><h3>EvoRoute</h3><div class="status">ARXIV PREPRINT · 2026</div></div><div class="evidence-line"><b>问题</b><span>Agent 各步骤对能力、价格和延迟的要求会变化，历史任务反馈可以沉淀为经验。</span></div><div class="evidence-line"><b>方法</b><span>每一步按角色、子任务和预计工具调用检索经验；筛除明显更贵且效果更差的模型，再用 Thompson sampling 探索候选。</span></div><div class="reported"><strong>作者报告：</strong>在其 GAIA 与 BrowseComp+ 设置中，cost 最多下降 80%、latency 超过 70%；论文指向的 GitHub 在执行日返回 404。</div><div class="our-read"><strong>研究启示：</strong>逐步、经验驱动的完整模型路由已有直接先例；下一次决策仍固定在下一步。</div><div class="links"><a href="https://arxiv.org/abs/2601.02695">论文</a><a href="https://arxiv.org/pdf/2601.02695">在线 PDF</a></div></article>
+          <article class="work"><div class="work-top"><h3>Hera</h3><div class="status">ARXIV PREPRINT · 2026</div></div><div class="evidence-line"><b>观察</b><span>长程任务的难度会逐执行步变化；整任务只选一次 device / cloud 模型可能过于粗糙。</span></div><div class="evidence-line"><b>方法</b><span>先比较本地模型和云模型在相同状态下的动作，再利用最终任务回报和后续云模型调用次数训练逐步选择器。</span></div><div class="reported"><strong>论文报告：</strong>达到 cloud-only success 的 92.5%，cloud 模型用于 46.3% steps；官方代码未核验。</div><div class="our-read"><strong>研究启示：</strong>逐步完整模型路由和“未来强模型调用数”监督已有直接先例；下一次决策固定在下一步。</div><div class="links"><a href="https://arxiv.org/abs/2605.24598">论文</a><a href="https://arxiv.org/pdf/2605.24598">在线 PDF</a></div></article>
+          <article class="work counter"><div class="work-top"><h3>Budget-Aware Agentic Routing</h3><div class="status">ARXIV PREPRINT · 2026</div></div><div class="evidence-line"><b>观察</b><span>每一步使用强模型的价值取决于当前历史和剩余预算。</span></div><div class="evidence-line"><b>方法</b><span>1.5B Router 每步读取完整交互历史和剩余预算，先用监督数据训练，再用强化学习优化。</span></div><div class="reported"><strong>论文反例：</strong>严格预算下，把强模型用于最前几步的简单规则仍有竞争力；Router 开销只做吞吐估算。</div><div class="our-read"><strong>研究启示：</strong>复杂强化学习未必超过简单时序规则，第一版实验应先比较轻量方法。</div><div class="links"><a href="https://arxiv.org/abs/2602.21227">论文</a><a href="https://arxiv.org/pdf/2602.21227">在线 PDF</a></div></article>
+          <article class="work"><div class="work-top"><h3>Harness-Native Data Flywheel</h3><div class="status">TECHNICAL REPORT · 2026</div></div><div class="evidence-line"><b>问题</b><span>可用于路由的状态还包括 observation、artifact、tool、recovery 和 verification 等 Harness 事件。</span></div><div class="evidence-line"><b>方法</b><span>OpenSquilla 把这些事件记录成结构化数据，再用规则和 LightGBM 为每一步选择模型。</span></div><div class="reported"><strong>作者报告：</strong>PinchBench score 93.14、平均 billed cost $0.0204/task；同一 OpenSquilla harness 的 fixed Opus score 94.33、$0.1649/task。多项持续更新机制仍是设计方案。</div><div class="our-read"><strong>研究启示：</strong>直接读取 Harness 事件的 Router 已有实现；未来事件和完整任务成本仍需进一步实验。</div><div class="links"><a href="https://arxiv.org/abs/2607.11399">报告</a><a href="https://github.com/opensquilla/opensquilla">代码</a><a href="https://arxiv.org/pdf/2607.11399">在线 PDF</a></div></article>
+        </div>
+        <div class="lesson"><div class="label">本节小结</div><p>MTRouter、EvoRoute、Hera 与 Budget-Aware Router 在执行过程中读取历史、环境状态或剩余预算，再为下一步选择模型；TwinRouterBench 和 Harness-Native 进一步加入执行验证、cache 账单与 Harness 事件。<strong>工具结果和执行状态能够补充初始 prompt。</strong>这些方法通常仍在每一步重新选择，完整评估还需要加入 Router、cache 失效、上下文重读、重试和切换。</p></div>
+      </section>
+
+      <section id="continuity">
+        <h2>会话连续性让“保持当前模型”具有独立价值</h2>
+        <p class="lead">每次调用都允许重新选择，并不代表每次都应该切换。已有前缀 cache、正在进行的工具调用，以及供应商内部保存的续写状态，都可能使保持当前模型更有利。</p>
+        <div class="family-intro"><div class="family-code"><b>ROUTE FAMILY</b><span>04</span></div><div class="family-summary"><div><b>要解决的问题</b>模型能力需求会变化，但切换会丢失 cache、状态和行为连续性。</div><div><b>下一次何时重选</b>HyDRA 只在 compaction 等事件重选；SAAR 每次请求、OpenSquilla 每轮都会运行 Router，但连续性规则可能让系统保持当前模型。</div></div></div>
+        <div class="deep-label"><b>REPRESENTATIVE SYSTEMS · 精讲</b><span>HyDRA 学习“选谁”但固定重选事件；SAAR 每请求计算，但用连续性规则约束是否切换</span></div>
+
+        <article class="method-study">
+          <header class="method-head"><div><div class="method-tag">CAPABILITY MATCHING · FIXED EVENT BOUNDARY</div><h3>HyDRA：学习当前需要什么能力，系统预先规定何时再选</h3><p>它把需求预测与模型能力档案分开：编码器预测四维能力需求，YAML 文件保存候选模型的实测表现，再按能力缺口选最便宜的可行模型。</p></div><div class="paper-locator"><a href="https://arxiv.org/abs/2605.17106">2026 preprint · 论文</a><a href="https://arxiv.org/pdf/2605.17106">在线 PDF · Figure 1 / Eqs. 1–5</a></div></header>
+          <div class="method-body">
+            <figure class="paper-figure">
+              <div class="figure-title"><h3>需求预测、模型画像与 shortfall matching</h3><span>据 FIGURE 1 重绘</span></div>
+              <div class="merge-flow">
+                <div class="merge-lanes"><div class="merge-lane"><div class="merge-node source"><b>当前消息 + 7 个状态标记</b><span>512 tokens；不读历史输出和工具结果</span></div><div class="lane-arrow">→</div><div class="merge-node"><b>ModernBERT + 4 个预测头</b><span>输出推理、代码、调试和工具需求</span></div></div><div class="merge-lane"><div class="merge-node source"><b>公开基准测试</b><span>按能力维度加权，并在当前模型池内校准</span></div><div class="lane-arrow">→</div><div class="merge-node"><b>模型能力档案</b><span>保存在外部 YAML 文件中，可独立于编码器更新</span></div></div></div>
+                <div class="merge-arrow">→</div><div class="merge-node joint"><b>Shortfall matching</b><span>逐模型计算四维能力缺口</span></div><div class="merge-arrow">→</div><div class="merge-node final"><b>最便宜 eligible model</b><span>无可行项则最小 shortfall</span></div>
+              </div>
+              <figcaption class="caption">某一维的能力富余不能抵消另一维的不足。模型能力档案和阈值可以独立更新，但新模型仍要重新运行基准测试，并按当前模型池进行相对归一化。</figcaption>
+            </figure>
+            <div class="formula-stack">
+              <div class="formula-card"><h4>四个需求头 · Equation (1)</h4><div class="equation">r̂<sub>k</sub>=σ(w<sub>k</sub><sup>T</sup> dropout(h<sub>CLS</sub>)+b<sub>k</sub>)</div><p>输入只含当前 user message 与 turn/error/file/URL/command/code/short-message flags；明确排除 prior assistant、tool output 和 repository state。</p></div>
+              <div class="formula-card"><h4>能力缺口 · Equation (5)</h4><div class="equation big">s<sub>m</sub>=Σ<sub>k=1</sub><sup>4</sup> w̃<sub>k</sub> max(0, r̂<sub>k</sub>−c<sub>m,k</sub>)</div><p>先取 s<sub>m</sub>≤τ 的可用模型，再选其中成本最低者；为空时 fail-open 到 shortfall 最小者。</p></div>
+            </div>
+            <figure class="paper-figure"><div class="figure-title"><h3>模型保持到固定系统事件</h3><span>SECTION 8 · STICKY ROUTING</span></div><div class="pipeline"><div class="pipe-node choice"><b>Turn 1 ◆</b><span>运行 Router</span></div><div class="pipe-node"><b>Keep</b><span>保持当前模型/cache</span></div><div class="pipe-node"><b>Keep</b><span>中途难度漂移不触发</span></div><div class="pipe-node choice"><b>Compaction ◆</b><span>重新运行 Router</span></div><div class="pipe-node"><b>Keep</b><span>直到 summary / terminal</span></div></div><figcaption class="caption">生产策略只在新会话、显式 compaction 和 background summarization 后重新选模。◆ 表示系统预设的触发点。</figcaption></figure>
+            <div class="method-points"><div class="method-point"><b>论文离线结果</b><span>SWE-Bench Verified 的保守工作点相对 always-strong 低 0.3 个 resolution point，作者按模型调用价格报告 cost saving 54.1%。</span></div><div class="method-point"><b>生产 A/B 的实际结果</b><span>相对 prior control：median time-to-complete −6.4%、TTFT −4.6%、per-inference-request cost −2.3%；aggregate segment COGS 因请求量变化大致持平。</span></div><div class="method-point warn-point"><b>论文报告了两组延迟数据</b><span>正文报告离线 CPU 路由耗时 55 ms P50 / 120 ms P99；arXiv 摘要页另报生产环境中位数 86 ms，两组数据来自不同环境，不能直接合并。</span></div><div class="method-point warn-point"><b>代理标签风险</b><span>能力需求来自强模型与便宜模型回答的 LLM Judge 分差，并非真实任务属性；工具使用维度与人工判断的一致性也很弱。</span></div></div>
+            <div class="method-conclusion"><b>要点</b><p>HyDRA 学习如何选择模型，重新选择的时机由新会话、上下文压缩和摘要完成等事件固定。RouteCraft 需要与这些简单事件规则直接比较。</p></div>
+          </div>
+        </article>
+
+        <article class="method-study">
+          <header class="method-head"><div><div class="method-tag">PER-REQUEST SELECTION · CONTINUITY GATE</div><h3>vLLM SAAR：先检查能不能切，再计算值不值得切</h3><p>每个请求先运行已有的基础选择器；会话状态层再根据工具状态、供应商内部续写状态的硬锁，以及 cache 和模型交接惩罚，决定保持上一模型还是接受新的候选。</p></div><div class="paper-locator"><a href="https://vllm-project.github.io/2026/06/02/session-aware-agentic-routing.html">官方技术博客 · Figures 3 / 8</a><a href="https://github.com/vllm-project/semantic-router/tree/ef9e5dd99c953a21d20a99a93547e57468bae863">固定代码 · v0.3</a></div></header>
+          <div class="method-body">
+            <figure class="paper-figure">
+              <div class="figure-title"><h3>硬约束优先于经济权衡</h3><span>据 BLOG FIGURE 3 与源码重绘</span></div>
+              <div class="branch-flow"><div class="branch-start"><b>基础选择器 + 会话记录</b><span>上一模型、调用轮次和切换次数、cache 记录、空闲时间、上游选模结果</span></div><div class="branch-arrow">→</div><div class="branch-options"><div class="branch-option escalate"><b>处于工具调用链，或供应商状态无法迁移？</b>是：保持上一模型</div><div class="branch-option"><b>长时间空闲，或上游选模结果改变？</b>是：清除部分连续性惩罚后重新选择</div><div class="branch-option accept"><b>否则</b>比较调整后的保持和切换分数</div></div></div>
+              <figcaption class="caption">这里的“上游选模结果改变”只表示基础 Router 给出的候选名称发生变化，并不表示系统识别了 planning、verification 等 Agent 阶段。后端错误和失败回退由恢复层处理，不属于这个会话选择器。</figcaption>
+            </figure>
+            <div class="formula-stack">
+              <div class="formula-card"><h4>源码规则的等价转写：保持</h4><div class="equation">A<sub>stay</sub>=b<sub>current</sub>+b<sub>stay</sub>+P<sub>prefix-benefit</sub>+1<sub>tool</sub>b<sub>tool</sub></div><p>硬锁在打分比较之前生效，更高的 base score 无法抵消它。</p></div>
+              <div class="formula-card"><h4>源码规则的等价转写：切换</h4><div class="equation">A<sub>switch</sub>(m)=b<sub>m</sub>+q<sub>gap</sub>−w<sub>h</sub>H<sub>handoff</sub>−P<sub>prefix</sub>−P<sub>history</sub>−δ<sub>switch</sub></div><p>默认还考虑工具状态、前缀 cache、历史切换次数和切换门槛；这些分数来自系统配置或查表，并不都对应实测费用。</p></div>
+            </div>
+            <div class="paper-figure"><div class="figure-title"><h3>整场会话固定模型更省，但质量损失更大</h3><span>21,600 DETERMINISTIC SYNTHETIC TURNS</span></div><div class="mini-table"><div class="th">Policy</div><div class="th">Switch / unsafe</div><div class="th">估算成本 / 质量变化</div><div>Single-turn</div><div>9,709 / 3,836</div><div>基准 / 0</div><div>Sticky</div><div>340 / 0</div><div>−98.65% / −0.1433</div><div>Full SAAR</div><div>2,011 / 0</div><div>−78.71% / −0.0453</div></div><figcaption class="caption">Sticky 的估算成本更低，质量损失也更大；SAAR 位于逐请求切换与整会话固定之间。上述数字是作者在实验配置下估算的模型调用费用，完整任务成本仍需另行测量。</figcaption></div>
+            <div class="method-points"><div class="method-point"><b>会话记录中保存的状态</b><span>当前模型、调用轮次和切换次数、prompt/cache 写入/cache 读取/输出 token、累计费用、是否处于工具调用链，以及上一条策略。</span></div><div class="method-point"><b>在线系统结果</b><span>2,896 个在线 ROCm 请求中，论文定义的连续性违规为 0；选择器 p95 约 6.181 ms（balanced）至 26.805 ms（stateful）。这项指标只衡量策略定义的连续性约束；论文没有报告外部 verifier 判断的任务错误率。</span></div><div class="method-point warn-point"><b>证据范围</b><span>核心矩阵来自确定性合成工作负载；前缀 cache 和模型交接惩罚仍未覆盖真实排队、模型驻留、跨集群网络与失败恢复。</span></div></div>
+            <div class="method-conclusion"><b>要点</b><p>SAAR 已经把基础选模、保持或切换、cache 和状态迁移约束放进每次请求。RouteCraft 需要检验，学习“保持到某个未来事件”能否超过这些逐请求固定规则。</p></div>
+          </div>
+        </article>
+
+        <div class="deep-label"><b>IMPLEMENTATION INDEX · 系统查阅</b><span>短卡片保留版本、结果范围，以及作为 baseline 时需要固定的附加行为</span></div>
+        <div class="work-grid single">
+          <article class="work"><div class="work-top"><h3>OpenSquilla 0.5.3</h3><div class="status">OFFICIAL OPEN-SOURCE · 2026</div></div><div class="evidence-line"><b>问题</b><span>Router 计划选择的模型与最终实际调用的模型可能不同；供应商内部续写状态是否可迁移也需要记录。</span></div><div class="evidence-line"><b>方法</b><span>每轮读取语义消息、token 用量、近五次路由历史与附件；分别记录计划选择、实际调用和 cache token。</span></div><div class="reported"><strong>比较条件：</strong>默认还会改变 thinking level 和 prompt policy，最高 tier 可启用模型集成；比较模型路由时需要关闭或固定这些附加行为。</div><div class="our-read"><strong>研究启示：</strong>OpenSquilla 可作为第二种 Harness，用于检验同一 Router 在不同执行框架中的表现。</div><div class="links"><a href="https://github.com/opensquilla/opensquilla/tree/79d57b2fe63e1f83b364ca2bd022e0cb76081406">固定代码</a><a href="https://arxiv.org/abs/2607.11399">技术报告</a></div></article>
+        </div>
+        <div class="callout"><strong>证据关系：</strong>Harness-Native 报告和 OpenSquilla 0.5.3 代码描述同一系统生态。前者提供方法与实验，后者提供实现细节，相关工作统计中合并为一项。</div>
+        <div class="lesson"><div class="label">本节小结</div><p>HyDRA 用会话内模型保持保护 prefix cache；vLLM SAAR 用供应商状态、交接惩罚和硬锁限制切换；OpenSquilla 分别记录计划选择与实际模型调用。<strong>保持当前模型会同时影响费用、延迟和后续调用能否继续。</strong>重新选择时机因此既取决于任务出现了多少新信息，也取决于切换会付出多少代价。</p></div>
+      </section>
+
+      <section id="overhead">
+        <h2>现有工作只测量了部分 Router 开销，完整任务的成本和耗时仍缺少统一统计</h2>
+        <p class="lead">Page 01 说明，多做一轮就可能多调用一次模型、再读一次上下文。引入 Router 后，系统还要承担选择模型本身的开销，包括在线判断、离线训练与模型能力测量、额外候选调用、结果验证，以及切换模型造成的 cache 丢失和排队等待。相关论文只测量了其中一部分，而且采用的指标和统计范围并不一致。</p>
+
+        <figure class="overhead-figure">
+          <div class="route-head"><h3>一次路由决策会在哪些地方增加成本？</h3><div class="figure-no">FIGURE 02 / ROUTER COST LIFECYCLE</div></div>
+          <div class="overhead-flow">
+            <div class="overhead-step"><span class="phase">BEFORE DEPLOYMENT</span><b>先建立判断依据</b><p>采集多模型结果、生成教师或 Judge 标注、训练 Router，并通过能力测试建立新模型的实测档案。</p></div>
+            <div class="overhead-step"><span class="phase">AT DECISION</span><b>运行 Router</b><p>分类器、向量编码模型、检索器或小语言模型都要占用 CPU/GPU，并增加一次决策等待。</p></div>
+            <div class="overhead-step"><span class="phase">AFTER DECISION</span><b>试探、升级与验证</b><p>级联调用、模型集成、固定 K 轮探索、失败回退和验证器可能增加模型、工具或测试调用。</p></div>
+            <div class="overhead-step"><span class="phase">ON SWITCH / SERVING</span><b>切换与服务端等待</b><p>前缀 cache 失效、重新计算前缀、供应商内部续写状态丢失，以及排队、模型驻留、网络传输和尾部延迟。</p></div>
+          </div>
+          <figcaption class="caption">等待时间可能来自 Router 计算、所选模型所在队列、顺序升级、重新 prefill 或工具阻塞。价格与时间分别记录，再按用户目标权衡。</figcaption>
+        </figure>
+
+        <div class="cost-evidence-grid">
+          <article class="cost-evidence">
+            <header><h3>Router 计算与离线准备</h3><span class="coverage some">已有局部实测</span></header>
+            <div class="evidence-half"><b>论文已经测到</b><p>RouteLLM 报告矩阵分解 Router 约 155.16 requests/s、估算每百万请求 $3.32；R²-Router 报告单次请求平均低于 400 ms；Hera 实测约 61 ms/step；HyDRA 报告离线 CPU 路由耗时为 55 ms P50 / 120 ms P99。<a href="https://openreview.net/forum?id=8sSqNntaMr">RouteLLM</a> · <a href="https://arxiv.org/abs/2602.02823">R²-Router</a> · <a href="https://arxiv.org/abs/2605.24598">Hera</a> · <a href="https://arxiv.org/abs/2605.17106">HyDRA</a></p></div>
+            <div class="evidence-half"><b>尚未计入线上节省比例的准备成本</b><p>现有结果通常没有摊入 RouteLLM 约 $700 的 Judge 数据构建和最高 8×A100 训练、R²-Bench 的大规模模型测试与 Judge，以及 SCOPE 为每个新模型运行的 250 个校准问题。并发负载下的 p95/p99 也需要单独测量。</p></div>
+          </article>
+
+          <article class="cost-evidence">
+            <header><h3>额外模型调用、升级与恢复</h3><span class="coverage some">调用费用部分覆盖</span></header>
+            <div class="evidence-half"><b>论文已经测到</b><p>FrugalGPT 已累计 cascade 停止前发生的全部 API 调用费用；Unified Routing and Cascading 也把被调用模型的成本相加，并在 11 模型实验中报告约 9.53–15.26 ms 的决策搜索时间。SWE-Router 则把 cheap 模型前 K 轮探索与强模型重启纳入策略比较。<a href="https://openreview.net/forum?id=cSimKw5p6R">FrugalGPT</a> · <a href="https://proceedings.mlr.press/v267/dekoninck25a.html">Unified</a> · <a href="https://arxiv.org/abs/2607.00053">SWE-Router</a></p></div>
+            <div class="evidence-half"><b>尚未拆分的额外等待与恢复</b><p>累计 API 价格只说明调用花了多少钱。可靠性评分、测试验证、工具执行、失败重试、失败回退和强模型重启所增加的等待时间通常没有单独报告，因此先用便宜模型的策略是否更快完成任务仍需实测。</p></div>
+          </article>
+
+          <article class="cost-evidence">
+            <header><h3>模型切换、cache 与状态交接</h3><span class="coverage">主要采用费用记录或规则估算</span></header>
+            <div class="evidence-half"><b>现有工作已经计费或显式建模</b><p>TwinRouterBench 区分未缓存输入、cache 读取、cache 写入与输出四类计费；HyDRA 通过会话内保持模型来保护前缀 cache；vLLM SAAR 把工具状态和供应商内部续写状态设为硬锁，并在保持/切换分数中加入前缀 cache、模型交接与历史切换惩罚；OpenSquilla 记录计划选择、实际模型调用和状态迁移诊断。<a href="https://arxiv.org/abs/2605.18859">TwinRouterBench</a> · <a href="https://vllm-project.github.io/2026/06/02/session-aware-agentic-routing.html">SAAR</a></p></div>
+            <div class="evidence-half"><b>尚未实测的跨模型切换代价</b><p>四类 token 费用没有给出 cache miss 引起的前缀重算、排队和尾部延迟；SAAR 的多项惩罚来自规则或查表。DeepSeek Harness 固定代码还显示，跨 adapter 时供应商内部续写状态会被移除，同一 adapter 跨模型也需自行验证能否迁移。需要从同一 Agent 状态分别执行“保持”与“切换”，直接比较新增价格、时间和失败风险。<a href="https://github.com/deepseek-ai/deepseek-harness/tree/47f943859bef60e4160492346772ded9b24f765a">固定代码</a></p></div>
+          </article>
+
+          <article class="cost-evidence">
+            <header><h3>排队、工具等待与任务尾延迟</h3><span class="coverage">完整任务时间缺少统一测量</span></header>
+            <div class="evidence-half"><b>论文已经测到</b><p>TRACE-Router 报告包含工具与环境执行的平均任务用时；Hera 报告平均端到端轨迹时间；Harness-Native 的多模型集成实验报告 p50/p95，但不能说明只选一个模型时的 Router 延迟；Aragog 在负载实验中报告端到端 P25/P50/P95，并显式读取排队状态。相邻的模型服务工作也说明，前缀复用、prefill 与 decode 之间的资源干扰会改变平均延迟和 p99。<a href="https://arxiv.org/abs/2607.22465">TRACE</a> · <a href="https://arxiv.org/abs/2605.24598">Hera</a> · <a href="https://arxiv.org/abs/2511.20975">Aragog</a> · <a href="https://proceedings.iclr.cc/paper_files/paper/2025/hash/5bc342f48de8264779952fac378f96dc-Abstract-Conference.html">Preble</a> · <a href="https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin">DistServe</a></p></div>
+            <div class="evidence-half"><b>尚未统一报告的任务完成时间</b><p>本轮核验尚未发现一项工作同时报告：经过外部验证的任务完成时间、p95/p99、Router 计算、排队、工具、失败恢复，以及跨模型 cache 和状态交接。无法观察供应商队列时，应明确标为 unknown。</p></div>
+          </article>
+        </div>
+
+        <div class="accounting-rule"><b>避免重复统计</b><p>同一次实际模型调用只计算一次。重试和错误恢复用于说明为什么出现了额外调用；新增调用计入模型费用，等待计入任务完成时间。离线训练、Judge 和模型能力测试单独说明如何分摊。</p></div>
+        <div class="lesson"><div class="label">把现有证据放在一起</div><p>几类论文分别补上了不同部分：基础 Router 测量在线选模开销，cascade 累计升级产生的模型调用，会话系统记录 cache 和供应商状态，serving 工作测量排队与重新 prefill。<strong>完整评估需要同时覆盖 Router、Agent 执行和模型服务三层。</strong>现有论文尚未在同一执行协议下，把这些量统一成每个成功任务的价格和完成时间。</p></div>
+      </section>
+
+      <section id="adjacent">
+        <h2>邻近研究提供了 workflow、停止和重新规划的时间控制方法</h2>
+        <p class="lead"><span class="mark boundary">方法参照</span>这些工作同样研究一项策略要保持多久，控制对象包括 workflow、Agent 角色、答案 refinement、上下文管理和重新规划。它们为时间扩展决策提供方法先例；端到端比较时需要单独控制 workflow 和任务目标的变化。</p>
+        <div class="scope-matrix" role="table" aria-label="邻近时间控制方法">
+          <article class="scope-row" role="row">
+            <div class="scope-type"><b>Workflow 与 milestone</b><span>执行路径的时间结构</span></div>
+            <div class="scope-work"><h3>GraphPlanner · EASy · Aragog</h3><p>GraphPlanner 联合选择角色、模型和 workflow；EASy 逐个生成 milestone 与 DAG；Aragog 在预先给定的 DAG 阶段按负载选择模型配置。</p><div class="scope-links"><a href="https://openreview.net/forum?id=ZdGB7MNQDT">GraphPlanner</a><a href="https://arxiv.org/abs/2608.04588">EASy</a><a href="https://arxiv.org/abs/2511.20975">Aragog</a></div></div>
+            <div class="scope-use"><b>控制的动作</b><p>生成 workflow、分配角色，或在已有 stage 中调度配置。</p><b>对本页的启示</b><p>Milestone 和 stage 都能提供有意义的时间单位；实验需要把模型选择收益与 workflow 变化分别统计。</p></div>
+          </article>
+          <article class="scope-row" role="row">
+            <div class="scope-type"><b>下一模型与当前终止</b><span>结束当前过程的判断</span></div>
+            <div class="scope-work"><h3>Router-R1 · Critique Controller</h3><p>Router-R1 同时拆分问题、选择模型并聚合答案；Critique Controller 每轮选择下一模型，同时输出 stop 或 continue。</p><div class="scope-links"><a href="https://arxiv.org/abs/2506.09033">Router-R1</a><a href="https://arxiv.org/abs/2605.08686">Critique Controller</a></div></div>
+            <div class="scope-use"><b>控制的动作</b><p>决定当前解题或答案改写过程是否结束。</p><b>对本页的启示</b><p>模型与停止可以联合决策；这里的 stop 结束当前过程，未来何时再次允许选模仍是另一个变量。</p></div>
+          </article>
+          <article class="scope-row" role="row">
+            <div class="scope-type"><b>配置、上下文与计划</b><span>状态失效后的重新考虑</span></div>
+            <div class="scope-work"><h3>ARC · AgentSwing · SyncPlan</h3><p>ARC 为整条请求选择 Agent 配置；AgentSwing 在规则触发后比较上下文管理分支；SyncPlan 检测计划是否因环境变化而失效。</p><div class="scope-links"><a href="https://arxiv.org/abs/2602.11574">ARC</a><a href="https://arxiv.org/abs/2603.27490">AgentSwing</a><a href="https://arxiv.org/abs/2608.01652">SyncPlan</a></div></div>
+            <div class="scope-use"><b>控制的动作</b><p>保持或更新 Agent 配置、上下文管理策略和计划。</p><b>对本页的启示</b><p>SMDP option、lookahead 和 staleness detector 为“保持多久”提供理论和算法参照，控制对象与完整模型选择需要分别定义。</p></div>
+          </article>
+        </div>
+        <div class="callout warm"><strong>本页采用的研究范围：</strong>保持原 Agent workflow，动作选择一个完整模型，同时指定下一次允许 Router 重新选择模型的未来事件。邻近方法用于解释时间边界与停止策略，直接实验则需要固定 workflow、工具和任务目标。</div>
+      </section>
+
+      <section id="space">
+        <h2>现有工作覆盖了多种固定重选时机；自适应重选仍需实验验证</h2>
+        <p class="lead">截至 2026-08-18，本轮英文一手资料已经覆盖请求前选模、任务固定、固定 K 升级、逐轮路由和事件触发。下一步需要检验的组合是：保持原 Agent workflow，同时选择完整模型和下一次允许 Router 重新选择模型的未来事件。关键判断标准是计入全部系统代价后是否仍有净收益。</p>
+        <div class="occupied">
+          <article class="claim-box done"><h3>现有文献已经覆盖的能力</h3><ul><li>根据初始输入选模、cheap-first 升级和整任务固定模型</li><li>固定 K 轮后升级，以及每轮或每次调用重新选模</li><li>读取执行历史和 Harness 事件，并用模型实测档案接入部分新模型</li><li>用 cache、状态迁移和会话保持规则限制切换</li><li>在 workflow 阶段分配模型，或同时选择下一模型和当前停止</li><li>从相同前缀执行分支，并学习配置、上下文或计划保持多久</li></ul></article>
+          <article class="claim-box open"><h3>RouteCraft 仍需通过实验回答的问题</h3><ul><li><strong>联合选择：</strong>能否同时选择模型和下一次重新选模的事件</li><li><strong>执行条件：</strong>保持原有工具、规划和执行流程</li><li><strong>外部验证：</strong>边界由工具反馈、测试或环境状态确认</li><li><strong>分支比较：</strong>从相同 Agent 状态和外部世界执行模型—边界组合</li><li><strong>完整评估：</strong>计入 Router、cache、重读、重试、状态交接、工具和任务完成时间</li><li><strong>主要对照：</strong>任务固定、固定 K、逐调用和固定事件策略</li></ul></article>
+        </div>
+        <figure class="action-figure">
+          <div class="route-head"><h3>RouteCraft 的候选问题：选定模型后，保持到哪个事件再重新选择？</h3><div class="figure-no">FIGURE 03 / CANDIDATE RESEARCH QUESTION</div></div>
+          <div class="action-flow"><div class="action-node"><b>当前 Harness 状态</b><p>任务进展、工具结果、错误、预算、cache 与当前模型。</p></div><div class="arrow">→</div><div class="action-node action"><b>联合选择（model, boundary）</b><p>在边界触发前保持模型；失败、超时或安全风险按预先规定的安全规则中断。</p></div><div class="arrow">→</div><div class="action-node"><b>外部事件触发</b><p>到达所选事件后，Router 再次选择模型和保持时长。</p></div></div>
+          <div class="boundary-options"><div><b>NEXT_CALL</b><span>下一次模型调用</span></div><div><b>NEXT_OBSERVATION</b><span>下一次工具反馈</span></div><div><b>VERIFIED_MILESTONE</b><span>外部证据确认子目标</span></div><div><b>TASK_TERMINAL</b><span>整任务结束</span></div></div>
+          <figcaption class="caption"><span class="mark infer">待验证假设</span>首先观察不同 Agent 状态下最合适的模型保持时长是否发生变化；再检验计入 Router、模型切换和上下文重读后，动态策略是否仍优于最佳固定时机。安全中断规则在实验前确定，提前中断的分支单独统计。</figcaption>
+        </figure>
+      </section>
+
+      <section id="decision">
+        <h2>现有证据要求 RouteCraft 先做现象验证</h2>
+        <div class="decision-grid">
+          <article class="decision-card"><div class="n">EVIDENCE 01</div><h3>分别报告理论机会和实际收益</h3><p><a href="https://arxiv.org/abs/2608.08265">Opportunity Is Not Realizability</a>（<a href="https://arxiv.org/pdf/2608.08265">在线 PDF</a>）区分三层结果：已知全部分支结果时的理论上限、只使用当前可见状态时的理论收益，以及 Router 在未参与训练的数据上实际实现的收益。</p></article>
+          <article class="decision-card"><div class="n">EVIDENCE 02</div><h3>对照方法覆盖四种主要重选策略</h3><p>至少比较整任务固定模型、固定 K 轮升级、每步重新选模，以及带会话保持规则的保持/切换策略。</p></article>
+          <article class="decision-card"><div class="n">DECISION 03</div><h3>把信息价值和切换代价同时测量</h3><p>下一页要逐阶段检查：哪些 Agent 事件带来足以改变模型选择的新信息，哪些只增加 Router 开销。</p></article>
+        </div>
+        <div class="verdict"><div class="decision">RELATED-WORK VERDICT · REVISE</div><h3>先验证重选时机是否有价值，再决定是否训练 Router。</h3><p>RouteCraft 当前适合继续做现象验证：检查 Agent 事件是否会改变最佳模型，以及这种变化能否补偿重新决策和模型切换成本。只有在未参与调参的数据上仍能实现一部分理论收益，才值得继续投入更复杂的 Router。</p></div>
+        <div class="callout"><strong>下一页：</strong>把这些问题转成可执行的研究决策树：每一步说明继续、收窄或停止的条件，并估算需要运行多少个反事实分支。<a href="03_research_plan_branches.html">继续阅读 Page 03 →</a></div>
+      </section>
+
+      <section id="references">
+        <h2>来源与证据状态</h2>
+        <ol class="refs">
+          <li><strong>正式论文：</strong><a href="https://openreview.net/forum?id=cSimKw5p6R">FrugalGPT</a>（TMLR 2024）；<a href="https://openreview.net/forum?id=8sSqNntaMr">RouteLLM</a>（ICLR 2025）；<a href="https://proceedings.mlr.press/v267/dekoninck25a.html">A Unified Approach to Routing and Cascading</a>（ICML 2025）；<a href="https://aclanthology.org/2026.findings-acl.1881/">LLMRouterBench</a>（Findings ACL 2026）；<a href="https://arxiv.org/abs/2506.09033">Router-R1</a>（NeurIPS 2025）；<a href="https://arxiv.org/abs/2602.02823">R²-Router</a>（ICML 2026）；<a href="https://aclanthology.org/2026.acl-long.2045/">MTRouter</a>（ACL 2026 long）；<a href="https://openreview.net/forum?id=ZdGB7MNQDT">GraphPlanner</a>（ICLR 2026）。</li>
+          <li><strong>Workshop / preprint / technical report：</strong><a href="https://arxiv.org/abs/2607.00053">SWE-Router</a> 为 ICML 2026 workshop preprint；TRACE、SCOPE、HyDRA、Hera、EvoRoute、TwinRouterBench、Budget-Aware、Agent-as-a-Router、Iterative Critique Controller、ARC、AgentSwing、SyncPlan、Opportunity Is Not Realizability 与 Aragog 按 preprint 标注；EASy 明示 under review；Harness-Native 按 technical report/preprint 标注。</li>
+          <li><strong>开源系统：</strong><a href="https://github.com/vllm-project/semantic-router/tree/ef9e5dd99c953a21d20a99a93547e57468bae863">vLLM Semantic Router 固定提交</a>；<a href="https://github.com/opensquilla/opensquilla/tree/79d57b2fe63e1f83b364ca2bd022e0cb76081406">OpenSquilla 0.5.3 固定提交</a>。系统事实来自官方代码和文档，不将其等同于同行评议论文结论。</li>
+          <li><strong>成本与延迟的邻近系统证据：</strong><a href="https://arxiv.org/abs/2511.20975">Aragog</a> 在固定 workflow 阶段中根据负载和排队状态选择配置；<a href="https://proceedings.iclr.cc/paper_files/paper/2025/hash/5bc342f48de8264779952fac378f96dc-Abstract-Conference.html">Preble</a>（ICLR 2025）研究前缀复用与负载均衡；<a href="https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin">DistServe</a>（OSDI 2024）分离 prefill 与 decode，并用 TTFT/TPOT 的服务目标评估。后二者用于解释等待机制，作为系统证据引用。</li>
+          <li><strong>未核验：</strong>SCOPE、HyDRA、Hera、TRACE、Budget-Aware、EASy、Iterative Critique Controller、ARC 与 Aragog 的官方代码未核验；SWE-Router 仅核验官方 Hugging Face 组织，源码仓库未核验；SyncPlan 论文写明代码将公开，执行日未核验到官方仓库。</li>
+        </ol>
+        <div class="source-box"><a href="sources/02_related_work_sources.md">完整来源清单</a><a href="assets/data/related_work_decision_granularity_2026-08-17.csv">结构化工作清单 CSV</a><a href="../research_notes/A_router_literature.md">逐论文证据卡</a><a href="../research_notes/B_harness_systems.md">系统固定提交核验</a><a href="../research_notes/D_latency_academic_audit.md">学术时间成本审计</a><a href="../research_notes/E_latency_commercial_audit.md">商业与系统时间审计</a><a href="../reports/RouteCraft_research_decision_report_2026-08-17.md">完整科研决策报告</a></div>
+        <p class="caption" style="margin-top:23px"><strong>阅读说明：</strong>卡片中的“论文报告”只适用于原论文的模型池、benchmark、价格与执行协议，不能横向组成统一排行榜。卡片中的“研究启示”是本报告基于多篇来源作出的综合判断。相关论文 PDF 已保存在本地分类目录。</p>
+      </section>
+    </main>
+  </div>
+
+  <footer><div class="shell">RouteCraft Research Pages · Related Work 02 · Decision granularity, observable state and system cost · Last verified 2026-08-18</div></footer>
+</body>
+</html>
