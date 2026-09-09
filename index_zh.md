@@ -104,7 +104,7 @@ lang: zh
   </li>
 
   <li>
-    <p> Yuanhui Wang, Kunlong Liu, <strong>Minnan Pei</strong>, Zhangming Li, Peisong Wang and Qinghao Hu. "MemeBQ: Memory Efficient Binary Quantization of LLMs". <em>[AAAI]</em>, 2026.</p>
+    <p> Yuanhui Wang<sup>*</sup>, Kunlong Liu<sup>*</sup>, <strong>Minnan Pei</strong>, Zhangming Li, Peisong Wang and Qinghao Hu. "MemeBQ: Memory Efficient Binary Quantization of LLMs". <em>[AAAI]</em>, 2026.（<sup>*</sup> 共同第一作者）</p>
     <div class="resource-links">
       <!-- <a href="https://arxiv.org/pdf/2507.07610" target="_blank">[PDF]</a>
       <a href="https://github.com/wangst0181/Spatial-Visualization-Benchmark" target="_blank">[Code]</a> -->
