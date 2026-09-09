@@ -34,6 +34,23 @@ lang: zh
 
 <ul class="publications-list">
 
+  <li>
+    <p><strong>Minnan Pei</strong>, Qiwei Dong, Yihan Zhou, Gang Li, Yuchen Zhu, Wenju Zhao, Zhongtian Long, Siting Wang, Peisong Wang and Jian Cheng.
+      "From Splats to Silicon: Rethinking Computational Efficiency of 3DGS." <em>[arXiv]</em>, 2026.</p>
+    <div class="resource-links">
+      <a href="https://arxiv.org/pdf/2609.06157" target="_blank">[PDF]</a>
+      <a href="https://github.com/HAPPYPMN/gsprof" target="_blank">[代码]</a>
+    </div>
+  </li>
+
+  <li>
+    <p><strong>Minnan Pei</strong>, Gang Li, Junwen Si, Yudong Mu, Zhihua Fan, Zeyu Zhu, Zitao Mo, Peisong Wang, Zhuoran Song, Xiaoyao Liang and Jian Cheng.
+      "GRADE: Gaussian-Wise Rendering with Adaptive Dependency-Ordered Execution for Static and Dynamic 3DGS." <em>[在投]</em>, 2026.</p>
+    <div class="resource-links">
+      <a href="https://github.com/HAPPYPMN/GRADE-GS" target="_blank">[代码]</a>
+    </div>
+  </li>
+
 <li>
     <p><strong>Minnan Pei</strong>, Gang Li, Zuyu Zhu, Siting Wang, Junwen Si, Zhuoran Song, Yu Feng, Fangxin Liu, Xiaoyao Liang and Jian Cheng. 
       "DeGS: A Scalable 3DGS Architecture via Decoupled Workload Parsing and Reorganization." <em>[MICRO]</em>, 2026.</p>
