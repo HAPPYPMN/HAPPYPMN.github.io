@@ -4,7 +4,7 @@
     <h1 id="name">{{ t.name }} <span lang="{% if page.lang == 'zh' %}en{% else %}zh-CN{% endif %}">{{ t.other_name }}</span></h1>
     <p>{{ t.intro }}</p>
     <p>{{ t.research_intro }}</p>
-    <p>{% if page.lang == 'zh' %}目前在字节跳动 Data 基础设施团队实习，从事 AI Factory 相关工作。此前在理想汽车基座模型-VLA 模型架构组实习。{% else %}I am currently an intern working on AI Factory in the Data infrastructure team at ByteDance. Previously, I interned in the Foundation Models – VLA Model Architecture team at Li Auto.{% endif %}</p>
+    <p>{{ t.industry_intro }}</p>
     <div class="social-links"><a href="mailto:peiminnan19@mails.ucas.ac.cn">Email</a><span aria-hidden="true">/</span><a href="https://scholar.google.com/citations?user=McR2_kgAAAAJ">Google Scholar</a><span aria-hidden="true">/</span><a href="https://github.com/HAPPYPMN">GitHub</a><span aria-hidden="true">/</span><a href="{{ '/assets/Minnan-Pei-CV.pdf' | relative_url }}">{% if page.lang == 'zh' %}简历{% else %}CV{% endif %}</a></div>
   </div>
   <img class="portrait" src="{{ '/assets/images/portrait.webp' | relative_url }}" alt="Minnan Pei / 裴旻楠" width="470" height="480" fetchpriority="high">

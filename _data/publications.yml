@@ -1,3 +1,60 @@
+- key: gcc
+  title: 'GCC: A 3DGS Inference Architecture with Gaussian-Wise and Cross-Stage Conditional Processing'
+  authors_html: <strong>Minnan Pei</strong>, Gang Li, Junwen Si, Zeyu Zhu, Zitao Mo, Peisong Wang, Zhuoran Song, Xiaoyao Liang,
+    Jian Cheng
+  authors:
+  - Minnan Pei
+  - Gang Li
+  - Junwen Si
+  - Zeyu Zhu
+  - Zitao Mo
+  - Peisong Wang
+  - Zhuoran Song
+  - Xiaoyao Liang
+  - Jian Cheng
+  venue: MICRO
+  year: 2025
+  topic: 3DGS
+  tags:
+  - 3D Gaussian Splatting
+  - Computer architecture
+  - Conditional processing
+  summary:
+    en: A 3DGS inference architecture with Gaussian-wise and cross-stage conditional processing.
+    zh: 结合高斯粒度与跨阶段条件处理，设计 3DGS 推理加速体系结构。
+  resources:
+  - label: PDF
+    url: https://arxiv.org/pdf/2507.15300
+  equal: false
+- key: spatialviz-bench
+  title: 'SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs'
+  authors_html: "Siting Wang, <strong>Minnan Pei</strong>, Luoyang Sun, Cheng Deng, Kun Shao, \n      Zheng Tian, Haifeng\
+    \ Zhang, Jun Wang"
+  authors:
+  - Siting Wang
+  - Minnan Pei
+  - Luoyang Sun
+  - Cheng Deng
+  - Kun Shao
+  - Zheng Tian
+  - Haifeng Zhang
+  - Jun Wang
+  venue: ICLR
+  year: 2026
+  topic: Other
+  tags:
+  - Multimodal LLM
+  - Spatial reasoning
+  - Benchmark
+  summary:
+    en: Automatically generated spatial visualization reasoning tasks for evaluating multimodal large language models.
+    zh: 自动生成空间可视化推理任务，用于评测多模态大语言模型。
+  resources:
+  - label: PDF
+    url: https://arxiv.org/pdf/2507.07610
+  - label: Code
+    url: https://github.com/wangst0181/Spatial-Visualization-Benchmark
+  equal: false
 - key: splats-to-silicon
   title: 'From Splats to Silicon: Rethinking Computational Efficiency of 3DGS'
   authors_html: <strong>Minnan Pei</strong>, Qiwei Dong, Yihan Zhou, Gang Li, Yuchen Zhu, Wenju Zhao, Zhongtian Long, Siting
@@ -189,35 +246,6 @@
     zh: 利用 KL 散度进行混合专家模型的分层剪枝。
   resources: []
   equal: false
-- key: spatialviz-bench
-  title: 'SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs'
-  authors_html: "Siting Wang, <strong>Minnan Pei</strong>, Luoyang Sun, Cheng Deng, Kun Shao, \n      Zheng Tian, Haifeng\
-    \ Zhang, Jun Wang"
-  authors:
-  - Siting Wang
-  - Minnan Pei
-  - Luoyang Sun
-  - Cheng Deng
-  - Kun Shao
-  - Zheng Tian
-  - Haifeng Zhang
-  - Jun Wang
-  venue: ICLR
-  year: 2026
-  topic: Other
-  tags:
-  - Multimodal LLM
-  - Spatial reasoning
-  - Benchmark
-  summary:
-    en: Automatically generated spatial visualization reasoning tasks for evaluating multimodal large language models.
-    zh: 自动生成空间可视化推理任务，用于评测多模态大语言模型。
-  resources:
-  - label: PDF
-    url: https://arxiv.org/pdf/2507.07610
-  - label: Code
-    url: https://github.com/wangst0181/Spatial-Visualization-Benchmark
-  equal: false
 - key: memebq
   title: 'MemeBQ: Memory Efficient Binary Quantization of LLMs'
   authors_html: Yuanhui Wang<sup>*</sup>, Kunlong Liu<sup>*</sup>, <strong>Minnan Pei</strong>, Zhangming Li, Peisong Wang
@@ -291,34 +319,6 @@
     en: FPGA acceleration of tree-based speculative decoding for large language models.
     zh: 面向 FPGA 的树状推测解码性能优化与大语言模型推理加速。
   resources: []
-  equal: false
-- key: gcc
-  title: 'GCC: A 3DGS Inference Architecture with Gaussian-Wise and Cross-Stage Conditional Processing'
-  authors_html: <strong>Minnan Pei</strong>, Gang Li, Junwen Si, Zeyu Zhu, Zitao Mo, Peisong Wang, Zhuoran Song, Xiaoyao Liang,
-    Jian Cheng
-  authors:
-  - Minnan Pei
-  - Gang Li
-  - Junwen Si
-  - Zeyu Zhu
-  - Zitao Mo
-  - Peisong Wang
-  - Zhuoran Song
-  - Xiaoyao Liang
-  - Jian Cheng
-  venue: MICRO
-  year: 2025
-  topic: 3DGS
-  tags:
-  - 3D Gaussian Splatting
-  - Computer architecture
-  - Conditional processing
-  summary:
-    en: A 3DGS inference architecture with Gaussian-wise and cross-stage conditional processing.
-    zh: 结合高斯粒度与跨阶段条件处理，设计 3DGS 推理加速体系结构。
-  resources:
-  - label: PDF
-    url: https://arxiv.org/pdf/2507.15300
   equal: false
 - key: unetpp
   title: 'Encoding feature supervised UNet++: Redesigning Supervision for liver and tumor segmentation'
