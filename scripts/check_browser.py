@@ -3,20 +3,29 @@ from pathlib import Path
 from functools import partial
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from threading import Thread
-import sys
 import json
+import argparse
 from playwright.sync_api import sync_playwright
 
-root = Path(sys.argv[1] if len(sys.argv) > 1 else '.preview-site').resolve()
-out = Path('artifacts/homepage-qa')
+parser = argparse.ArgumentParser()
+parser.add_argument('build', nargs='?', default='.local/build')
+parser.add_argument('--url', help='Check the deployed site instead of starting a local server')
+parser.add_argument('--out', help='Screenshot and report directory')
+args = parser.parse_args()
+root = Path(args.build).resolve()
+out = Path(args.out or ('.local/qa/live' if args.url else '.local/qa/local'))
 out.mkdir(parents=True, exist_ok=True)
 class QuietHandler(SimpleHTTPRequestHandler):
     def log_message(self, *args):
         pass
-server = ThreadingHTTPServer(('127.0.0.1', 0), partial(QuietHandler, directory=str(root)))
-thread = Thread(target=server.serve_forever, daemon=True)
-thread.start()
-base = f'http://127.0.0.1:{server.server_port}'
+server = None
+if args.url:
+    base = args.url.rstrip('/')
+else:
+    server = ThreadingHTTPServer(('127.0.0.1', 0), partial(QuietHandler, directory=str(root)))
+    thread = Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    base = f'http://127.0.0.1:{server.server_port}'
 results = []
 try:
     with sync_playwright() as p:
@@ -27,16 +36,20 @@ try:
                 errors = []
                 page.on('pageerror', lambda error: errors.append(str(error)))
                 page.on('response', lambda response: errors.append(f'HTTP {response.status}: {response.url}') if response.status >= 400 else None)
-                page.goto(base + route, wait_until='networkidle')
+                page.goto(base + route, wait_until='networkidle', timeout=60000)
                 assert page.locator('h1').count() == 1
                 assert page.locator('[data-publication]:visible').count() == 13
                 assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), f'Horizontal overflow: {width} {lang}'
                 assert page.locator('img').evaluate_all('(imgs) => imgs.every(i => i.complete && i.naturalWidth > 0)'), 'Image did not load'
+                assert page.locator('link[type="image/svg+xml"]').get_attribute('href').endswith('/assets/images/favicon-p.svg')
                 if width in [1440,390]:
                     page.screenshot(path=str(out / f'{lang}-{width}.png'), full_page=True)
                     page.screenshot(path=str(out / f'{lang}-{width}-hero.png'))
                 assert page.locator('#projects, .project-card, .hero-statement, .profile-card').count() == 0
                 assert page.locator('.experience-entry').count() == 2
+                page.locator('.site-header a[href$="#publications"]').click()
+                assert page.url.endswith('#publications')
+                assert 0 <= page.locator('#publications-heading').bounding_box()['y'] < 100
                 page.locator('a.language-link').click()
                 assert page.locator('html').get_attribute('lang') == ('zh-CN' if lang == 'en' else 'en')
                 assert not errors, errors
@@ -64,8 +77,9 @@ try:
         assert page.locator('.skip-link').evaluate('(el) => el === document.activeElement')
         page.close()
         browser.close()
-    (out/'results.json').write_text(json.dumps(results,indent=2),encoding='utf-8')
+    (out/'results.json').write_text(json.dumps({'base_url':base,'viewports':results},indent=2),encoding='utf-8')
     print('PASS: 10 bilingual viewport checks, projects removed, language switching, 3 paper viewports, no-JS content, keyboard skip link. Screenshots: '+str(out))
 finally:
-    server.shutdown()
-    server.server_close()
+    if server:
+        server.shutdown()
+        server.server_close()

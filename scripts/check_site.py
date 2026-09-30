@@ -1,4 +1,4 @@
-"""Validate a Jekyll build: python scripts/check_site.py .preview-site."""
+"""Validate a Jekyll build: python scripts/check_site.py .local/build."""
 from pathlib import Path
 from urllib.parse import urljoin, urlparse, unquote
 import json
@@ -6,7 +6,7 @@ import sys
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 
-root = Path(sys.argv[1] if len(sys.argv) > 1 else '.preview-site').resolve()
+root = Path(sys.argv[1] if len(sys.argv) > 1 else '.local/build').resolve()
 base = 'https://happypmn.github.io'
 pages = [root / 'index.html', root / 'index_zh.html', *sorted((root / 'research').glob('*/index.html'))]
 assert len(pages) == 15, f'Expected 2 homepages and 13 paper pages, got {len(pages)}'
@@ -71,6 +71,7 @@ for url in urls:
 assert f'Sitemap: {base}/sitemap.xml' in (root / 'robots.txt').read_text()
 assert not (root / 'resume_2p').exists(), 'Private working CV sources must not be built'
 assert not (root / 'scripts').exists(), 'QA tooling must not be published'
+assert not (root / '.local').exists(), 'Local archives and previews must not be published'
 assert (root / 'google04628dea8fc4532f.html').is_file(), 'Preserve Google verification file'
 if errors:
     raise SystemExit('\n'.join(errors))

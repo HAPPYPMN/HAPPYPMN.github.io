@@ -1,4 +1,6 @@
 /resume_2p/
+/.local/
+/_site/
 /.preview-site/
 /.tmp_homepage_*
 /artifacts/homepage-qa/

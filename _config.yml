@@ -5,11 +5,13 @@ url: https://happypmn.github.io
 baseurl: ""
 encoding: utf-8
 markdown: kramdown
+destination: .local/build
 collections:
   publications:
     output: true
     permalink: /research/:name/
 exclude:
+  - .local
   - Gemfile
   - Gemfile.lock
   - README.md

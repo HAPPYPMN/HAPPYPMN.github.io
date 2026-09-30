@@ -14,6 +14,7 @@ Bilingual academic homepage, built with Jekyll on GitHub Pages. The design follo
 - `_includes/home.html`, `_layouts/`: semantic HTML templates.
 - `assets/css/style.scss`: custom responsive theme; no remote fonts or CSS dependencies.
 - `assets/images/portrait.webp`: optimized display photo; the original remains at `assets/images/1.jpg`.
+- `assets/images/favicon-p.svg` and `favicon.ico`: plain serif P tab icon. SVG uses a glyph outline, so rendering does not depend on browser fonts. ICO includes 16, 32, and 48 pixel sizes.
 - `assets/Minnan-Pei-CV.pdf`: existing public CV. The website update does not regenerate this PDF.
 
 The two homepages share all publication data. The site does not require JavaScript. There is currently no selected-projects section. Avoid promotional slogans, oversized hero text, decorative illustrations, card grids, and numbered section labels. Existing `/index.html`, `/index_zh.html`, and RouteCraft URLs remain usable.
@@ -22,16 +23,36 @@ The two homepages share all publication data. The site does not require JavaScri
 
 ```sh
 bundle install
-bundle exec jekyll build --destination .preview-site
+bundle exec jekyll build
 python -m pip install beautifulsoup4 playwright
 python -m playwright install chromium
-python scripts/check_site.py .preview-site
-python scripts/check_browser.py .preview-site
+python scripts/check_site.py
+python scripts/check_browser.py
+# After GitHub Pages deployment:
+python scripts/check_live.py
+python scripts/check_browser.py --url https://happypmn.github.io
 ```
 
-Browser QA writes screenshots and a results file to the ignored `artifacts/homepage-qa/` directory. It checks desktop, tablet, and mobile widths, both languages, language switching, paper layout, no-JavaScript content, keyboard entry, and removal of the projects section. `check_site.py` checks local links and fragments, JSON-LD, metadata, and sitemap URLs. Update expected counts in the checks when adding papers.
+Browser QA writes screenshots and a results file to `.local/qa/local/` or `.local/qa/live/`. It checks desktop, tablet, and mobile widths, both languages, language switching, paper layout, no-JavaScript content, keyboard entry, and removal of the projects section. `check_site.py` checks local links and fragments, JSON-LD, metadata, and sitemap URLs. `check_live.py` checks deployed resources, including the favicon files. Update expected counts in the checks when adding papers.
 
-GitHub Pages builds from `main` at the repository root. `.preview-site` is for local testing. The legacy tracked `_site` directory is not the publishing source. Working CV sources, temporary files, QA tools, and internal research notes are excluded from the Jekyll output. The existing Google verification HTML is preserved.
+GitHub Pages builds from `main` at the repository root. Local builds default to `.local/build/`; GitHub Pages supplies its deployment destination. Working CV sources, temporary files, QA tools, and internal research notes are excluded from the Jekyll output. The existing Google verification HTML is preserved.
+
+## Local workspace organization
+
+| Location | Purpose |
+| --- | --- |
+| `_data/`, `_includes/`, `_layouts/`, `_publications/` | Website source and paper pages |
+| `assets/` | Published CSS, portrait, sharing image, and CV |
+| `routecraft/` | Existing research pages and source material |
+| `scripts/` | Reusable build and validation tools |
+| `resume_2p/` | Existing local LaTeX CV project; kept in place for VS Code |
+| `.local/build/` | Current local Jekyll output |
+| `.local/qa/local/`, `.local/qa/live/` | Local and deployed-page screenshots and reports |
+| `.local/archive/` | Preserved old builds, one-off scripts, sample page, and earlier QA artifacts |
+
+`.local/` is ignored by Git and excluded from publication. The old `_site/` output and `sample.html` have been archived locally and removed from the tracked publishing source; they remain recoverable from Git history. The `.vscode/` settings and existing uncommitted research draft are kept in their original locations.
+
+To regenerate the tab icon, install Pillow and fonttools, then run `python scripts/build_favicon.py --font path/to/georgia.ttf`. Windows defaults to the system Georgia font. Changing the SVG filename and ICO query version in `_layouts/default.html` avoids reusing the previous icon cache.
 
 ## Search visibility
 
