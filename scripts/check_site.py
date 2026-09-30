@@ -37,7 +37,9 @@ for path in pages:
         else:
             assert len(soup.select('[data-publication]')) == 13
             assert len(soup.select('link[hreflang]')) == 3
-            assert len(soup.select('.experience-card')) == 2
+            assert len(soup.select('.experience-entry')) == 2
+            assert not soup.select('#projects, .project-card, .hero-statement, .profile-card, .contact-section')
+            assert not soup.select('a[href$="#projects"]'), 'Removed projects section must not have navigation links'
             assert 'AI Factory' in soup.get_text()
         ids = [el['id'] for el in soup.select('[id]')]
         assert len(ids) == len(set(ids)), 'Duplicate HTML IDs'

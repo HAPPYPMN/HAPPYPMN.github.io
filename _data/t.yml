@@ -1,36 +1,12 @@
 en:
-  eyebrow: AI systems & computer architecture
   name: Minnan Pei
   other_name: 裴旻楠
-  headline: Efficient AI,<br>from algorithms<br>to <em>silicon.</em>
-  intro: I am a PhD student at the <strong>Institute of Automation, Chinese Academy of Sciences (CASIA)</strong> and the <strong>University of
-    Chinese Academy of Sciences (UCAS)</strong>, advised by <a href="https://people.ucas.ac.cn/~chengjian">Prof. Jian Cheng</a> and Prof. Gang
-    Li at <a href="http://clab.ia.ac.cn">CLab</a>.
-  research_intro: 'I work on efficient AI computing and hardware-software co-design: accelerating 3D Gaussian Splatting, optimizing LLM and VLA
-    inference, and exploring AI infrastructure and agent systems.'
-  view_research: Explore my research
-  cv: Download CV
-  location: Beijing, China
-  role: PhD student · CASIA / UCAS
-  currently: Currently
-  current_role: AI Factory @ ByteDance
-  current_team: Data · Infrastructure · Intern
-  focus_label: Research focus
-  focus:
-  - n: '01'
-    title: 3D Gaussian Splatting
-    text: Efficient rendering, dataflows & accelerator architecture
-    link: /research/degs/
-  - n: '02'
-    title: LLM & VLA inference
-    text: Model compression, heterogeneous deployment & scheduling
-    link: /research/lattice/
-  - n: '03'
-    title: AI systems & agents
-    text: AI infrastructure, agent routing & multi-model systems
-    link: /routecraft/
+  intro: I am a PhD student at the <strong>Institute of Automation, Chinese Academy of Sciences (CASIA)</strong> and the <strong>University
+    of Chinese Academy of Sciences (UCAS)</strong>, advised by <a href="https://people.ucas.ac.cn/~chengjian">Prof. Jian Cheng</a>
+    and Prof. Gang Li at <a href="http://clab.ia.ac.cn">CLab</a>.
+  research_intro: 'I work on efficient AI computing and hardware-software co-design: accelerating 3D Gaussian Splatting, optimizing
+    LLM and VLA inference, and exploring AI infrastructure and agent systems.'
   experience: Industry experience
-  experience_note: Bringing research into real systems.
   internships:
   - company: ByteDance
     cn: 字节跳动
@@ -57,45 +33,9 @@ en:
     - On-device inference
     - Hardware-software co-design
     current: false
-  projects: Selected projects
-  projects_note: From rendering workloads to intelligent systems.
-  project_link: Explore project
-  project_list:
-  - key: gsprof
-    kind: 3DGS · PROFILING
-    name: From Splats to Silicon
-    text: Understanding the computational efficiency of 3D Gaussian Splatting, with gsprof as the accompanying codebase.
-    url: /research/splats-to-silicon/
-    links:
-    - text: Paper
-      url: https://arxiv.org/pdf/2609.06157
-    - text: Code
-      url: https://github.com/HAPPYPMN/gsprof
-  - key: grade
-    kind: 3DGS · RENDERING
-    name: GRADE
-    text: Gaussian-wise rendering with adaptive dependency-ordered execution for static and dynamic 3DGS.
-    url: /research/grade/
-    links:
-    - text: Code
-      url: https://github.com/HAPPYPMN/GRADE-GS
-  - key: routecraft
-    kind: LLM · AGENT SYSTEMS
-    name: RouteCraft
-    text: An evidence-led research notebook on LLM routing, agent-loop cost, and when to reconsider model selection.
-    url: /routecraft/
-    links:
-    - text: Research notes (中文)
-      url: /routecraft/
   publications: Publications
-  publications_note: Papers, preprints & work under review.
-  all: All research
-  other: Other
-  systems: Systems
   details: Overview
-  equal: Equal contribution
   code: Code
-  background: Background
   education: Education
   education_items:
   - date: 2023 — Present
@@ -111,43 +51,14 @@ en:
   service: Academic service
   service_text: 'Reviewer: ISCA, HPCA, CoRL, ACM MM, TCAD, TCAS-I, TVLSI.'
   awards: Selected honors
-  awards_text: National Scholarship (2022) · Beijing Outstanding Student (2021) · Beijing Distinguished Graduate (2023).
   leadership: Previously President of the Student Union, School of Artificial Intelligence, UCAS (2024).
-  contact_label: Get in touch
-  contact_title: Let’s make AI<br><em>more efficient.</em>
-  contact_text: For research collaborations and industry opportunities in AI systems, inference optimization, and computer architecture.
-  email: Email me
-  updated: Updated September 2026
 zh:
-  eyebrow: AI 系统与计算机体系结构
   name: 裴旻楠
   other_name: Minnan Pei
-  headline: 让 AI 更高效，<br>从算法走向<br><em>系统与芯片。</em>
-  intro: 我是<strong>中国科学院自动化研究所（CASIA）</strong>与<strong>中国科学院大学（UCAS）</strong>的在读博士研究生，在 <a href="http://clab.ia.ac.cn">CLab</a> 开展研究，导师为<a href="https://people.ucas.ac.cn/~chengjian">程健研究员</a>和李钢研究员。
+  intro: 我是<strong>中国科学院自动化研究所（CASIA）</strong>与<strong>中国科学院大学（UCAS）</strong>的在读博士研究生，在 <a href="http://clab.ia.ac.cn">CLab</a>
+    开展研究，导师为<a href="https://people.ucas.ac.cn/~chengjian">程健研究员</a>和李钢研究员。
   research_intro: 研究聚焦人工智能高效计算与软硬件协同优化，涵盖三维高斯溅射（3D Gaussian Splatting, 3DGS）加速、LLM/VLA 推理优化，以及 AI 基础设施与智能体系统。
-  view_research: 查看研究成果
-  cv: 下载简历
-  location: 中国 · 北京
-  role: 博士研究生 · CASIA / UCAS
-  currently: 目前
-  current_role: 字节跳动 · AI Factory
-  current_team: Data · 基础设施 · 实习
-  focus_label: 研究方向
-  focus:
-  - n: '01'
-    title: 3DGS 高效渲染
-    text: 三维高斯溅射、渲染数据流与专用加速体系结构
-    link: /research/degs/
-  - n: '02'
-    title: LLM / VLA 推理加速
-    text: 模型压缩、异构部署与计算调度
-    link: /research/lattice/
-  - n: '03'
-    title: AI 系统与智能体
-    text: AI 基础设施、Agent 路由与多模型协作
-    link: /routecraft/
   experience: 实习经历
-  experience_note: 将研究带入真实系统。
   internships:
   - company: 字节跳动
     cn: ByteDance
@@ -174,45 +85,9 @@ zh:
     - 端侧推理
     - 软硬件协同优化
     current: false
-  projects: 代表项目
-  projects_note: 从渲染工作负载，到智能计算系统。
-  project_link: 了解项目
-  project_list:
-  - key: gsprof
-    kind: 3DGS · 性能分析
-    name: From Splats to Silicon
-    text: 研究三维高斯溅射的计算效率，提供配套 gsprof 代码，将算法工作负载与硬件效率联系起来。
-    url: /research/splats-to-silicon/
-    links:
-    - text: 论文
-      url: https://arxiv.org/pdf/2609.06157
-    - text: 代码
-      url: https://github.com/HAPPYPMN/gsprof
-  - key: grade
-    kind: 3DGS · 渲染优化
-    name: GRADE
-    text: 面向静态与动态 3DGS，研究高斯粒度渲染与自适应依赖顺序执行。
-    url: /research/grade/
-    links:
-    - text: 代码
-      url: https://github.com/HAPPYPMN/GRADE-GS
-  - key: routecraft
-    kind: LLM · 智能体系统
-    name: RouteCraft
-    text: 围绕 LLM 路由、Agent 循环成本与模型重选时机，整理研究证据、相关工作及可验证的研究问题。
-    url: /routecraft/
-    links:
-    - text: 研究笔记
-      url: /routecraft/
   publications: 论文与研究
-  publications_note: 已发表论文、预印本与在投工作。
-  all: 全部研究
-  other: 其他
-  systems: 系统
   details: 研究概览
-  equal: 共同第一作者
   code: 代码
-  background: 教育与背景
   education: 教育经历
   education_items:
   - date: 2023 — 至今
@@ -228,10 +103,4 @@ zh:
   service: 学术服务
   service_text: 论文审稿：ISCA、HPCA、CoRL、ACM MM、TCAD、TCAS-I、TVLSI。
   awards: 部分荣誉
-  awards_text: 国家奖学金（2022）· 北京市三好学生（2021）· 北京市优秀毕业生（2023）。
   leadership: 曾任中国科学院大学人工智能学院学生会主席（2024）。
-  contact_label: 联系我
-  contact_title: 一起探索<br><em>更高效的 AI。</em>
-  contact_text: 欢迎就 AI 系统、推理优化与计算机体系结构方向的学术合作和职业机会联系我。
-  email: 邮件联系
-  updated: 更新于 2026 年 9 月

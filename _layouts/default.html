@@ -6,7 +6,7 @@
   <title>{{ page.title | escape }}</title>
   <meta name="description" content="{{ page.description | default: site.description | escape }}">
   <meta name="author" content="Minnan Pei">
-  <meta name="theme-color" content="#f7f6f2">
+  <meta name="theme-color" content="#ffffff">
   <meta name="robots" content="{% if page.noindex %}noindex, follow{% else %}index, follow, max-image-preview:large{% endif %}">
   <link rel="canonical" href="{{ page.url | replace: 'index.html', '' | absolute_url }}">
   {% if page.homepage %}
@@ -22,7 +22,7 @@
   <meta property="og:image" content="{{ '/assets/images/social-card.png' | absolute_url }}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Minnan Pei — Efficient AI, from algorithms to silicon">
+  <meta property="og:image:alt" content="Minnan Pei (裴旻楠) — CASIA / UCAS — Research homepage">
   <meta property="og:locale" content="{% if page.lang == 'zh' %}zh_CN{% else %}en_US{% endif %}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ page.title | escape }}">
@@ -40,10 +40,8 @@
     <main id="main">{{ content }}</main>
     <footer class="site-footer">
       <span>© {{ 'now' | date: '%Y' }} Minnan Pei <span lang="zh-CN">/ 裴旻楠</span></span>
-      <span>{% if page.lang == 'zh' %}高效计算，有用的智能。{% else %}Efficient computation. Useful intelligence.{% endif %}</span>
       <a href="#top">{% if page.lang == 'zh' %}回到顶部{% else %}Back to top{% endif %} ↑</a>
     </footer>
   </div>
-  <script src="{{ '/assets/js/site.js' | relative_url }}" defer></script>
 </body>
 </html>

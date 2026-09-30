@@ -35,17 +35,12 @@ try:
                 if width in [1440,390]:
                     page.screenshot(path=str(out / f'{lang}-{width}.png'), full_page=True)
                     page.screenshot(path=str(out / f'{lang}-{width}-hero.png'))
-                page.locator('button[data-topic="3DGS"]').click()
-                assert page.locator('[data-publication]:visible').count() == 4
-                assert page.locator('button[data-topic="3DGS"]').get_attribute('aria-pressed') == 'true'
-                page.locator('button[data-topic="LLM / VLA"]').click()
-                assert page.locator('[data-publication]:visible').count() == 5
-                page.locator('button[data-topic="all"]').click()
-                assert page.locator('[data-publication]:visible').count() == 13
+                assert page.locator('#projects, .project-card, .hero-statement, .profile-card').count() == 0
+                assert page.locator('.experience-entry').count() == 2
                 page.locator('a.language-link').click()
                 assert page.locator('html').get_attribute('lang') == ('zh-CN' if lang == 'en' else 'en')
                 assert not errors, errors
-                results.append({'width':width,'language':lang,'overflow':False,'filters':'pass','language_switch':'pass'})
+                results.append({'width':width,'language':lang,'overflow':False,'projects_removed':True,'language_switch':'pass'})
                 page.close()
         for width in [1440,390,320]:
             page=browser.new_page(viewport={'width':width,'height':900})
@@ -70,7 +65,7 @@ try:
         page.close()
         browser.close()
     (out/'results.json').write_text(json.dumps(results,indent=2),encoding='utf-8')
-    print('PASS: 10 bilingual viewport checks, publication filters, language switching, 3 paper viewports, no-JS content, reduced motion, keyboard skip link. Screenshots: '+str(out))
+    print('PASS: 10 bilingual viewport checks, projects removed, language switching, 3 paper viewports, no-JS content, keyboard skip link. Screenshots: '+str(out))
 finally:
     server.shutdown()
     server.server_close()

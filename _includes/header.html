@@ -1,10 +1,10 @@
 <header class="site-header" id="top">
-  <a class="wordmark" href="{{ '/' | relative_url }}" aria-label="Minnan Pei home"><span class="monogram" aria-hidden="true">mp<span>.</span></span><span>Minnan Pei <span class="wordmark-zh" lang="zh-CN">/ 裴旻楠</span></span></a>
+  {% if page.lang == 'zh' %}{% assign home = '/index_zh.html' %}{% else %}{% assign home = '/' %}{% endif %}
   <nav aria-label="{% if page.lang == 'zh' %}主导航{% else %}Main navigation{% endif %}">
-    {% if page.lang == 'zh' %}{% assign home = '/index_zh.html' %}{% else %}{% assign home = '/' %}{% endif %}
-    <a href="{{ home | relative_url }}#experience">{% if page.lang == 'zh' %}经历{% else %}Experience{% endif %}</a>
+    {% unless page.homepage %}<a href="{{ home | relative_url }}">Home</a>{% endunless %}
+    <a href="{{ home | relative_url }}#experience">{% if page.lang == 'zh' %}实习经历{% else %}Experience{% endif %}</a>
     <a href="{{ home | relative_url }}#publications">{% if page.lang == 'zh' %}论文{% else %}Publications{% endif %}</a>
-    <a href="{{ home | relative_url }}#projects">{% if page.lang == 'zh' %}项目{% else %}Projects{% endif %}</a>
-    {% if page.lang == 'zh' %}<a class="language-link" href="{{ '/' | relative_url }}" lang="en" hreflang="en">EN <span aria-hidden="true">↗</span></a>{% else %}<a class="language-link" href="{{ '/index_zh.html' | relative_url }}" lang="zh-CN" hreflang="zh-CN">中文 <span aria-hidden="true">↗</span></a>{% endif %}
+    <a href="{{ '/assets/Minnan-Pei-CV.pdf' | relative_url }}">{% if page.lang == 'zh' %}简历{% else %}CV{% endif %}</a>
+    {% if page.lang == 'zh' %}<a class="language-link" href="{{ '/' | relative_url }}" lang="en" hreflang="en">English</a>{% else %}<a class="language-link" href="{{ '/index_zh.html' | relative_url }}" lang="zh-CN" hreflang="zh-CN">中文</a>{% endif %}
   </nav>
 </header>
