@@ -1,57 +1,345 @@
-﻿- key: memebq
-  authors: "Yuanhui Wang, Kunlong Liu, <strong>Minnan Pei</strong>, Zhangming Li, Peisong Wang, Peisong Wang and Qinghao Hu."
-  title: "MemeBQ: Memory Efficient Binary Quantization of LLMs"
-  venue: "[AAAI]"
+- key: splats-to-silicon
+  title: 'From Splats to Silicon: Rethinking Computational Efficiency of 3DGS'
+  authors_html: <strong>Minnan Pei</strong>, Qiwei Dong, Yihan Zhou, Gang Li, Yuchen Zhu, Wenju Zhao, Zhongtian Long, Siting
+    Wang, Peisong Wang and Jian Cheng
+  authors:
+  - Minnan Pei
+  - Qiwei Dong
+  - Yihan Zhou
+  - Gang Li
+  - Yuchen Zhu
+  - Wenju Zhao
+  - Zhongtian Long
+  - Siting Wang
+  - Peisong Wang
+  - Jian Cheng
+  venue: arXiv
   year: 2026
+  topic: 3DGS
+  tags:
+  - 3D Gaussian Splatting
+  - Hardware efficiency
+  - Profiling
+  summary:
+    en: A study of computational efficiency in 3D Gaussian Splatting, with the accompanying gsprof codebase.
+    zh: 研究三维高斯溅射的计算效率，并提供配套的 gsprof 代码。
+  resources:
+  - label: PDF
+    url: https://arxiv.org/pdf/2609.06157
+  - label: Code
+    url: https://github.com/HAPPYPMN/gsprof
+  equal: false
+- key: grade
+  title: 'GRADE: Gaussian-Wise Rendering with Adaptive Dependency-Ordered Execution for Static and Dynamic 3DGS'
+  authors_html: <strong>Minnan Pei</strong>, Gang Li, Junwen Si, Yudong Mu, Zhihua Fan, Zeyu Zhu, Zitao Mo, Peisong Wang,
+    Zhuoran Song, Xiaoyao Liang and Jian Cheng
+  authors:
+  - Minnan Pei
+  - Gang Li
+  - Junwen Si
+  - Yudong Mu
+  - Zhihua Fan
+  - Zeyu Zhu
+  - Zitao Mo
+  - Peisong Wang
+  - Zhuoran Song
+  - Xiaoyao Liang
+  - Jian Cheng
+  venue: Under Review
+  year: 2026
+  topic: 3DGS
+  tags:
+  - 3D Gaussian Splatting
+  - Rendering
+  - Scheduling
+  summary:
+    en: Gaussian-wise rendering and adaptive dependency-ordered execution for static and dynamic 3D Gaussian Splatting.
+    zh: 面向静态与动态 3DGS，研究高斯粒度渲染与自适应依赖顺序执行。
+  resources:
+  - label: Code
+    url: https://github.com/HAPPYPMN/GRADE-GS
+  equal: false
+- key: degs
+  title: 'DeGS: A Scalable 3DGS Architecture via Decoupled Workload Parsing and Reorganization'
+  authors_html: <strong>Minnan Pei</strong>, Gang Li, Zuyu Zhu, Siting Wang, Junwen Si, Zhuoran Song, Yu Feng, Fangxin Liu,
+    Xiaoyao Liang and Jian Cheng
+  authors:
+  - Minnan Pei
+  - Gang Li
+  - Zuyu Zhu
+  - Siting Wang
+  - Junwen Si
+  - Zhuoran Song
+  - Yu Feng
+  - Fangxin Liu
+  - Xiaoyao Liang
+  - Jian Cheng
+  venue: MICRO
+  year: 2026
+  topic: 3DGS
+  tags:
+  - 3D Gaussian Splatting
+  - Computer architecture
+  - Scalability
+  summary:
+    en: A scalable 3DGS architecture that decouples workload parsing and reorganization.
+    zh: 通过解耦工作负载解析与重组，研究可扩展的 3DGS 加速体系结构。
+  resources:
+  - label: PDF
+    url: https://arxiv.org/pdf/2608.02099
+  equal: false
+- key: lattice
+  title: 'LATTICE: Constraint-Directed Scheduling, Memory Planning, and Pipeline Refinement for NPUs'
+  authors_html: Runhao Liu<sup>*</sup>, <strong>Minnan Pei<sup>*</sup></strong>, Fei Ding, Guangzhen Yao, You Li, Peng Xiao,
+    Gang Li and Peng Zhang
+  authors:
+  - Runhao Liu
+  - Minnan Pei
+  - Fei Ding
+  - Guangzhen Yao
+  - You Li
+  - Peng Xiao
+  - Gang Li
+  - Peng Zhang
+  venue: arXiv
+  year: 2026
+  topic: Systems
+  tags:
+  - NPU
+  - Scheduling
+  - Memory planning
+  summary:
+    en: Constraint-directed scheduling, memory planning, and pipeline refinement for neural processing units.
+    zh: 面向 NPU 的约束驱动调度、内存规划与流水线优化。
+  resources:
+  - label: PDF
+    url: https://arxiv.org/pdf/2607.17422v2
+  equal: true
+- key: vqvla
+  title: 'VQVLA: Motion-Aware Vector Quantization with Computation Fusion for VLA Acceleration'
+  authors_html: Zhuoran Song, Haozhe Jiang, Chunyu Qi, <strong>Minnan Pei</strong>, Gang Li, Xiaoyao Liang and Haibing Guan
+  authors:
+  - Zhuoran Song
+  - Haozhe Jiang
+  - Chunyu Qi
+  - Minnan Pei
+  - Gang Li
+  - Xiaoyao Liang
+  - Haibing Guan
+  venue: MICRO
+  year: 2026
+  topic: LLM / VLA
+  tags:
+  - Vision-Language-Action
+  - Vector quantization
+  - Inference acceleration
+  summary:
+    en: Motion-aware vector quantization and computation fusion for efficient vision-language-action models.
+    zh: 通过运动感知向量量化与计算融合，加速视觉语言动作模型（VLA）。
+  resources: []
+  equal: false
+- key: dali
+  title: 'DALI: A Workload-Aware Offloading Framework for Efficient MoE Inference on Local PCs'
+  authors_html: Zeyu Zhu, Gang Li, Peisong Wang, Zitao Mo, <strong>Minnan Pei</strong>, Zhuoran Song, Xiaoyao Liang, Jian
+    Cheng
+  authors:
+  - Zeyu Zhu
+  - Gang Li
+  - Peisong Wang
+  - Zitao Mo
+  - Minnan Pei
+  - Zhuoran Song
+  - Xiaoyao Liang
+  - Jian Cheng
+  venue: arXiv
+  year: 2026
+  topic: LLM / VLA
+  tags:
+  - Mixture of Experts
+  - LLM inference
+  - Offloading
+  summary:
+    en: Workload-aware offloading for efficient mixture-of-experts inference on local PCs.
+    zh: 通过工作负载感知卸载，优化本地 PC 上的混合专家模型（MoE）推理。
+  resources:
+  - label: PDF
+    url: https://arxiv.org/pdf/2602.03495
+  equal: false
+- key: kl-moe
+  title: 'KL-MoE: A Hierarchical MoE Pruning Framework Exploiting KL Divergence'
+  authors_html: Zeyu Zhu, Gang Li, <strong>Minnan Pei</strong>, Zitao Mo, Peihuan Ni, Peisong Wang, Tielong Liu and Jian Cheng
+  authors:
+  - Zeyu Zhu
+  - Gang Li
+  - Minnan Pei
+  - Zitao Mo
+  - Peihuan Ni
+  - Peisong Wang
+  - Tielong Liu
+  - Jian Cheng
+  venue: DAC
+  year: 2026
+  topic: LLM / VLA
+  tags:
+  - Mixture of Experts
+  - Model pruning
+  - KL divergence
+  summary:
+    en: Hierarchical pruning of mixture-of-experts models using KL divergence.
+    zh: 利用 KL 散度进行混合专家模型的分层剪枝。
+  resources: []
+  equal: false
+- key: spatialviz-bench
+  title: 'SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs'
+  authors_html: "Siting Wang, <strong>Minnan Pei</strong>, Luoyang Sun, Cheng Deng, Kun Shao, \n      Zheng Tian, Haifeng\
+    \ Zhang, Jun Wang"
+  authors:
+  - Siting Wang
+  - Minnan Pei
+  - Luoyang Sun
+  - Cheng Deng
+  - Kun Shao
+  - Zheng Tian
+  - Haifeng Zhang
+  - Jun Wang
+  venue: ICLR
+  year: 2026
+  topic: Other
+  tags:
+  - Multimodal LLM
+  - Spatial reasoning
+  - Benchmark
+  summary:
+    en: Automatically generated spatial visualization reasoning tasks for evaluating multimodal large language models.
+    zh: 自动生成空间可视化推理任务，用于评测多模态大语言模型。
+  resources:
+  - label: PDF
+    url: https://arxiv.org/pdf/2507.07610
+  - label: Code
+    url: https://github.com/wangst0181/Spatial-Visualization-Benchmark
+  equal: false
+- key: memebq
+  title: 'MemeBQ: Memory Efficient Binary Quantization of LLMs'
+  authors_html: Yuanhui Wang<sup>*</sup>, Kunlong Liu<sup>*</sup>, <strong>Minnan Pei</strong>, Zhangming Li, Peisong Wang
+    and Qinghao Hu
+  authors:
+  - Yuanhui Wang
+  - Kunlong Liu
+  - Minnan Pei
+  - Zhangming Li
+  - Peisong Wang
+  - Qinghao Hu
+  venue: AAAI
+  year: 2026
+  topic: LLM / VLA
+  tags:
+  - LLM
+  - Binary quantization
+  - Memory efficiency
+  summary:
+    en: Memory-efficient binary quantization of large language models.
+    zh: 研究面向大语言模型的内存高效二值量化。
+  resources: []
+  equal: true
 - key: apex
-  authors: "Peihuan Ni, Zitao Mo, Tielong Liu, Hongli Wen, Zeyu Zhu, <strong>Minnan Pei</strong>, Junwen Si, Weifan Guan, Peisong Wang, Qinghao Hu, Gang Li and Jian Cheng."
-  title: "APEX: Integer-only Non-linear Function Approximation for Efficient Cross-Modal Inference"
-  venue: "[DATE]"
+  title: 'APEX: Integer-only Non-linear Function Approximation for Efficient Cross-Modal Inference'
+  authors_html: Peihuan Ni, Zitao Mo, Tielong Liu, Hongli Wen, Zeyu Zhu, <strong>Minnan Pei</strong>, Junwen Si, Weifan Guan,
+    Peisong Wang, Qinghao Hu, Gang Li and Jian Cheng
+  authors:
+  - Peihuan Ni
+  - Zitao Mo
+  - Tielong Liu
+  - Hongli Wen
+  - Zeyu Zhu
+  - Minnan Pei
+  - Junwen Si
+  - Weifan Guan
+  - Peisong Wang
+  - Qinghao Hu
+  - Gang Li
+  - Jian Cheng
+  venue: DATE
   year: 2026
-- key: speculative
-  authors: "Tielong Liu, Gang Li, Zitao Mo, Zeyu Zhu, <strong>Minnan Pei</strong> and Jian Cheng."
-  title: "Boosting the Performance of Tree-Based Speculative Decoding of LLMs on FPGAs"
-  venue: "[DATE]"
+  topic: Systems
+  tags:
+  - Integer-only inference
+  - Cross-modal inference
+  - Function approximation
+  summary:
+    en: Integer-only approximation of non-linear functions for efficient cross-modal inference.
+    zh: 通过非线性函数的纯整数近似，优化跨模态推理效率。
+  resources: []
+  equal: false
+- key: fpga-speculative-decoding
+  title: Boosting the Performance of Tree-Based Speculative Decoding of LLMs on FPGAs
+  authors_html: Tielong Liu, Gang Li, Zitao Mo, Zeyu Zhu, <strong>Minnan Pei</strong> and Jian Cheng
+  authors:
+  - Tielong Liu
+  - Gang Li
+  - Zitao Mo
+  - Zeyu Zhu
+  - Minnan Pei
+  - Jian Cheng
+  venue: DATE
   year: 2026
-- key: spatialviz
-  authors: "Siting Wang, <strong>Minnan Pei</strong>, Luoyang Sun, Cheng Deng, Kun Shao, Zheng Tian, Haifeng Zhang, Jun Wang."
-  title: "SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs"
-  venue: "[ICLR]"
-  year: 2025
-  resources:
-    - url: "https://arxiv.org/pdf/2507.07610"
-      label:
-        en: "[PDF]"
-        zh: "[PDF]"
-    - url: "https://github.com/wangst0181/Spatial-Visualization-Benchmark"
-      label:
-        en: "[Code]"
-        zh: "[代码]"
+  topic: LLM / VLA
+  tags:
+  - Speculative decoding
+  - FPGA
+  - LLM inference
+  summary:
+    en: FPGA acceleration of tree-based speculative decoding for large language models.
+    zh: 面向 FPGA 的树状推测解码性能优化与大语言模型推理加速。
+  resources: []
+  equal: false
 - key: gcc
-  authors: "<strong>Minnan Pei</strong>, Gang Li,Junwen Si, Zeyu Zhu, Zitao Mo, Peisong Wang, Zhuoran Song, Xiaoyao Liang, Jian Cheng."
-  title: "GCC: A 3DGS Inference Architecture with Gaussian-Wise and Cross-Stage Conditional Processing"
-  venue: "[MICRO]"
+  title: 'GCC: A 3DGS Inference Architecture with Gaussian-Wise and Cross-Stage Conditional Processing'
+  authors_html: <strong>Minnan Pei</strong>, Gang Li, Junwen Si, Zeyu Zhu, Zitao Mo, Peisong Wang, Zhuoran Song, Xiaoyao Liang,
+    Jian Cheng
+  authors:
+  - Minnan Pei
+  - Gang Li
+  - Junwen Si
+  - Zeyu Zhu
+  - Zitao Mo
+  - Peisong Wang
+  - Zhuoran Song
+  - Xiaoyao Liang
+  - Jian Cheng
+  venue: MICRO
   year: 2025
+  topic: 3DGS
+  tags:
+  - 3D Gaussian Splatting
+  - Computer architecture
+  - Conditional processing
+  summary:
+    en: A 3DGS inference architecture with Gaussian-wise and cross-stage conditional processing.
+    zh: 结合高斯粒度与跨阶段条件处理，设计 3DGS 推理加速体系结构。
   resources:
-    - url: "https://arxiv.org/pdf/2507.15300"
-      label:
-        en: "[PDF]"
-        zh: "[PDF]"
-    - url: "[代码的GitHub链接]"
-      label:
-        en: "[Code]"
-        zh: "[代码]"
+  - label: PDF
+    url: https://arxiv.org/pdf/2507.15300
+  equal: false
 - key: unetpp
-  authors: "Jiahao Cui, Ruoxin Xiao, Shiyuan Fang, <strong>Minnan Pei</strong>, Yixuan Yu."
-  title: "Encoding feature supervised UNet++: Redesigning Supervision for liver and tumor segmentation"
-  venue: "[CoRR]"
+  title: 'Encoding feature supervised UNet++: Redesigning Supervision for liver and tumor segmentation'
+  authors_html: Jiahao Cui, Ruoxin Xiao, Shiyuan Fang, <strong>Minnan Pei</strong>, Yixuan Yu
+  authors:
+  - Jiahao Cui
+  - Ruoxin Xiao
+  - Shiyuan Fang
+  - Minnan Pei
+  - Yixuan Yu
+  venue: arXiv
   year: 2022
+  topic: Other
+  tags:
+  - Medical image segmentation
+  - UNet++
+  - Computer vision
+  summary:
+    en: Feature-supervised UNet++ for liver and tumor segmentation.
+    zh: 面向肝脏与肿瘤分割的特征监督 UNet++。
   resources:
-    - url: "https://arxiv.org/pdf/2211.08146"
-      label:
-        en: "[PDF]"
-        zh: "[PDF]"
-    - url: "[代码的GitHub链接]"
-      label:
-        en: "[Code]"
-        zh: "[代码]"
+  - label: PDF
+    url: https://arxiv.org/pdf/2211.08146
+  equal: false

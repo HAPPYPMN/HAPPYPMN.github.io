@@ -1,0 +1,35 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfilePage",
+      "@id": {{ page.url | absolute_url | append: '#profile' | jsonify }},
+      "url": {{ page.url | absolute_url | jsonify }},
+      "name": {{ page.title | jsonify }},
+      "description": {{ page.description | jsonify }},
+      "inLanguage": "{% if page.lang == 'zh' %}zh-CN{% else %}en{% endif %}",
+      "mainEntity": {"@id": "{{ site.url }}/#person"},
+      "hasPart": [{% for pub in site.data.publications %}{"@id": "{{ site.url }}/research/{{ pub.key }}/#article"}{% unless forloop.last %},{% endunless %}{% endfor %}]
+    },
+    {
+      "@type": "Person",
+      "@id": "{{ site.url }}/#person",
+      "name": "Minnan Pei",
+      "alternateName": ["裴旻楠", "Pei Minnan"],
+      "url": "{{ site.url }}/",
+      "image": "{{ site.url }}/assets/images/portrait.webp",
+      "jobTitle": "PhD Student",
+      "description": "PhD student at CASIA and UCAS researching efficient AI systems and hardware-software co-design. AI Factory intern at ByteDance, Data – Infrastructure.",
+      "affiliation": [
+        {"@type": "Organization", "name": "Institute of Automation, Chinese Academy of Sciences", "alternateName": "CASIA"},
+        {"@type": "CollegeOrUniversity", "name": "University of Chinese Academy of Sciences", "alternateName": "UCAS"}
+      ],
+      "worksFor": {"@type": "Organization", "name": "ByteDance", "alternateName": "字节跳动"},
+      "alumniOf": {"@type": "CollegeOrUniversity", "name": "University of Chinese Academy of Sciences"},
+      "knowsAbout": ["Efficient AI systems", "3D Gaussian Splatting", "Computer architecture", "Hardware-software co-design", "LLM inference", "Vision-Language-Action models", "AI infrastructure", "AI Factory", "Agent routing", "CUDA", "Vulkan", "FPGA"],
+      "sameAs": ["https://github.com/HAPPYPMN", "https://scholar.google.com/citations?user=McR2_kgAAAAJ"]
+    }
+  ]
+}
+</script>

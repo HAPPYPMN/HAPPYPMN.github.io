@@ -1,5 +1,26 @@
-title: Minnan Pei
-description: Personal Page
+title: Minnan Pei · 裴旻楠
+description: Minnan Pei (裴旻楠), PhD student at CASIA and UCAS. Efficient AI systems, 3D Gaussian Splatting, LLM and VLA inference, hardware-software co-design, and AI infrastructure.
 author: Minnan Pei
-
-theme: jekyll-theme-minimal
+url: https://happypmn.github.io
+baseurl: ""
+encoding: utf-8
+markdown: kramdown
+collections:
+  publications:
+    output: true
+    permalink: /research/:name/
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - scripts
+  - resume_2p
+  - tmp
+  - docs
+  - sample.html
+  - routecraft/README.md
+  - routecraft/evidence
+  - routecraft/reports
+  - routecraft/research_notes
+  - routecraft/papers
+  - routecraft/router_research_pages/sources

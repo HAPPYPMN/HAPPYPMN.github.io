@@ -1,0 +1,24 @@
+---
+layout: default
+---
+{% assign pub = site.data.publications | where: 'key', page.key | first %}
+<article class="paper-page">
+  <a class="back-link" href="{{ '/' | relative_url }}#publications">← All publications</a>
+  <div class="paper-meta"><span class="venue {% if pub.venue == 'arXiv' or pub.venue == 'Under Review' %}venue-neutral{% endif %}">{{ pub.venue }} · {{ pub.year }}</span><span>{{ pub.topic }}</span></div>
+  <h1>{{ pub.title }}</h1>
+  <p class="paper-authors">{{ pub.authors_html }}{% if pub.equal %}<br><small><sup>*</sup> Equal contribution.</small>{% endif %}</p>
+  <div class="resource-links">{% for resource in pub.resources %}<a class="button {% if resource.label == 'PDF' %}button-primary{% endif %}" href="{{ resource.url }}">{% if resource.label == 'PDF' %}Read paper ↗{% else %}View code ↗{% endif %}</a>{% endfor %}</div>
+  <section class="paper-summary" aria-labelledby="overview">
+    <p class="eyebrow">Research overview</p>
+    <h2 id="overview">{{ pub.summary.en }}</h2>
+    <p lang="zh-CN">{{ pub.summary.zh }}</p>
+    <ul class="tag-list">{% for tag in pub.tags %}<li>{{ tag }}</li>{% endfor %}</ul>
+    {% if pub.venue == 'Under Review' %}<p class="paper-note">This work is under review. The linked resources are the currently public materials.</p>{% elsif pub.venue == 'arXiv' %}<p class="paper-note">Preprint · {{ pub.year }}. See the linked paper for the full method, experiments, and latest version.</p>{% else %}<p class="paper-note">{{ pub.venue }} · {{ pub.year }}{% if pub.resources.size == 0 %}. Public paper and code links will be added when available.{% endif %}</p>{% endif %}
+  </section>
+  <section class="related-papers" aria-labelledby="related">
+    <p class="eyebrow">Explore further</p>
+    <h2 id="related">Related research</h2>
+    {% for related in site.data.publications %}{% if related.topic == pub.topic and related.key != pub.key %}<a href="{{ '/research/' | append: related.key | append: '/' | relative_url }}"><span>{{ related.title }}</span><span aria-hidden="true">↗</span></a>{% endif %}{% endfor %}
+  </section>
+  <p class="paper-contact">Research by <a href="{{ '/' | relative_url }}">Minnan Pei (裴旻楠)</a> and collaborators · <a href="mailto:peiminnan19@mails.ucas.ac.cn">Get in touch</a></p>
+</article>

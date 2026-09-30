@@ -1,0 +1,14 @@
+---
+layout: null
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>{{ '/' | absolute_url }}</loc><xhtml:link rel="alternate" hreflang="en" href="{{ '/' | absolute_url }}"/><xhtml:link rel="alternate" hreflang="zh-CN" href="{{ '/index_zh.html' | absolute_url }}"/><xhtml:link rel="alternate" hreflang="x-default" href="{{ '/' | absolute_url }}"/></url>
+  <url><loc>{{ '/index_zh.html' | absolute_url }}</loc><xhtml:link rel="alternate" hreflang="en" href="{{ '/' | absolute_url }}"/><xhtml:link rel="alternate" hreflang="zh-CN" href="{{ '/index_zh.html' | absolute_url }}"/><xhtml:link rel="alternate" hreflang="x-default" href="{{ '/' | absolute_url }}"/></url>
+  {% for paper in site.publications %}<url><loc>{{ paper.url | absolute_url }}</loc></url>
+  {% endfor %}
+  <url><loc>{{ '/routecraft/router_research_pages/' | absolute_url }}</loc></url>
+  <url><loc>{{ '/routecraft/router_research_pages/01_background_why_router.html' | absolute_url }}</loc></url>
+  <url><loc>{{ '/routecraft/router_research_pages/02_related_work_decision_granularity.html' | absolute_url }}</loc></url>
+  <url><loc>{{ '/routecraft/router_research_pages/03_research_plan_branches.html' | absolute_url }}</loc></url>
+</urlset>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="先验证动态重选是否有净收益，再判断哪些 Agent 事件值得重新运行 Router，并据此安排 RouteCraft 的最小实验。">
-  <title>03 · 先找出何时值得重选，再决定训练什么｜RouteCraft Research Pages</title>
+  <title>Agent 模型重选与研究计划 | RouteCraft · Minnan Pei</title>
   <style>
     :root{
       --ink:#14233a;--muted:#5f7087;--paper:#f4f1e9;--card:#fffefa;--line:#d9d4ca;
@@ -35,8 +35,18 @@
     @media(max-width:720px){.shell{padding:0 18px}.hero{padding-top:55px}.hero-grid,.evidence-grid,.hyp-grid,.state-grid,.scope-exits,.outcome-grid,.cost-gates{grid-template-columns:1fr}.stage-strip{grid-template-columns:repeat(2,1fr)}.gate{grid-template-columns:1fr}.gate-uncertain{grid-column:auto}.tr,.rr,.week{grid-template-columns:1fr}.thead,.rrhead,.week.head{display:none}.tr>div,.rr>div,.week>div{display:block!important}.tr>div:before,.rr>div:before,.week>div:before{display:block;font:800 9px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);margin-bottom:3px}.tr>div:nth-child(1):before{content:"阶段"}.tr>div:nth-child(2):before{content:"新信息"}.tr>div:nth-child(3):before{content:"验证与风险"}.tr>div:nth-child(4):before{content:"首先检验的路由方式"}.rr>div:nth-child(1):before{content:"实验阶段"}.rr>div:nth-child(2):before{content:"状态与动作规模"}.rr>div:nth-child(3):before{content:"累计分支数"}.rr>div:nth-child(4):before{content:"要回答的问题"}.week>div:nth-child(1):before{content:"周次"}.week>div:nth-child(2):before{content:"完成什么"}.week>div:nth-child(3):before{content:"回答什么问题"}.week>div:nth-child(4):before{content:"什么条件下继续"}.unlock{grid-template-columns:1fr}.next-page{grid-template-columns:1fr}.page-nav span{display:none}}
     @media print{.topbar,.toc{display:none}.layout{display:block}.hero{padding-top:40px}.shell{max-width:none;padding:0 18mm}.evidence-card,.hyp-card,.gate,.outcome,.run-definition,.verdict,.next-page{break-inside:avoid}a{color:inherit;text-decoration:none}section{break-before:auto}}
   </style>
+<meta name="description" content="研究 Agent 系统何时值得重新选择模型：动态重选收益、事件触发与模型选择的可验证假设。">
+  <meta name="author" content="Minnan Pei">
+  <link rel="canonical" href="https://happypmn.github.io/routecraft/router_research_pages/03_research_plan_branches.html">
+  <meta property="og:title" content="Agent 模型重选与研究计划 | RouteCraft · Minnan Pei">
+  <meta property="og:description" content="研究 Agent 系统何时值得重新选择模型：动态重选收益、事件触发与模型选择的可验证假设。">
+  <meta property="og:url" content="https://happypmn.github.io/routecraft/router_research_pages/03_research_plan_branches.html">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://happypmn.github.io/assets/images/social-card.png">
+  <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
+<a href="/index_zh.html#projects" style="display:block;max-width:1080px;margin:20px auto 0;padding:0 28px;color:#0b6e69;font:14px/1.6 sans-serif">← 裴旻楠 Minnan Pei · 个人主页</a>
   <header class="topbar"><div class="shell">
     <div class="brand"><a href="index.html">RouteCraft Research Pages</a></div>
     <nav class="page-nav" aria-label="页面导航"><a href="02_related_work_decision_granularity.html">← Page 02</a><span>PUBLIC WEB EDITION · Page 03</span></nav>

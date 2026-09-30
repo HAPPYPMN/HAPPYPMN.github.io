@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="LLM Router 是什么、为什么需要它：模型异质性、Agent loop 成本放大、厂商公开路线与 RouteCraft 的研究缺口。">
-  <title>01 · LLM Router 是什么，为什么需要它？｜RouteCraft Research Pages</title>
+  <title>LLM Router：背景与系统成本 | RouteCraft · Minnan Pei</title>
   <style>
     :root{
       --ink:#14233a;--muted:#607086;--faint:#8995a5;--paper:#f4f1e9;--card:#fffefa;
@@ -40,8 +40,18 @@
     @media(max-width:650px){.vendor-table,.vendor-table tbody,.vendor-table tr,.vendor-table td{display:block;width:100%}.vendor-table thead{display:none}.vendor-table tr{padding:10px 0;border-bottom:1px solid var(--line)}.vendor-table tr:last-child{border-bottom:0}.vendor-table td{display:grid;grid-template-columns:86px minmax(0,1fr);gap:8px;padding:6px 12px;border:0}.vendor-table td:before{font:800 9.5px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);letter-spacing:.03em}.vendor-table td:nth-child(1):before{content:"平台 / 产品"}.vendor-table td:nth-child(2):before{content:"选择什么"}.vendor-table td:nth-child(3):before{content:"何时选择"}.vendor-table td:nth-child(4):before{content:"本页归类"}}
     @media print{.topbar,.toc{display:none}.layout{display:block}.shell{max-width:none}.figure,.table-wrap{box-shadow:none;break-inside:avoid}.agent-figure,.callout{break-inside:avoid}body{background:white}a{color:inherit;text-decoration:none}.hero{padding-top:30px}}
   </style>
+<meta name="description" content="从模型异质性、Agent 循环成本与公开路由系统出发，梳理 LLM Router 的研究背景与系统问题。">
+  <meta name="author" content="Minnan Pei">
+  <link rel="canonical" href="https://happypmn.github.io/routecraft/router_research_pages/01_background_why_router.html">
+  <meta property="og:title" content="LLM Router：背景与系统成本 | RouteCraft · Minnan Pei">
+  <meta property="og:description" content="从模型异质性、Agent 循环成本与公开路由系统出发，梳理 LLM Router 的研究背景与系统问题。">
+  <meta property="og:url" content="https://happypmn.github.io/routecraft/router_research_pages/01_background_why_router.html">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://happypmn.github.io/assets/images/social-card.png">
+  <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
+<a href="/index_zh.html#projects" style="display:block;max-width:1080px;margin:20px auto 0;padding:0 28px;color:#0b6e69;font:14px/1.6 sans-serif">← 裴旻楠 Minnan Pei · 个人主页</a>
   <header class="topbar"><div class="shell"><div class="brand"><a href="index.html">RouteCraft / Research Pages</a></div><div class="crumb">PUBLIC WEB EDITION · 01 · Background · Verified 2026-08-17</div></div></header>
 
   <div class="hero"><div class="shell">

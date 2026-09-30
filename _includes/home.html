@@ -1,0 +1,55 @@
+{% assign t = site.data.t[page.lang] %}
+<section class="hero" aria-labelledby="name">
+  <div class="hero-copy">
+    <p class="eyebrow"><span class="tiny-square" aria-hidden="true"></span>{{ t.eyebrow }}</p>
+    <h1 id="name">{{ t.name }} <span lang="{% if page.lang == 'zh' %}en{% else %}zh-CN{% endif %}">{{ t.other_name }}</span></h1>
+    <p class="hero-statement">{{ t.headline }}</p>
+    <div class="hero-bio"><p>{{ t.intro }}</p><p>{{ t.research_intro }}</p></div>
+    <div class="hero-actions"><a class="button button-primary" href="#publications">{{ t.view_research }} <span aria-hidden="true">↗</span></a><a class="button" href="{{ '/assets/Minnan-Pei-CV.pdf' | relative_url }}">{{ t.cv }} <span aria-hidden="true">↓</span></a></div>
+    <div class="social-links"><a href="mailto:peiminnan19@mails.ucas.ac.cn">Email ↗</a><a href="https://scholar.google.com/citations?user=McR2_kgAAAAJ">Google Scholar ↗</a><a href="https://github.com/HAPPYPMN">GitHub ↗</a></div>
+  </div>
+  <aside class="profile-card" aria-label="{% if page.lang == 'zh' %}个人简介{% else %}At a glance{% endif %}">
+    <div class="portrait-wrap"><img src="{{ '/assets/images/portrait.webp' | relative_url }}" alt="Minnan Pei / 裴旻楠" width="470" height="480" fetchpriority="high"><span class="portrait-caption">{{ t.location }}</span></div>
+    <p class="profile-role">{{ t.role }}</p>
+    <div class="profile-current"><span class="current-label"><span class="status-dot" aria-hidden="true"></span>{{ t.currently }}</span><strong>{{ t.current_role }}</strong><span>{{ t.current_team }}</span></div>
+    <div class="profile-diagram" aria-hidden="true"><span>ALGORITHMS</span><i></i><span>SYSTEMS</span><i></i><span>SILICON</span></div>
+  </aside>
+</section>
+<section class="focus-strip" aria-label="{{ t.focus_label }}">{% for focus in t.focus %}<a href="{{ focus.link | relative_url }}"><span class="focus-number">{{ focus.n }}</span><div><h2>{{ focus.title }} <span aria-hidden="true">↗</span></h2><p>{{ focus.text }}</p></div></a>{% endfor %}</section>
+
+<section class="section experience-section" id="experience" aria-labelledby="experience-heading">
+  <div class="section-heading"><div><p class="eyebrow">01 / EXPERIENCE</p><h2 id="experience-heading">{{ t.experience }}</h2></div><p>{{ t.experience_note }}</p></div>
+  <div class="experience-grid">{% for job in t.internships %}<article class="experience-card {% if job.current %}is-current{% endif %}">
+    <div class="experience-top"><span class="company-mark {% if job.current %}mark-byte{% endif %}" aria-hidden="true">{% if job.current %}<i></i><i></i><i></i><i></i>{% else %}Li{% endif %}</span><span class="date">{{ job.date }}</span></div>
+    <h3>{{ job.company }} <span>{{ job.cn }}</span></h3><p class="team">{{ job.team }}</p><p class="job-role">{{ job.role }}</p><p class="job-description">{{ job.text }}</p>
+    <ul class="tag-list">{% for tag in job.tags %}<li>{{ tag }}</li>{% endfor %}</ul>
+  </article>{% endfor %}</div>
+</section>
+
+<section class="section projects-section" id="projects" aria-labelledby="projects-heading">
+  <div class="section-heading"><div><p class="eyebrow">02 / SELECTED WORK</p><h2 id="projects-heading">{{ t.projects }}</h2></div><p>{{ t.projects_note }}</p></div>
+  <div class="project-grid">{% for project in t.project_list %}<article class="project-card">
+    <a class="project-art art-{{ project.key }}" href="{{ project.url | relative_url }}" aria-label="{{ project.name }} — {{ t.project_link }}">{% include project-art.html key=project.key %}<span class="art-arrow" aria-hidden="true">↗</span></a>
+    <div class="project-body"><p class="eyebrow">{{ project.kind }}</p><h3><a href="{{ project.url | relative_url }}">{{ project.name }}</a></h3><p>{{ project.text }}</p><div class="resource-links">{% for link in project.links %}<a href="{{ link.url }}">{{ link.text }} ↗</a>{% endfor %}</div></div>
+  </article>{% endfor %}</div>
+</section>
+
+<section class="section publications-section" id="publications" aria-labelledby="publications-heading">
+  <div class="section-heading"><div><p class="eyebrow">03 / RESEARCH</p><h2 id="publications-heading">{{ t.publications }} <span class="section-count">{{ site.data.publications.size }}</span></h2></div><p>{{ t.publications_note }}</p></div>
+  <div class="publication-tools" data-filters hidden role="group" aria-label="{% if page.lang == 'zh' %}按研究方向筛选论文{% else %}Filter publications by topic{% endif %}"><button type="button" data-topic="all" aria-pressed="true">{{ t.all }}</button><button type="button" data-topic="3DGS" aria-pressed="false">3DGS</button><button type="button" data-topic="LLM / VLA" aria-pressed="false">LLM / VLA</button><button type="button" data-topic="Systems" aria-pressed="false">{{ t.systems }}</button><button type="button" data-topic="Other" aria-pressed="false">{{ t.other }}</button></div>
+  <p class="sr-only" data-filter-status role="status" aria-live="polite"></p>
+  <ol class="publication-list">{% for pub in site.data.publications %}<li class="publication" data-publication data-topic="{{ pub.topic }}">
+    <div class="publication-index" aria-hidden="true">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</div>
+    <article><div class="paper-meta"><span class="venue {% if pub.venue == 'arXiv' or pub.venue == 'Under Review' %}venue-neutral{% endif %}">{% if pub.venue == 'Under Review' and page.lang == 'zh' %}在投{% else %}{{ pub.venue }}{% endif %} · {{ pub.year }}</span><span class="paper-topic">{{ pub.topic }}</span></div>
+    <h3><a href="{{ '/research/' | append: pub.key | append: '/' | relative_url }}">{{ pub.title }}</a></h3><p class="authors">{{ pub.authors_html }}{% if pub.equal %} <span class="equal-note">(<sup>*</sup> {{ t.equal }})</span>{% endif %}</p><p class="publication-summary">{{ pub.summary[page.lang] }}</p>
+    <div class="resource-links"><a href="{{ '/research/' | append: pub.key | append: '/' | relative_url }}">{{ t.details }} ↗</a>{% for link in pub.resources %}<a href="{{ link.url }}">{% if link.label == 'Code' %}{{ t.code }}{% else %}{{ link.label }}{% endif %} ↗</a>{% endfor %}</div></article>
+  </li>{% endfor %}</ol>
+</section>
+
+<section class="section background-section" id="background" aria-labelledby="background-heading">
+  <div class="section-heading"><div><p class="eyebrow">04 / BACKGROUND</p><h2 id="background-heading">{{ t.background }}</h2></div></div>
+  <div class="background-grid"><div><h3>{{ t.education }}</h3><div class="education-list">{% for item in t.education_items %}<article><span class="date">{{ item.date }}</span><h4>{{ item.title }}</h4><p>{{ item.text }}</p></article>{% endfor %}</div></div>
+  <div class="background-details"><h3>{{ t.skills }}</h3><ul class="tag-list skill-list"><li>Python</li><li>C / C++</li><li>CUDA</li><li>PyTorch</li><li>Vulkan</li><li>Verilog / FPGA</li><li>Linux</li><li>Docker</li></ul><h3>{{ t.service }}</h3><p>{{ t.service_text }}</p><h3>{{ t.awards }}</h3><p>{{ t.awards_text }}</p><p>{{ t.leadership }}</p></div></div>
+</section>
+
+<section class="contact-section" id="contact" aria-labelledby="contact-heading"><div><p class="eyebrow">{{ t.contact_label }}</p><h2 id="contact-heading">{{ t.contact_title }}</h2></div><div><p>{{ t.contact_text }}</p><a class="contact-email" href="mailto:peiminnan19@mails.ucas.ac.cn">peiminnan19@mails.ucas.ac.cn <span aria-hidden="true">↗</span></a><p class="last-updated">{{ t.updated }}</p></div></section>

@@ -1,0 +1,23 @@
+{% assign pub = site.data.publications | where: 'key', page.key | first %}
+<meta name="citation_title" content="{{ pub.title | escape }}">
+{% for author in pub.authors %}<meta name="citation_author" content="{{ author | escape }}">
+{% endfor %}
+{% if pub.venue != 'Under Review' %}<meta name="citation_publication_date" content="{{ pub.year }}">{% endif %}
+{% comment %}Only use citation_pdf_url for a full text hosted beside its abstract, per Scholar's inclusion guidelines.{% endcomment %}
+{% if pub.local_pdf %}<meta name="citation_pdf_url" content="{{ pub.local_pdf | absolute_url | escape }}">{% endif %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "@id": "{{ site.url }}/research/{{ pub.key }}/#article",
+  "url": "{{ site.url }}/research/{{ pub.key }}/",
+  "headline": {{ pub.title | jsonify }},
+  "name": {{ pub.title | jsonify }},
+  "description": {{ pub.summary.en | jsonify }},
+  "inLanguage": "en",
+  "keywords": {{ pub.tags | jsonify }},
+  "author": [{% for author in pub.authors %}{"@type": "Person", "name": {{ author | jsonify }}{% if author == 'Minnan Pei' %}, "@id": "{{ site.url }}/#person"{% endif %}}{% unless forloop.last %},{% endunless %}{% endfor %}],
+  "isPartOf": {"@type": "WebSite", "name": "Minnan Pei · 裴旻楠", "url": "{{ site.url }}/"}{% if pub.resources.size > 0 %},
+  "sameAs": [{% for resource in pub.resources %}{{ resource.url | jsonify }}{% unless forloop.last %},{% endunless %}{% endfor %}]{% endif %}
+}
+</script>

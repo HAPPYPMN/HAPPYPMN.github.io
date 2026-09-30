@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="梳理现有完整模型 Router 已经解决的选模问题，并分析自适应决定下一次重选时机还缺少哪些证据。">
-  <title>02 · 现有 Router 已经解决了什么？｜RouteCraft Research Pages</title>
+  <title>LLM Router 相关工作与决策粒度 | RouteCraft · Minnan Pei</title>
   <style>
     :root{
       --ink:#14233a;--muted:#607086;--faint:#8a95a3;--paper:#f4f1e9;--card:#fffefa;
@@ -54,8 +54,18 @@
     @media(max-width:720px){.shell{padding:0 18px}.hero{padding-top:50px}.hero h1{max-width:100%;font-size:clamp(38px,10.5vw,43px);line-height:1.02;letter-spacing:-.035em;word-break:break-word;line-break:anywhere}.dek{font-size:18px}.page-nav{display:none}.tension-grid,.work-grid,.neighbor-grid,.occupied,.decision-grid,.family-summary,.cost-evidence-grid,.formula-stack{grid-template-columns:1fr}.family-intro{grid-template-columns:1fr}.family-code{min-height:auto;display:flex;flex-direction:row;align-items:center;justify-content:space-between}.family-code span{margin:0}.route-head{display:block}.figure-no{white-space:normal;margin-top:8px}.work-top{flex-wrap:wrap}.status{text-align:left;max-width:none}.route-axis{grid-template-columns:repeat(2,1fr)}.matrix-head{display:none}.matrix-row{grid-template-columns:1fr}.matrix-row>div{display:block!important}.matrix-row>div:before{display:block;font:800 9px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--accent2);margin-bottom:3px}.matrix-row>div:nth-child(1):before{content:"决策时机"}.matrix-row>div:nth-child(2):before{content:"代表工作与动作"}.matrix-row>div:nth-child(3):before{content:"可利用的状态"}.matrix-row>div:nth-child(4):before{content:"下一次何时重选"}.benchmark-stats{flex-wrap:wrap}.lesson,.accounting-rule{grid-template-columns:1fr}.boundary-options{grid-template-columns:repeat(2,1fr)}.method-head{grid-template-columns:1fr;padding:23px 20px 19px}.paper-locator{text-align:left;white-space:normal}.method-body{padding:20px}.paper-figure{padding:17px}.pipeline{grid-template-columns:1fr}.pipe-node:not(:last-child):after{content:"↓";right:auto;left:calc(50% - 7px);top:auto;bottom:-18px}.pipe-node:nth-child(3):after{display:block}.branch-flow{grid-template-columns:1fr}.branch-arrow{transform:rotate(90deg)}.merge-flow{grid-template-columns:1fr}.merge-lane{grid-template-columns:1fr}.lane-arrow{transform:rotate(90deg)}.merge-arrow{transform:rotate(90deg)}.method-conclusion{grid-template-columns:1fr}.mini-table{grid-template-columns:repeat(3,minmax(0,1fr))}.mini-table>.th{display:block}.mini-table>div:nth-child(3n+1):not(.th){margin-top:0}.overhead-flow{grid-template-columns:1fr}.overhead-step:not(:last-child):after{content:"↓";right:auto;left:calc(50% - 7px);top:auto;bottom:-19px}.overhead-step:nth-child(2):after{display:block}.scope-row{grid-template-columns:1fr}.scope-type{min-height:auto}section{padding:48px 0 62px}}
     @media print{.topbar,.toc{display:none}.layout{display:block}.hero{padding-top:40px}.hero h1{font-size:42pt}.shell{max-width:none;padding:0 18mm}.method-study{overflow:visible;box-shadow:none;break-inside:auto}.method-head,.figure-title,h2,h3{break-after:avoid}.method-conclusion,.lesson,.accounting-rule,.work,.neighbor,.route-map,.action-figure,.overhead-figure,.cost-evidence,.verdict,.paper-figure,.formula-card,.scope-row{break-inside:avoid}#references{break-before:page}a{color:inherit;text-decoration:none}section{break-before:auto}footer{padding:18px 0}footer .shell{font-size:8px;white-space:nowrap}}
   </style>
+<meta name="description" content="按模型选择时机比较 LLM Router 相关工作，分析 Agent 状态、路由决策粒度与可测量的系统成本。">
+  <meta name="author" content="Minnan Pei">
+  <link rel="canonical" href="https://happypmn.github.io/routecraft/router_research_pages/02_related_work_decision_granularity.html">
+  <meta property="og:title" content="LLM Router 相关工作与决策粒度 | RouteCraft · Minnan Pei">
+  <meta property="og:description" content="按模型选择时机比较 LLM Router 相关工作，分析 Agent 状态、路由决策粒度与可测量的系统成本。">
+  <meta property="og:url" content="https://happypmn.github.io/routecraft/router_research_pages/02_related_work_decision_granularity.html">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://happypmn.github.io/assets/images/social-card.png">
+  <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
+<a href="/index_zh.html#projects" style="display:block;max-width:1080px;margin:20px auto 0;padding:0 28px;color:#0b6e69;font:14px/1.6 sans-serif">← 裴旻楠 Minnan Pei · 个人主页</a>
   <header class="topbar"><div class="shell">
     <div class="brand"><a href="index.html">RouteCraft Research Pages</a></div>
     <nav class="page-nav" aria-label="页面导航"><a href="01_background_why_router.html">← Page 01</a><span>PUBLIC WEB EDITION · Page 02</span><a href="03_research_plan_branches.html">Page 03 →</a></nav>
