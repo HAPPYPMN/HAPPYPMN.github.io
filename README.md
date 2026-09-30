@@ -8,7 +8,7 @@ Bilingual academic homepage, built with Jekyll on GitHub Pages. The design follo
 
 ## Editing
 
-- `_data/t.yml`: both homepage languages, internship dates and teams, education, and academic service.
+- `_data/t.yml`: both homepage languages, internship dates and teams, and education.
 - `_data/publications.yml`: shared paper titles, author order and equal-contribution marks, publication status, topic, summaries, and public links. Do not turn under-review work into accepted work without confirmation from the author.
 - `_publications/<key>.md`: each paper's stable URL and page metadata. Add a matching file when adding a publication. Keep its title and description in sync with the shared data.
 - `_includes/home.html`, `_layouts/`: semantic HTML templates.

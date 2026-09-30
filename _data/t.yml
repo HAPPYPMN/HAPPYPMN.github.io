@@ -47,11 +47,7 @@ en:
   - date: Spring 2022
     title: Visiting student · UC Berkeley
     text: Electrical Engineering and Computer Sciences (EECS).
-  skills: Technical toolkit
-  service: Academic service
-  service_text: 'Reviewer: ISCA, HPCA, CoRL, ACM MM, TCAD, TCAS-I, TVLSI.'
   awards: Selected honors
-  leadership: Previously President of the Student Union, School of Artificial Intelligence, UCAS (2024).
 zh:
   name: 裴旻楠
   other_name: Minnan Pei
@@ -99,8 +95,4 @@ zh:
   - date: 2022 春季
     title: 公派访学 · 加州大学伯克利分校
     text: 电子工程与计算机科学（EECS）。
-  skills: 技术工具
-  service: 学术服务
-  service_text: 论文审稿：ISCA、HPCA、CoRL、ACM MM、TCAD、TCAS-I、TVLSI。
   awards: 部分荣誉
-  leadership: 曾任中国科学院大学人工智能学院学生会主席（2024）。

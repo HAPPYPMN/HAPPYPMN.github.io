@@ -40,6 +40,11 @@
   <h2 id="education-heading">{{ t.education }}</h2>
   {% for item in t.education_items %}<article class="education-entry"><div class="entry-heading"><h3>{{ item.title }}</h3><span class="date">{{ item.date }}</span></div><p>{{ item.text }}</p></article>{% endfor %}
 </section>
-<section class="section" aria-labelledby="service-heading"><h2 id="service-heading">{{ t.service }}</h2><p>{{ t.service_text }}</p><p>{{ t.leadership }}</p></section>
-<section class="section" aria-labelledby="honors-heading"><h2 id="honors-heading">{{ t.awards }}</h2><ul class="honors-list">{% if page.lang == 'zh' %}<li>北京市优秀毕业生，2023</li><li>国家奖学金，2022</li><li>北京市三好学生，2021</li>{% else %}<li>Beijing Distinguished Graduate, 2023</li><li>National Scholarship, 2022</li><li>Beijing Outstanding Student, 2021</li>{% endif %}</ul></section>
-<section class="section" aria-labelledby="skills-heading"><h2 id="skills-heading">{{ t.skills }}</h2><p>Python, C/C++, CUDA, PyTorch, Vulkan, Verilog/FPGA, Linux, Docker.</p></section>
+<section class="section" aria-labelledby="honors-heading">
+  <h2 id="honors-heading">{{ t.awards }}</h2>
+  <ul class="honors-list">
+    <li><a href="https://bkjy.ucas.ac.cn/index.php/2020-11-10-07-29-19/2020-11-10-07-32-02/6979-2019-9">{% if page.lang == 'zh' %}北京市优秀毕业生{% else %}Beijing Distinguished Graduate{% endif %}</a>, 2023</li>
+    <li><a href="https://bkjy.ucas.edu.cn/index.php/tzgg/6433-2021-2050">{% if page.lang == 'zh' %}国家奖学金{% else %}National Scholarship{% endif %}</a>, 2022</li>
+    <li><a href="https://onestop.ucas.ac.cn/home/infob/48d6092a-be91-442a-adcf-50953a455869/0">{% if page.lang == 'zh' %}北京市三好学生{% else %}Beijing Outstanding Student{% endif %}</a>, 2021</li>
+  </ul>
+</section>
