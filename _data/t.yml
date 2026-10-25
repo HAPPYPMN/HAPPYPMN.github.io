@@ -17,7 +17,6 @@ en:
     end: null
     team: Infrastructure - Chief Architect Office
     role: Infra Agent RSI
-    separator: ' - '
     text: Building an infrastructure data ontology and developing self-evolving decision-making agents.
     tags:
     - Infrastructure data ontology
@@ -68,7 +67,6 @@ zh:
     end: null
     team: 基础设施部门 - 首席架构团队
     role: 研究实习生
-    separator: ' - '
     text: 基础设施数据本体建设和决策 Agent 自进化。
     tags:
     - 基础设施数据本体

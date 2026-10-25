@@ -15,7 +15,7 @@
   <div class="experience-list">{% for job in t.internships %}
     <article class="experience-entry">
       <div class="entry-heading"><h3>{{ job.company }} <span class="secondary-name">({{ job.cn }})</span></h3><span class="date">{{ job.date }}</span></div>
-      <p>{{ job.team }}{{ job.separator | default: ' · ' }}{{ job.role }}</p>
+      <p>{{ job.team }} · {{ job.role }}</p>
       <p class="entry-description">{{ job.text }}</p>
     </article>
   {% endfor %}</div>
