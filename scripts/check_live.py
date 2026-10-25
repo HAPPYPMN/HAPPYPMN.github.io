@@ -24,7 +24,8 @@ for route, status, body in results:
     assert status == 200, (route, status)
     if route in ['/', '/index_zh.html']:
         soup = BeautifulSoup(body, 'html.parser')
-        assert 'AI Factory' in soup.get_text()
+        expected_team = '首席架构团队' if soup.html.get('lang') == 'zh-CN' else 'Chief Architect Office'
+        assert expected_team in soup.get_text()
         assert len(soup.select('[data-publication]')) == 13
         assert len(soup.select('.experience-entry')) == 2
         assert not soup.select('#projects, .hero-statement, .profile-card')

@@ -15,7 +15,7 @@
   <div class="experience-list">{% for job in t.internships %}
     <article class="experience-entry">
       <div class="entry-heading"><h3>{{ job.company }} <span class="secondary-name">({{ job.cn }})</span></h3><span class="date">{{ job.date }}</span></div>
-      <p>{{ job.team }} · {{ job.role }}</p>
+      <p>{{ job.team }}{{ job.separator | default: ' · ' }}{{ job.role }}</p>
       <p class="entry-description">{{ job.text }}</p>
     </article>
   {% endfor %}</div>
@@ -43,6 +43,7 @@
 <section class="section" aria-labelledby="honors-heading">
   <h2 id="honors-heading">{{ t.awards }}</h2>
   <ul class="honors-list">
+    <li>{% if page.lang == 'zh' %}中国科学院大学三好学生标兵，2022、2026{% else %}UCAS Model Student, 2022, 2026{% endif %}</li>
     <li><a href="https://bkjy.ucas.ac.cn/index.php/2020-11-10-07-29-19/2020-11-10-07-32-02/6979-2019-9">{% if page.lang == 'zh' %}北京市优秀毕业生{% else %}Beijing Distinguished Graduate{% endif %}</a>, 2023</li>
     <li><a href="https://bkjy.ucas.edu.cn/index.php/tzgg/6433-2021-2050">{% if page.lang == 'zh' %}国家奖学金{% else %}National Scholarship{% endif %}</a>, 2022</li>
     <li><a href="https://onestop.ucas.ac.cn/home/infob/48d6092a-be91-442a-adcf-50953a455869/0">{% if page.lang == 'zh' %}北京市三好学生{% else %}Beijing Outstanding Student{% endif %}</a>, 2021</li>

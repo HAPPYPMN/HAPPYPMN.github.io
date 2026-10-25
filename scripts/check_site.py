@@ -40,7 +40,8 @@ for path in pages:
             assert len(soup.select('.experience-entry')) == 2
             assert not soup.select('#projects, .project-card, .hero-statement, .profile-card, .contact-section')
             assert not soup.select('a[href$="#projects"]'), 'Removed projects section must not have navigation links'
-            assert 'AI Factory' in soup.get_text()
+            expected_team = '首席架构团队' if soup.html.get('lang') == 'zh-CN' else 'Chief Architect Office'
+            assert expected_team in soup.get_text()
         ids = [el['id'] for el in soup.select('[id]')]
         assert len(ids) == len(set(ids)), 'Duplicate HTML IDs'
         for el in soup.select('a[href], img[src], script[src], link[rel=stylesheet], link[rel=icon]'):
