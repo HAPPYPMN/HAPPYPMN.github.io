@@ -20,8 +20,13 @@
   - Computer architecture
   - Conditional processing
   summary:
-    en: A 3DGS inference architecture with Gaussian-wise and cross-stage conditional processing.
-    zh: 结合高斯粒度与跨阶段条件处理，设计 3DGS 推理加速体系结构。
+    en: GCC accelerates novel view synthesis from a reconstructed 3D scene by skipping unused Gaussians and reusing each Gaussian across image tiles.
+    zh: 三维重建得到高斯场景后，GCC 在渲染新视角时跳过用不到的高斯，并在图像分块间复用高斯数据，减少端侧计算与访存。
+  detail:
+    en: GCC uses cross-stage conditional processing to skip preprocessing for primitives that never affect the image. Its Gaussian-wise rendering dataflow finishes the contributions of one Gaussian before loading the next. The paper compares the speed and energy efficiency of this 3D Gaussian Splatting (3DGS) accelerator with GSCore.
+    zh: GCC 面向端侧低功耗的新视角合成。跨阶段条件处理让三维高斯溅射（3DGS）加速器跳过无用的预处理，逐高斯渲染则减少重复读取。论文将这一硬件设计与 GSCore 比较，评估渲染性能与能效。
+  arxiv: '2507.15300'
+  doi: 10.1145/3725843.3756072
   resources:
   - label: PDF
     url: https://arxiv.org/pdf/2507.15300
@@ -78,8 +83,12 @@
   - Hardware efficiency
   - Profiling
   summary:
-    en: A study of computational efficiency in 3D Gaussian Splatting, with the accompanying gsprof codebase.
-    zh: 研究三维高斯溅射的计算效率，并提供配套的 gsprof 代码。
+    en: From Splats to Silicon uses GPU profiling to trace when reducing work in 3D Gaussian Splatting actually saves memory traffic or shortens frame time.
+    zh: 三维高斯溅射的计算量减少后，渲染一帧会更快吗？这项研究结合文献和 GPU 性能分析，追踪各阶段的工作量、访存量与耗时。
+  detail:
+    en: Rendering new views of a reconstructed scene involves selecting Gaussians, processing their screen-space footprints and moving data between stages. The study compares how those costs change across scenes, viewpoints and implementations. Its companion tool, gsprof, supports investigation of GPU bottlenecks.
+    zh: 对三维重建后的场景做新视角合成时，同一种优化在不同场景和视角下可能得到不同的帧耗时。论文把高斯筛选、屏幕空间工作量与下游执行联系起来，配套的 gsprof 可用于定位 GPU 瓶颈。
+  arxiv: '2609.06157'
   resources:
   - label: PDF
     url: https://arxiv.org/pdf/2609.06157
@@ -110,20 +119,23 @@
   - Rendering
   - Scheduling
   summary:
-    en: Gaussian-wise rendering and adaptive dependency-ordered execution for static and dynamic 3D Gaussian Splatting.
-    zh: 面向静态与动态 3DGS，研究高斯粒度渲染与自适应依赖顺序执行。
+    en: GRADE schedules rendering work for static and dynamic Gaussian scenes. Its 4D implementation computes appearance only for candidates that survive filtering for the current camera.
+    zh: GRADE 研究静态与动态高斯场景的渲染调度。其 4D 实现先筛选当前视角的候选高斯，再计算这些高斯的外观。
+  detail:
+    en: For a changing scene, the time and camera of a frame determine which primitives may contribute. The public implementation can reject records before generating geometry and defer appearance evaluation. It also includes a search over stage configurations and a benchmark for comparing execution orders.
+    zh: 动态场景中，每一帧的时间和相机位置决定哪些高斯可能参与成像。公开实现可以在生成几何信息之前排除部分高斯，推迟外观计算，并提供阶段配置搜索和执行顺序对比测试。
   resources:
   - label: Code
     url: https://github.com/HAPPYPMN/GRADE-GS
   equal: false
 - key: degs
   title: 'DeGS: A Scalable 3DGS Architecture via Decoupled Workload Parsing and Reorganization'
-  authors_html: <strong>Minnan Pei</strong>, Gang Li, Zuyu Zhu, Siting Wang, Junwen Si, Zhuoran Song, Yu Feng, Fangxin Liu,
+  authors_html: <strong>Minnan Pei</strong>, Gang Li, Zeyu Zhu, Siting Wang, Junwen Si, Zhuoran Song, Yu Feng, Fangxin Liu,
     Xiaoyao Liang and Jian Cheng
   authors:
   - Minnan Pei
   - Gang Li
-  - Zuyu Zhu
+  - Zeyu Zhu
   - Siting Wang
   - Junwen Si
   - Zhuoran Song
@@ -139,8 +151,12 @@
   - Computer architecture
   - Scalability
   summary:
-    en: A scalable 3DGS architecture that decouples workload parsing and reorganization.
-    zh: 通过解耦工作负载解析与重组，研究可扩展的 3DGS 加速体系结构。
+    en: DeGS speeds up high-resolution Gaussian rendering by grouping useful pixel work before blending, so more processing elements can run in parallel.
+    zh: 高分辨率新视角渲染时，增加处理单元并不总能提速。DeGS 在像素混合前重组有效工作，提高三维高斯溅射加速器的并行利用率。
+  detail:
+    en: In 3D Gaussian Splatting (3DGS), irregular footprints and early pixel termination leave parallel processing elements idle. DeGS decouples workload parsing from blending and uses workload reorganization to pack the surviving pixel operations together. The paper measures scaling from 16 to 1,024 processing elements, at resolutions from 720p to 8K.
+    zh: 对三维重建后的高斯场景合成新视角时，高斯覆盖的区域不规则，每个像素结束混合的时刻也不同。DeGS 将覆盖和透射率检查与混合分开，评估了 16 至 1,024 个处理单元以及 720p 至 8K 分辨率下的扩展性。
+  arxiv: '2608.02099'
   resources:
   - label: PDF
     url: https://arxiv.org/pdf/2608.02099
@@ -166,8 +182,12 @@
   - Scheduling
   - Memory planning
   summary:
-    en: Constraint-directed scheduling, memory planning, and pipeline refinement for neural processing units.
-    zh: 面向 NPU 的约束驱动调度、内存规划与流水线优化。
+    en: LATTICE schedules commands on an AI accelerator so that more data fits in on-chip memory, then refines the pipeline around the chosen memory layout.
+    zh: LATTICE 研究 AI 加速芯片的编译调度。它先调整 NPU 指令顺序以缓解片上内存压力，再根据实际内存布局优化流水线。
+  detail:
+    en: The order of commands determines which buffers must coexist. On a neural processing unit (NPU), a poor order can force intermediate data out to external memory. LATTICE jointly considers buffer lifetimes, placement and address reuse, and evaluates spill traffic and modeled execution time on command traces.
+    zh: 指令执行顺序决定哪些缓冲区必须同时驻留。片上空间不足会导致中间数据被写回外存，再重新载入。LATTICE 编译器根据数据生命周期安排指令，在分配地址后利用复用约束调整执行时序，并以指令轨迹评估外存流量和建模执行时间。
+  arxiv: '2607.17422'
   resources:
   - label: PDF
     url: https://arxiv.org/pdf/2607.17422v2

@@ -1,10 +1,15 @@
+{%- assign description = page.description | default: site.description -%}
+{%- if page.collection == 'publications' -%}
+  {%- assign publication = site.data.publications | where: 'key', page.key | first -%}
+  {%- if publication.detail -%}{%- assign description = publication.summary.en -%}{%- endif -%}
+{%- endif -%}
 <!DOCTYPE html>
 <html lang="{% if page.lang == 'zh' %}zh-CN{% else %}en{% endif %}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ page.title | escape }}</title>
-  <meta name="description" content="{{ page.description | default: site.description | escape }}">
+  <meta name="description" content="{{ description | escape }}">
   <meta name="author" content="Minnan Pei">
   <meta name="theme-color" content="#ffffff">
   <meta name="robots" content="{% if page.noindex %}noindex, follow{% else %}index, follow, max-image-preview:large{% endif %}">
@@ -17,7 +22,7 @@
   <meta property="og:type" content="{% if page.homepage %}profile{% else %}article{% endif %}">
   <meta property="og:site_name" content="Minnan Pei · 裴旻楠">
   <meta property="og:title" content="{{ page.title | escape }}">
-  <meta property="og:description" content="{{ page.description | default: site.description | escape }}">
+  <meta property="og:description" content="{{ description | escape }}">
   <meta property="og:url" content="{{ page.url | replace: 'index.html', '' | absolute_url }}">
   <meta property="og:image" content="{{ '/assets/images/social-card.png' | absolute_url }}">
   <meta property="og:image:width" content="1200">
@@ -26,7 +31,7 @@
   <meta property="og:locale" content="{% if page.lang == 'zh' %}zh_CN{% else %}en_US{% endif %}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ page.title | escape }}">
-  <meta name="twitter:description" content="{{ page.description | default: site.description | escape }}">
+  <meta name="twitter:description" content="{{ description | escape }}">
   <meta name="twitter:image" content="{{ '/assets/images/social-card.png' | absolute_url }}">
   <link rel="icon" href="{{ '/favicon.ico' | relative_url }}?v=p1" sizes="16x16 32x32 48x48">
   <link rel="icon" type="image/svg+xml" href="{{ '/assets/images/favicon-p.svg' | relative_url }}">

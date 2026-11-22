@@ -7,11 +7,11 @@ layout: default
   <div class="paper-meta"><span>{{ pub.venue }}, {{ pub.year }}</span><span>{{ pub.topic }}</span></div>
   <h1>{{ pub.title }}</h1>
   <p class="paper-authors">{{ pub.authors_html }}{% if pub.equal %}<br><small><sup>*</sup> Equal contribution.</small>{% endif %}</p>
-  <div class="resource-links">{% for resource in pub.resources %}<a href="{{ resource.url }}">{% if resource.label == 'PDF' %}[Paper]{% else %}[Code]{% endif %}</a>{% endfor %}</div>
+  <div class="resource-links">{% if pub.doi %}<a href="https://doi.org/{{ pub.doi }}">[Conference paper]</a>{% endif %}{% if pub.arxiv %}<a href="https://arxiv.org/abs/{{ pub.arxiv }}">[arXiv]</a>{% endif %}{% for resource in pub.resources %}<a href="{{ resource.url }}">[{{ resource.label }}]</a>{% endfor %}</div>
   <section class="paper-summary" aria-labelledby="overview">
     <h2 id="overview">Overview</h2>
-    <p>{{ pub.summary.en }}</p>
-    <p lang="zh-CN">{{ pub.summary.zh }}</p>
+    <p>{{ pub.summary.en | escape }}{% if pub.detail %} {{ pub.detail.en | escape }}{% endif %}</p>
+    <p lang="zh-CN">{{ pub.summary.zh | escape }}{% if pub.detail %}{{ pub.detail.zh | escape }}{% endif %}</p>
     <ul class="tag-list">{% for tag in pub.tags %}<li>{{ tag }}</li>{% endfor %}</ul>
     {% if pub.venue == 'Under Review' %}<p class="paper-note">This work is under review. The linked resources are the currently public materials.</p>{% elsif pub.venue == 'arXiv' %}<p class="paper-note">Preprint, {{ pub.year }}. See the linked paper for the full method, experiments, and latest version.</p>{% else %}<p class="paper-note">{{ pub.venue }}, {{ pub.year }}{% if pub.resources.size == 0 %}. Public paper and code links will be added when available.{% endif %}</p>{% endif %}
   </section>
