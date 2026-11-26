@@ -1,13 +1,13 @@
 en:
   name: Minnan Pei
   other_name: 裴旻楠
-  industry_intro: I am currently an Infra Agent RSI in ByteDance’s Infrastructure - Chief Architect Office, working on infrastructure data ontology development and the self-evolution of decision-making agents. Previously, I worked on on-device VLA inference acceleration in Li Auto’s Foundation Models – VLA Model Architecture team.
+  industry_intro: As a research intern in ByteDance’s Infrastructure Chief Architect Office, I lead the development of an evaluation environment and data framework for infrastructure agents. At Li Auto, I optimized on-device inference for VLA models including GR00T and π0.5, achieving about 2× speedup on bandwidth-constrained edge chips by decoupling the two systems.
   intro: I am a PhD student at the <strong>Institute of Automation, Chinese Academy of Sciences (CASIA)</strong> and the <strong>University
     of Chinese Academy of Sciences (UCAS)</strong>. In 2024, I served as President of the Student Union of the School of Artificial
     Intelligence, UCAS. I am advised by <a href="https://people.ucas.ac.cn/~chengjian">Prof. Jian Cheng</a> and Prof. Gang Li at
     <a href="http://clab.ia.ac.cn">CLab</a>.
-  research_intro: 'I work on efficient AI computing and hardware-software co-design: accelerating 3D Gaussian Splatting, optimizing
-    LLM and VLA inference, and exploring AI infrastructure and agent systems.'
+  research_intro: I work on efficient AI computing and hardware–software co-design, focusing on on-device VLA inference,
+    3D Gaussian Splatting (3DGS) acceleration, and LLM agents for AI infrastructure management and chip design optimization.
   experience: Industry experience
   internships:
   - company: ByteDance
@@ -55,10 +55,10 @@ en:
 zh:
   name: 裴旻楠
   other_name: Minnan Pei
-  industry_intro: 现于字节跳动基础设施部门首席架构团队担任研究实习生，从事基础设施数据本体建设和决策 Agent 自进化研究；此前于理想汽车基座模型-VLA 模型架构组开展 VLA 端侧推理加速研究。
+  industry_intro: 现于字节跳动基础设施部门首席架构团队担任研究实习生，主导构建面向基础设施 Agent 的评测环境和数据框架。此前在理想汽车优化 GR00T、π0.5 等 VLA 模型的端侧推理，通过双系统解耦在低带宽芯片上实现约 2 倍推理加速。
   intro: 我是<strong>中国科学院自动化研究所（CASIA）</strong>与<strong>中国科学院大学（UCAS）</strong>的在读博士研究生，曾任国科大人工智能学院学生会主席（2024）。在
     <a href="http://clab.ia.ac.cn">CLab</a> 开展研究，导师为<a href="https://people.ucas.ac.cn/~chengjian">程健研究员</a>和李钢研究员。
-  research_intro: 研究聚焦人工智能高效计算与软硬件协同优化，涵盖三维高斯溅射（3D Gaussian Splatting, 3DGS）加速、LLM/VLA 推理优化，以及 AI 基础设施与智能体系统。
+  research_intro: 我的研究聚焦高效 AI 计算与软硬件协同设计，主要关注 VLA 端侧推理、三维高斯溅射（3DGS）加速，以及 LLM Agent 在 AI 基础设施管理和芯片设计优化中的应用。
   experience: 实习经历
   internships:
   - company: 字节跳动
