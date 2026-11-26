@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 root = Path(sys.argv[1] if len(sys.argv) > 1 else '.local/build').resolve()
 base = 'https://happypmn.github.io'
 pages = [root / 'index.html', root / 'index_zh.html', *sorted((root / 'research').glob('*/index.html'))]
-assert len(pages) == 14, f'Expected 2 homepages and 12 paper pages, got {len(pages)}'
+assert len(pages) == 15, f'Expected 2 homepages and 13 paper pages, got {len(pages)}'
 assert not (root / 'research/grade/index.html').exists(), 'GRADE should be unpublished'
 errors = []
 all_titles = set()
@@ -37,7 +37,7 @@ for path in pages:
             assert soup.select_one('meta[name=citation_title]')
         else:
             publications = soup.select('[data-publication] h3 a')
-            assert len(publications) == 12
+            assert len(publications) == 13
             assert publications[1]['href'] == '/research/degs/', 'DeGS should be second'
             assert len(soup.select('link[hreflang]')) == 3
             assert len(soup.select('.experience-entry')) == 2
@@ -66,7 +66,7 @@ for path in pages:
 sitemap = ET.parse(root / 'sitemap.xml')
 ns = {'s': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
 urls = [el.text for el in sitemap.findall('.//s:loc', ns)]
-assert len(urls) == 18 and len(set(urls)) == 18, 'Sitemap should have 18 unique canonical URLs'
+assert len(urls) == 19 and len(set(urls)) == 19, 'Sitemap should have 19 unique canonical URLs'
 for url in urls:
     target = root / urlparse(url).path.lstrip('/')
     if target.is_dir():

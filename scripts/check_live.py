@@ -28,7 +28,7 @@ for route, status, body in results:
         expected_team = '首席架构团队' if soup.html.get('lang') == 'zh-CN' else 'Chief Architect Office'
         assert expected_team in soup.get_text()
         publications = soup.select('[data-publication] h3 a')
-        assert len(publications) == 12
+        assert len(publications) == 13
         assert publications[1]['href'] == '/research/degs/', 'DeGS should be second'
         assert len(soup.select('.experience-entry')) == 2
         assert not soup.select('#projects, .hero-statement, .profile-card')
@@ -39,7 +39,7 @@ for route, status, body in results:
         assert soup.select_one('meta[name=citation_title]')
         assert json.loads(soup.select_one('script[type="application/ld+json"]').string)['@type'] == 'ScholarlyArticle'
     if route == '/sitemap.xml':
-        assert len(ET.fromstring(body)) == 18
+        assert len(ET.fromstring(body)) == 19
     if route == '/favicon.ico':
         assert body[:4] == bytes([0, 0, 1, 0]), 'Invalid ICO'
     if route == '/assets/images/favicon-p.svg':
@@ -49,4 +49,4 @@ for route, status, body in results:
 out = root / '.local/qa/live'
 out.mkdir(parents=True, exist_ok=True)
 (out / 'http-results.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
-print('PASS: deployed homepages, 12 papers, metadata, favicons, and public assets.')
+print('PASS: deployed homepages, 13 papers, metadata, favicons, and public assets.')

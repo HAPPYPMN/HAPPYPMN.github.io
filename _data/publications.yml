@@ -217,6 +217,41 @@
     zh: 通过运动感知向量量化与计算融合，加速视觉语言动作模型（VLA）。
   resources: []
   equal: false
+- key: flute
+  title: 'FLUTE: A LUT-Based Floating-Point Engine for Efficient LLM Acceleration Exploiting Core-Tail Hierarchical Alignment'
+  authors_html: Tielong Liu<sup>*</sup>, Zeyu Zhu<sup>*</sup>, Gang Li, Zitao Mo, Chen Bai, Junwen Si, Peihuan Ni,
+    <strong>Minnan Pei</strong>, Peisong Wang, Zhuoran Song, Xiaoyao Liang and Jian Cheng
+  authors:
+  - Tielong Liu
+  - Zeyu Zhu
+  - Gang Li
+  - Zitao Mo
+  - Chen Bai
+  - Junwen Si
+  - Peihuan Ni
+  - Minnan Pei
+  - Peisong Wang
+  - Zhuoran Song
+  - Xiaoyao Liang
+  - Jian Cheng
+  venue: MICRO
+  year: 2026
+  topic: LLM / VLA
+  tags:
+  - LLM inference
+  - Floating-point weight quantization
+  - Lookup-table computing
+  - Exponent alignment
+  summary:
+    en: FLUTE accelerates LLM inference with low-bit floating-point weights by aligning common exponents separately from rare ones, keeping the lookup-table representation compact.
+    zh: FLUTE 面向采用低比特浮点权重量化的大语言模型。它将集中分布的核心指数与少量长尾指数分开对齐，减少查表计算所需的位平面。
+  detail:
+    en: Core-Tail Hierarchical Exponent Alignment (CT-HEA) groups weights by exponent and aligns the groups hierarchically. The Bipolar Expansion Unit (BEU) implements the resulting ternary bit planes with parallel binary lookups. Across four baselines, the paper reports 1.85–3.13× the performance, 1.62–6.32× the area efficiency, and 2.37–6.02× the energy efficiency while maintaining model accuracy.
+    zh: 核心与长尾分层指数对齐（CT-HEA）先按指数将权重分组，再分层对齐。双极展开单元（BEU）将生成的三值位平面转换为并行的二值查表。论文报告，在保持模型精度的同时，相比四种基线，FLUTE 的性能为其 1.85–3.13 倍，面积效率为其 1.62–6.32 倍，能效为其 2.37–6.02 倍。
+  resources:
+  - label: PDF
+    url: https://baichen318.github.io/misc/c24-paper.pdf
+  equal: true
 - key: dali
   title: 'DALI: A Workload-Aware Offloading Framework for Efficient MoE Inference on Local PCs'
   authors_html: Zeyu Zhu, Gang Li, Peisong Wang, Zitao Mo, <strong>Minnan Pei</strong>, Zhuoran Song, Xiaoyao Liang, Jian
