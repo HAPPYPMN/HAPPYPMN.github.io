@@ -7,7 +7,10 @@ layout: default
   <div class="paper-meta"><span>{{ pub.venue }}, {{ pub.year }}</span><span>{{ pub.topic }}</span></div>
   <h1>{{ pub.title }}</h1>
   <p class="paper-authors">{{ pub.authors_html }}{% if pub.equal %}<br><small><sup>*</sup> Equal contribution.</small>{% endif %}</p>
-  <div class="resource-links">{% if pub.doi %}<a href="https://doi.org/{{ pub.doi }}">[Conference paper]</a>{% endif %}{% if pub.arxiv %}<a href="https://arxiv.org/abs/{{ pub.arxiv }}">[arXiv]</a>{% endif %}{% for resource in pub.resources %}<a href="{{ resource.url }}">[{{ resource.label }}]</a>{% endfor %}</div>
+  <div class="resource-links">
+    {% include publication-source-links.html paper=pub official_label=site.data.t.en.official %}
+    {% for resource in pub.resources %}<a href="{{ resource.url }}">[{{ resource.label }}]</a>{% endfor %}
+  </div>
   <section class="paper-summary" aria-labelledby="overview">
     <h2 id="overview">Overview</h2>
     <p>{{ pub.summary.en | escape }}{% if pub.detail %} {{ pub.detail.en | escape }}{% endif %}</p>

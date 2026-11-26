@@ -31,7 +31,11 @@
         <p class="authors">{{ pub.authors_html }}</p>
         <p class="publication-venue"><em>{% if pub.venue == 'Under Review' and page.lang == 'zh' %}在投{% else %}{{ pub.venue }}{% endif %}</em>, {{ pub.year }}.</p>
         {% if pub.detail %}<p class="publication-summary">{{ pub.summary[page.lang] | escape }}</p>{% endif %}
-        <div class="resource-links"><a href="{{ '/research/' | append: pub.key | append: '/' | relative_url }}">[{{ t.details }}]</a>{% for link in pub.resources %}<a href="{{ link.url }}">[{% if link.label == 'Code' %}{{ t.code }}{% else %}{{ link.label }}{% endif %}]</a>{% endfor %}</div>
+        <div class="resource-links">
+          <a href="{{ '/research/' | append: pub.key | append: '/' | relative_url }}">[{{ t.details }}]</a>
+          {% include publication-source-links.html paper=pub official_label=t.official %}
+          {% for link in pub.resources %}<a href="{{ link.url }}">[{% if link.label == 'Code' %}{{ t.code }}{% else %}{{ link.label }}{% endif %}]</a>{% endfor %}
+        </div>
       </article>
     </li>
   {% endfor %}</ul>

@@ -38,6 +38,7 @@ en:
     current: false
   publications: Publications
   details: Overview
+  official: Official
   code: Code
   education: Education
   education_items:
@@ -88,6 +89,7 @@ zh:
     current: false
   publications: 论文与研究
   details: 研究概览
+  official: 官网
   code: 代码
   education: 教育经历
   education_items:

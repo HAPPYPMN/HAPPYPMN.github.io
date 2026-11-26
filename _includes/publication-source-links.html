@@ -1,0 +1,8 @@
+{% if include.paper.official_url %}
+  <a href="{{ include.paper.official_url | escape }}">[{{ include.official_label }}]</a>
+{% elsif include.paper.doi %}
+  <a href="https://doi.org/{{ include.paper.doi | escape }}">[{{ include.official_label }}]</a>
+{% endif %}
+{% if include.paper.arxiv %}
+  <a href="https://arxiv.org/abs/{{ include.paper.arxiv | escape }}">[arXiv]</a>
+{% endif %}

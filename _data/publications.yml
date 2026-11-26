@@ -60,6 +60,7 @@
     en: In 3D Gaussian Splatting (3DGS), irregular footprints and early pixel termination leave parallel processing elements idle. DeGS decouples workload parsing from blending and uses workload reorganization to pack the surviving pixel operations together. The paper measures scaling from 16 to 1,024 processing elements, at resolutions from 720p to 8K.
     zh: 对三维重建后的高斯场景合成新视角时，高斯覆盖的区域不规则，每个像素结束混合的时刻也不同。DeGS 将覆盖和透射率检查与混合分开，评估了 16 至 1,024 个处理单元以及 720p 至 8K 分辨率下的扩展性。
   arxiv: '2608.02099'
+  official_url: https://microarch.hosting.acm.org/micro59/program/#iii-d
   resources:
   - label: PDF
     url: https://arxiv.org/pdf/2608.02099
