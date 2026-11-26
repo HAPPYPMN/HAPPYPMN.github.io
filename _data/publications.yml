@@ -27,9 +27,7 @@
     zh: GCC 面向端侧低功耗的新视角合成。跨阶段条件处理让三维高斯溅射（3DGS）加速器跳过无用的预处理，逐高斯渲染则减少重复读取。论文将这一硬件设计与 GSCore 比较，评估渲染性能与能效。
   arxiv: '2507.15300'
   doi: 10.1145/3725843.3756072
-  resources:
-  - label: PDF
-    url: https://arxiv.org/pdf/2507.15300
+  resources: []
   equal: false
 - key: degs
   title: 'DeGS: A Scalable 3DGS Architecture via Decoupled Workload Parsing and Reorganization'
@@ -61,9 +59,7 @@
     zh: 对三维重建后的高斯场景合成新视角时，高斯覆盖的区域不规则，每个像素结束混合的时刻也不同。DeGS 将覆盖和透射率检查与混合分开，评估了 16 至 1,024 个处理单元以及 720p 至 8K 分辨率下的扩展性。
   arxiv: '2608.02099'
   official_url: https://microarch.hosting.acm.org/micro59/program/#iii-d
-  resources:
-  - label: PDF
-    url: https://arxiv.org/pdf/2608.02099
+  resources: []
   equal: false
 - key: spatialviz-bench
   title: 'SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs'
