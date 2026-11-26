@@ -31,6 +31,39 @@
   - label: PDF
     url: https://arxiv.org/pdf/2507.15300
   equal: false
+- key: degs
+  title: 'DeGS: A Scalable 3DGS Architecture via Decoupled Workload Parsing and Reorganization'
+  authors_html: <strong>Minnan Pei</strong>, Gang Li, Zeyu Zhu, Siting Wang, Junwen Si, Zhuoran Song, Yu Feng, Fangxin Liu,
+    Xiaoyao Liang and Jian Cheng
+  authors:
+  - Minnan Pei
+  - Gang Li
+  - Zeyu Zhu
+  - Siting Wang
+  - Junwen Si
+  - Zhuoran Song
+  - Yu Feng
+  - Fangxin Liu
+  - Xiaoyao Liang
+  - Jian Cheng
+  venue: MICRO
+  year: 2026
+  topic: 3DGS
+  tags:
+  - 3D Gaussian Splatting
+  - Computer architecture
+  - Scalability
+  summary:
+    en: DeGS speeds up high-resolution Gaussian rendering by grouping useful pixel work before blending, so more processing elements can run in parallel.
+    zh: 高分辨率新视角渲染时，增加处理单元并不总能提速。DeGS 在像素混合前重组有效工作，提高三维高斯溅射加速器的并行利用率。
+  detail:
+    en: In 3D Gaussian Splatting (3DGS), irregular footprints and early pixel termination leave parallel processing elements idle. DeGS decouples workload parsing from blending and uses workload reorganization to pack the surviving pixel operations together. The paper measures scaling from 16 to 1,024 processing elements, at resolutions from 720p to 8K.
+    zh: 对三维重建后的高斯场景合成新视角时，高斯覆盖的区域不规则，每个像素结束混合的时刻也不同。DeGS 将覆盖和透射率检查与混合分开，评估了 16 至 1,024 个处理单元以及 720p 至 8K 分辨率下的扩展性。
+  arxiv: '2608.02099'
+  resources:
+  - label: PDF
+    url: https://arxiv.org/pdf/2608.02099
+  equal: false
 - key: spatialviz-bench
   title: 'SpatialViz-Bench: Automatically Generated Spatial Visualization Reasoning Tasks for MLLMs'
   authors_html: "Siting Wang, <strong>Minnan Pei</strong>, Luoyang Sun, Cheng Deng, Kun Shao, \n      Zheng Tian, Haifeng\
@@ -95,72 +128,41 @@
   - label: Code
     url: https://github.com/HAPPYPMN/gsprof
   equal: false
-- key: grade
-  title: 'GRADE: Gaussian-Wise Rendering with Adaptive Dependency-Ordered Execution for Static and Dynamic 3DGS'
-  authors_html: <strong>Minnan Pei</strong>, Gang Li, Junwen Si, Yudong Mu, Zhihua Fan, Zeyu Zhu, Zitao Mo, Peisong Wang,
-    Zhuoran Song, Xiaoyao Liang and Jian Cheng
-  authors:
-  - Minnan Pei
-  - Gang Li
-  - Junwen Si
-  - Yudong Mu
-  - Zhihua Fan
-  - Zeyu Zhu
-  - Zitao Mo
-  - Peisong Wang
-  - Zhuoran Song
-  - Xiaoyao Liang
-  - Jian Cheng
-  venue: Under Review
-  year: 2026
-  topic: 3DGS
-  tags:
-  - 3D Gaussian Splatting
-  - Rendering
-  - Scheduling
-  summary:
-    en: GRADE schedules rendering work for static and dynamic Gaussian scenes. Its 4D implementation computes appearance only for candidates that survive filtering for the current camera.
-    zh: GRADE 研究静态与动态高斯场景的渲染调度。其 4D 实现先筛选当前视角的候选高斯，再计算这些高斯的外观。
-  detail:
-    en: For a changing scene, the time and camera of a frame determine which primitives may contribute. The public implementation can reject records before generating geometry and defer appearance evaluation. It also includes a search over stage configurations and a benchmark for comparing execution orders.
-    zh: 动态场景中，每一帧的时间和相机位置决定哪些高斯可能参与成像。公开实现可以在生成几何信息之前排除部分高斯，推迟外观计算，并提供阶段配置搜索和执行顺序对比测试。
-  resources:
-  - label: Code
-    url: https://github.com/HAPPYPMN/GRADE-GS
-  equal: false
-- key: degs
-  title: 'DeGS: A Scalable 3DGS Architecture via Decoupled Workload Parsing and Reorganization'
-  authors_html: <strong>Minnan Pei</strong>, Gang Li, Zeyu Zhu, Siting Wang, Junwen Si, Zhuoran Song, Yu Feng, Fangxin Liu,
-    Xiaoyao Liang and Jian Cheng
-  authors:
-  - Minnan Pei
-  - Gang Li
-  - Zeyu Zhu
-  - Siting Wang
-  - Junwen Si
-  - Zhuoran Song
-  - Yu Feng
-  - Fangxin Liu
-  - Xiaoyao Liang
-  - Jian Cheng
-  venue: MICRO
-  year: 2026
-  topic: 3DGS
-  tags:
-  - 3D Gaussian Splatting
-  - Computer architecture
-  - Scalability
-  summary:
-    en: DeGS speeds up high-resolution Gaussian rendering by grouping useful pixel work before blending, so more processing elements can run in parallel.
-    zh: 高分辨率新视角渲染时，增加处理单元并不总能提速。DeGS 在像素混合前重组有效工作，提高三维高斯溅射加速器的并行利用率。
-  detail:
-    en: In 3D Gaussian Splatting (3DGS), irregular footprints and early pixel termination leave parallel processing elements idle. DeGS decouples workload parsing from blending and uses workload reorganization to pack the surviving pixel operations together. The paper measures scaling from 16 to 1,024 processing elements, at resolutions from 720p to 8K.
-    zh: 对三维重建后的高斯场景合成新视角时，高斯覆盖的区域不规则，每个像素结束混合的时刻也不同。DeGS 将覆盖和透射率检查与混合分开，评估了 16 至 1,024 个处理单元以及 720p 至 8K 分辨率下的扩展性。
-  arxiv: '2608.02099'
-  resources:
-  - label: PDF
-    url: https://arxiv.org/pdf/2608.02099
-  equal: false
+# Temporarily hidden until GRADE can be cited.
+# - key: grade
+#   title: 'GRADE: Gaussian-Wise Rendering with Adaptive Dependency-Ordered Execution for Static and Dynamic 3DGS'
+#   authors_html: <strong>Minnan Pei</strong>, Gang Li, Junwen Si, Yudong Mu, Zhihua Fan, Zeyu Zhu, Zitao Mo, Peisong Wang,
+#     Zhuoran Song, Xiaoyao Liang and Jian Cheng
+#   authors:
+#   - Minnan Pei
+#   - Gang Li
+#   - Junwen Si
+#   - Yudong Mu
+#   - Zhihua Fan
+#   - Zeyu Zhu
+#   - Zitao Mo
+#   - Peisong Wang
+#   - Zhuoran Song
+#   - Xiaoyao Liang
+#   - Jian Cheng
+#   venue: Under Review
+#   year: 2026
+#   topic: 3DGS
+#   tags:
+#   - 3D Gaussian Splatting
+#   - Rendering
+#   - Scheduling
+#   summary:
+#     en: GRADE schedules rendering work for static and dynamic Gaussian scenes. Its 4D implementation computes appearance only for candidates that survive filtering for the current camera.
+#     zh: GRADE 研究静态与动态高斯场景的渲染调度。其 4D 实现先筛选当前视角的候选高斯，再计算这些高斯的外观。
+#   detail:
+#     en: For a changing scene, the time and camera of a frame determine which primitives may contribute. The public implementation can reject records before generating geometry and defer appearance evaluation. It also includes a search over stage configurations and a benchmark for comparing execution orders.
+#     zh: 动态场景中，每一帧的时间和相机位置决定哪些高斯可能参与成像。公开实现可以在生成几何信息之前排除部分高斯，推迟外观计算，并提供阶段配置搜索和执行顺序对比测试。
+#   resources:
+#   - label: Code
+#     url: https://github.com/HAPPYPMN/GRADE-GS
+#   equal: false
+
 - key: lattice
   title: 'LATTICE: Constraint-Directed Scheduling, Memory Planning, and Pipeline Refinement for NPUs'
   authors_html: Runhao Liu<sup>*</sup>, <strong>Minnan Pei<sup>*</sup></strong>, Fei Ding, Guangzhen Yao, You Li, Peng Xiao,

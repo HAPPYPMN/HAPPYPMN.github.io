@@ -38,7 +38,7 @@ try:
                 page.on('response', lambda response: errors.append(f'HTTP {response.status}: {response.url}') if response.status >= 400 else None)
                 page.goto(base + route, wait_until='networkidle', timeout=60000)
                 assert page.locator('h1').count() == 1
-                assert page.locator('[data-publication]:visible').count() == 13
+                assert page.locator('[data-publication]:visible').count() == 12
                 assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), f'Horizontal overflow: {width} {lang}'
                 assert page.locator('img').evaluate_all('(imgs) => imgs.every(i => i.complete && i.naturalWidth > 0)'), 'Image did not load'
                 assert page.locator('link[type="image/svg+xml"]').get_attribute('href').endswith('/assets/images/favicon-p.svg')
@@ -67,7 +67,7 @@ try:
         context=browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844})
         page=context.new_page()
         page.goto(base+'/')
-        assert page.locator('[data-publication]:visible').count()==13
+        assert page.locator('[data-publication]:visible').count() == 12
         assert page.locator('[data-filters]:visible').count()==0
         context.close()
         page=browser.new_page(reduced_motion='reduce')

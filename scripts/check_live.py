@@ -16,7 +16,8 @@ def fetch(route):
 routes = ['/', '/index_zh.html', '/robots.txt', '/sitemap.xml', '/assets/css/style.css',
           '/favicon.ico', '/assets/images/favicon-p.svg', '/assets/images/portrait.webp',
           '/assets/images/social-card.png', '/google04628dea8fc4532f.html']
-routes.extend('/research/' + path.stem + '/' for path in (root / '_publications').glob('*.md'))
+routes.extend('/research/' + path.stem + '/' for path in (root / '_publications').glob('*.md')
+              if path.stem != 'grade')
 with ThreadPoolExecutor(max_workers=5) as pool:
     results = list(pool.map(fetch, routes))
 report = []
@@ -26,7 +27,9 @@ for route, status, body in results:
         soup = BeautifulSoup(body, 'html.parser')
         expected_team = '首席架构团队' if soup.html.get('lang') == 'zh-CN' else 'Chief Architect Office'
         assert expected_team in soup.get_text()
-        assert len(soup.select('[data-publication]')) == 13
+        publications = soup.select('[data-publication] h3 a')
+        assert len(publications) == 12
+        assert publications[1]['href'] == '/research/degs/', 'DeGS should be second'
         assert len(soup.select('.experience-entry')) == 2
         assert not soup.select('#projects, .hero-statement, .profile-card')
         assert soup.select_one('link[type="image/svg+xml"]')['href'].endswith('favicon-p.svg')
@@ -36,7 +39,7 @@ for route, status, body in results:
         assert soup.select_one('meta[name=citation_title]')
         assert json.loads(soup.select_one('script[type="application/ld+json"]').string)['@type'] == 'ScholarlyArticle'
     if route == '/sitemap.xml':
-        assert len(ET.fromstring(body)) == 19
+        assert len(ET.fromstring(body)) == 18
     if route == '/favicon.ico':
         assert body[:4] == bytes([0, 0, 1, 0]), 'Invalid ICO'
     if route == '/assets/images/favicon-p.svg':
@@ -46,4 +49,4 @@ for route, status, body in results:
 out = root / '.local/qa/live'
 out.mkdir(parents=True, exist_ok=True)
 (out / 'http-results.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
-print('PASS: deployed homepages, 13 papers, metadata, favicons, and public assets.')
+print('PASS: deployed homepages, 12 papers, metadata, favicons, and public assets.')
